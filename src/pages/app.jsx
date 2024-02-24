@@ -10,7 +10,6 @@ export default function AppPage() {
       <Helmet>
         <title> Dashboard | Minimal UI </title>
       </Helmet>
-
       <AppView />
     </>
   );
