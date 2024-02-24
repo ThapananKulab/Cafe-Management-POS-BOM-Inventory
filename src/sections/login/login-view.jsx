@@ -84,7 +84,7 @@ export default function LoginView() {
         />
         <TextField
           name="password"
-          label="Password"
+          label="รหัสผ่าน"
           type={showPassword ? 'text' : 'password'}
           value={formData.password}
           onChange={handleChange}
@@ -109,7 +109,7 @@ export default function LoginView() {
           color="inherit"
           onClick={handleClick}
         >
-          Login
+          เข้าสู่ระบบ
         </LoadingButton>
       </Box>
     </form>

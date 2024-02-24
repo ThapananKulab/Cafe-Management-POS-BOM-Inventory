@@ -39,7 +39,6 @@ export default function AccountPopover() {
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
-
   const handleClose = async (event) => {
     event.preventDefault();
     try {
