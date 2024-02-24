@@ -55,7 +55,7 @@ export default function LoginView() {
 
       if (result.message === 'Success') {
         localStorage.setItem('token', result.token);
-        router.push('/Dashboard');
+        router.push('/dashboard');
       } else {
         Swal.fire({
           icon: 'error',

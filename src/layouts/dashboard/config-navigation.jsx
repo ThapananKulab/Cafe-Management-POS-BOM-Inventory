@@ -11,20 +11,26 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'user',
+    title: 'พนักงาน',
     path: '/user',
     icon: icon('ic_user'),
   },
+  // {
+  //   title: 'products',
+  //   path: '/products',
+  //   icon: icon('ic_cart'),
+  // },
   {
-    title: 'product',
-    path: '/products',
-    icon: icon('ic_cart'),
+    title: 'สินค้า',
+    path: '/product',
+    icon: icon('ic_products'),
   },
   {
     title: 'blog',
     path: '/blog',
     icon: icon('ic_blog'),
   },
+
   // {
   //   title: 'login',
   //   path: '/login',
