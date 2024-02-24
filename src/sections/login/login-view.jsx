@@ -1,11 +1,9 @@
-import { useState } from 'react';
+import Swal from 'sweetalert2';
+import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
-// import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-// import Button from '@mui/material/Button';
-// import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -17,30 +15,80 @@ import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
 
-// import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
 
 export default function LoginView() {
   const theme = useTheme();
-
   const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleClick = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('https://cafe-project-server11.onrender.com/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+
+      if (result.message === 'Success') {
+        localStorage.setItem('token', result.token);
+        router.push('/Dashboard');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: result.message,
+        });
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: 'There was an issue connecting to the server. Please try again later.',
+      });
+    }
   };
 
   const renderForm = (
-    <>
+    <form>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField
+          name="username"
+          label="ชื่อผู้ใช้"
+          value={formData.username}
+          onChange={handleChange}
+        />
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={formData.password}
+          onChange={handleChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -53,17 +101,19 @@ export default function LoginView() {
         />
       </Stack>
 
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        color="inherit"
-        onClick={handleClick}
-      >
-        Login
-      </LoadingButton>
-    </>
+      <Box marginTop={2}>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          color="inherit"
+          onClick={handleClick}
+        >
+          Login
+        </LoadingButton>
+      </Box>
+    </form>
   );
 
   return (
