@@ -20,7 +20,6 @@ import Iconify from 'src/components/iconify';
 export default function LoginView() {
   const theme = useTheme();
   const router = useRouter();
-
   const [formData, setFormData] = useState({
     username: '',
     password: '',
