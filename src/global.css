@@ -1,10 +1,6 @@
 /* scrollbar */
 @import 'simplebar-react/dist/simplebar.min.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .prompt-thin {
   font-family: 'Prompt', sans-serif;
   font-weight: 100;
