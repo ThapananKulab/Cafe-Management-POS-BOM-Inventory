@@ -27,7 +27,7 @@ export default function ProductPage() {
         }
         const result = await response.json();
         if (result.status === 'ok') {
-          // Possible implementation or comment
+          console.log('เรียบร้อย');
         } else {
           localStorage.removeItem('token');
           Swal.fire({
