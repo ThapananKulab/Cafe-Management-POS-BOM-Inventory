@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import React, { useState, useEffect } from 'react';
 
@@ -37,7 +38,30 @@ export default function ProductPage() {
     fetchProducts();
   }, []);
 
-  // ฟังก์ชั่นสำหรับกรองผลลัพธ์ตามคำค้นหา
+  const confirmDelete = (productId) => {
+    Swal.fire({
+      title: 'คุณต้องการลบหรือไม่ ?',
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonText: 'ใช่',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(
+            `https://cafe-project-server11.onrender.com/api/products/${productId}`
+          ); // Ensure this URL matches your actual API endpoint
+          Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
+          setProducts(products.filter((product) => product._id !== productId));
+        } catch (error) {
+          console.error('There was an error deleting the product:', error);
+          Swal.fire('Error!', 'There was an error deleting your product.', 'error');
+        }
+      }
+    });
+  };
+
   const filteredProducts = products.filter(
     (product) =>
       product.productname.toLowerCase().includes(search.toLowerCase()) ||
@@ -81,7 +105,17 @@ export default function ProductPage() {
                 <TableBody>
                   {filteredProducts.length > 0 ? (
                     filteredProducts.map((product, index) => (
-                      <TableRow key={product.id}>
+                      <TableRow
+                        key={product._id} // Make sure the key is unique. Use _id if it's unique.
+                        sx={{
+                          '&:nth-of-type(odd)': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.02)', // Light grey for odd rows
+                          },
+                          '&:nth-of-type(even)': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)', // Very light grey for even rows
+                          },
+                        }}
+                      >
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
@@ -94,17 +128,42 @@ export default function ProductPage() {
                         </TableCell>
                         <TableCell>{product.productname}</TableCell>
                         <TableCell align="right">{product.price}</TableCell>
-                        <TableCell align="center">{product.type} </TableCell>
+                        <TableCell align="center">{product.type}</TableCell>
                         <TableCell>
                           <a
-                            href="http://example.com/edit"
+                            href="#"
                             style={{ marginRight: '8px', display: 'inline-block' }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              // Implement edit functionality or redirect here
+                            }}
                           >
-                            <Icon icon="mingcute:edit-fill" width="2em" height="2em" />
+                            {/* Use an appropriate icon component or element for editing */}
                           </a>
-                          <a href="http://example.com/delete">
-                            <Icon icon="mingcute:delete-fill" width="2em" height="2em" />
+                          {/* Use the product._id from the map function */}
+                          <Icon
+                            icon="mingcute:delete-fill"
+                            width="2em"
+                            height="2em"
+                            onClick={() => confirmDelete(product._id)}
+                          />
+                          <a
+                            href="#"
+                            style={{ marginRight: '8px', display: 'inline-block' }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              // Implement edit functionality or redirect here
+                            }}
+                          >
+                            {/* Use an appropriate icon component or element for editing */}
                           </a>
+                          {/* Use the product._id from the map function */}
+                          <Icon
+                            icon="mingcute:delete-fill"
+                            width="2em"
+                            height="2em"
+                            onClick={() => confirmDelete(product._id)}
+                          />
                         </TableCell>
                       </TableRow>
                     ))
