@@ -10,6 +10,7 @@ import {
   TableCell,
   TableHead,
   TextField,
+  Typography,
   TableContainer,
 } from '@mui/material';
 
@@ -31,8 +32,11 @@ export default function ProductPage() {
   }, []);
 
   // ฟังก์ชั่นสำหรับกรองผลลัพธ์ตามคำค้นหา
-  const filteredProducts = products.filter((product) =>
-    product.productname.toLowerCase().includes(search.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.productname.toLowerCase().includes(search.toLowerCase()) ||
+      product.price.toString().toLowerCase().includes(search.toLowerCase()) ||
+      product.type.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -51,25 +55,43 @@ export default function ProductPage() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
+                  <TableCell>ลำดับ</TableCell>
+                  <TableCell>ID</TableCell>
                   <TableCell>รูปภาพ</TableCell>
                   <TableCell>ชื่อสินค้า</TableCell>
                   <TableCell align="right">ราคา</TableCell>
-                  <TableCell align="right">ประเภทสินค้า</TableCell>
+                  <TableCell align="center">ประเภทสินค้า</TableCell>
+                  <TableCell align="left">จัดการ</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow
-                    key={product.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {product.productname}
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product, index) => (
+                    <TableRow key={product.id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{product._id}</TableCell>
+                      <TableCell>
+                        {/* Placeholder for product image */}
+                        <img
+                          src={product.imageUrl || 'placeholder.jpg'}
+                          alt={product.productname}
+                          style={{ width: 50, height: 50 }}
+                        />
+                      </TableCell>
+                      <TableCell>{product.productname}</TableCell>
+                      <TableCell align="right">{product.price}</TableCell>
+                      <TableCell align="center">{product.type}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      <Typography variant="subtitle1" gutterBottom>
+                        ไม่เจอสินค้า
+                      </Typography>
                     </TableCell>
-                    <TableCell align="right">{product.price}</TableCell>
-                    <TableCell align="right">{product.category}</TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>
