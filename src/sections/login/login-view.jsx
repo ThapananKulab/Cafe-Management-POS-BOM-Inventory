@@ -104,7 +104,7 @@ export default function LoginView() {
         />
       </Stack>
 
-      <Box marginTop={2}>
+      <Box marginTop={3}>
         <LoadingButton
           fullWidth
           size="large"
@@ -137,10 +137,15 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">
+          <Box mb={4}>
             {' '}
-            <StyledDiv>เข้าสู่ระบบ</StyledDiv>
-          </Typography>
+            {/* ใช้ Box รอบ Typography และเพิ่ม marginBottom */}
+            <Typography variant="h4" component="div" textAlign="center">
+              {' '}
+              {/* เพิ่ม textAlign หากต้องการให้ข้อความอยู่ตรงกลาง */}
+              <StyledDiv>เข้าสู่ระบบ</StyledDiv>
+            </Typography>
+          </Box>
           {renderForm}
         </Card>
       </Stack>

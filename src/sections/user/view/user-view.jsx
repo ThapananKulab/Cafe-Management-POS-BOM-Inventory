@@ -71,21 +71,24 @@ export default function UserPage() {
 
   const confirmDelete = (userId) => {
     Swal.fire({
-      title: 'คุณต้องการลบหรือไม่ ?',
+      title: 'คุณแน่ใจไหม?',
+      text: 'คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้!',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่, ลบเลย!',
       cancelButtonText: 'ยกเลิก',
-      confirmButtonText: 'ใช่',
       reverseButtons: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           await axios.delete(`https://cafe-project-server11.onrender.com/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
-          Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
-          setUsers(users.filter((user) => user._id !== userId));
+          Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
+          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {
           console.error('There was an error deleting the user:', error);
-          Swal.fire('Error!', 'There was an error deleting your user.', 'error');
+          Swal.fire('Error!', 'ไม่สามารถลบผู้ใช้ได้.', 'error');
         }
       }
     });
@@ -97,8 +100,11 @@ export default function UserPage() {
     handleClose();
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(search.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(search.toLowerCase()) ||
+      user.firstname.toLowerCase().includes(search.toLowerCase()) ||
+      user.lastname.toLowerCase().includes(search.toLowerCase())
   );
 
   const formatDateAndCalculateDays = (dateString) => {
@@ -198,7 +204,7 @@ export default function UserPage() {
         </Stack>
 
         <TextField
-          label="ค้นหาสินค้า เช่น ชาไทย"
+          label="ค้นหาผู้ใช้งาน เช่น สมประสงค์"
           variant="outlined"
           size="small" // ทำให้ TextField มีขนาดเล็กลง
           margin="normal"
@@ -294,7 +300,7 @@ export default function UserPage() {
                     <TableRow>
                       <TableCell colSpan={6} align="center">
                         <Typography variant="subtitle1" gutterBottom>
-                          <StyledDiv>ไม่พบสินค้า</StyledDiv>
+                          <StyledDiv>ไม่พบผู้ใช้</StyledDiv>
                         </Typography>
                       </TableCell>
                     </TableRow>
