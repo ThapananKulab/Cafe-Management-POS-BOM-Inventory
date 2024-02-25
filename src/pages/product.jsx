@@ -47,7 +47,7 @@ export default function ProductPage() {
   return (
     <>
       <Helmet>
-        <title> Product | Minimal UI </title>
+        <title> สินค้า </title>
       </Helmet>
 
       <ProductView />

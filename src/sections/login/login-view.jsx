@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import styled from 'styled-components';
 import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -18,6 +19,9 @@ import { bgGradient } from 'src/theme/css';
 import Iconify from 'src/components/iconify';
 
 export default function LoginView() {
+  const StyledDiv = styled.div`
+    font-family: 'Prompt', sans-serif;
+  `;
   const theme = useTheme();
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -78,7 +82,7 @@ export default function LoginView() {
       <Stack spacing={3}>
         <TextField
           name="username"
-          label="ชื่อผู้ใช้"
+          label="ชื่อบัญชีผู้ใช้"
           value={formData.username}
           onChange={handleChange}
         />
@@ -109,7 +113,7 @@ export default function LoginView() {
           color="inherit"
           onClick={handleClick}
         >
-          เข้าสู่ระบบ
+          <StyledDiv>เข้าสู่ระบบ</StyledDiv>
         </LoadingButton>
       </Box>
     </form>
@@ -133,7 +137,10 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">เข้าสู่ระบบ</Typography>
+          <Typography variant="h4">
+            {' '}
+            <StyledDiv>เข้าสู่ระบบ</StyledDiv>
+          </Typography>
           {renderForm}
         </Card>
       </Stack>
