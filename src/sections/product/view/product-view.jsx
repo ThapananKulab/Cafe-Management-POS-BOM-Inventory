@@ -12,6 +12,7 @@ import {
   Stack,
   Modal,
   Button,
+  MenuItem,
   TableRow,
   Container,
   TableBody,
@@ -40,6 +41,13 @@ export default function ProductPage() {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // ปรับค่าเงาให้ดูนุ่มนวลขึ้น
     p: 4,
   };
+
+  const categories = [
+    { value: 'cool', label: 'เย็น' },
+    { value: 'hot', label: 'ร้อน' },
+    { value: 'mix', label: 'ปั่น' },
+    // เพิ่มประเภทสินค้าตามที่ต้องการ
+  ];
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -138,12 +146,19 @@ export default function ProductPage() {
                   variant="outlined"
                 />
                 <TextField
+                  select // ใช้ prop select เพื่อให้เป็น dropdown
                   fullWidth
                   margin="normal"
                   label="ประเภท"
                   variant="outlined"
-                  required // เพิ่ม required ที่นี่
-                />
+                  required
+                >
+                  {categories.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 <Button
                   variant="outlined" // แก้ไขจาก "contained" เป็น "outlined"
                   component="label"

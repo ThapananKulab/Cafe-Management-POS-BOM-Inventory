@@ -1,173 +1,310 @@
-import { useState } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { Icon } from '@iconify/react';
+import styled from 'styled-components';
+import { differenceInDays } from 'date-fns';
+import React, { useState, useEffect } from 'react';
 
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
-
-import { users } from 'src/_mock/user';
+import {
+  Box,
+  Grid,
+  Paper,
+  Table,
+  Stack,
+  Modal,
+  Button,
+  MenuItem,
+  TableRow,
+  Container,
+  TableBody,
+  TableCell,
+  TableHead,
+  TextField,
+  Typography,
+  TableContainer,
+} from '@mui/material';
 
 import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-
-import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
-import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-
-// ----------------------------------------------------------------------
 
 export default function UserPage() {
-  const [page, setPage] = useState(0);
-
-  const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleSort = (event, id) => {
-    const isAsc = orderBy === id && order === 'asc';
-    if (id !== '') {
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(id);
-    }
+  const StyledDiv = styled.div`
+    font-family: 'Prompt', sans-serif;
+  `;
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper', // สามารถเปลี่ยนเป็นสีที่ต้องการ เช่น 'white', '#f7f7f7'
+    borderRadius: '16px', // ทำให้มุมโค้งมน
+    border: 'none', // ถ้าต้องการลบขอบด้านนอกออก หรือปรับเป็น '1px solid #e0e0e0' เพื่อดูเรียบร้อย
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // ปรับค่าเงาให้ดูนุ่มนวลขึ้น
+    p: 4,
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
+  const categories = [
+    { value: 'cool', label: 'เย็น' },
+    { value: 'hot', label: 'ร้อน' },
+    { value: 'mix', label: 'ปั่น' },
+    // เพิ่มประเภทสินค้าตามที่ต้องการ
+  ];
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState(''); // สร้าง state สำหรับจัดการคำค้นหา
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('https://cafe-project-server11.onrender.com/api/users');
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const confirmDelete = (userId) => {
+    Swal.fire({
+      title: 'คุณต้องการลบหรือไม่ ?',
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonText: 'ใช่',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`https://cafe-project-server11.onrender.com/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
+          Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
+          setUsers(users.filter((user) => user._id !== userId));
+        } catch (error) {
+          console.error('There was an error deleting the user:', error);
+          Swal.fire('Error!', 'There was an error deleting your user.', 'error');
+        }
+      }
+    });
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('Form submitted');
+    handleClose();
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const formatDateAndCalculateDays = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const formattedDate = new Intl.DateTimeFormat('th-TH', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      timeZone: 'Asia/Bangkok',
+    }).format(date);
+
+    const daysDifference = differenceInDays(now, date);
+
+    return `${formattedDate} (${daysDifference} วันที่ผ่านมา)`;
   };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
-  const dataFiltered = applyFilter({
-    inputData: users,
-    comparator: getComparator(order, orderBy),
-    filterName,
-  });
-
-  const notFound = !dataFiltered.length && !!filterName;
 
   return (
-    <Container>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
-
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
-      </Stack>
-
-      <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
-
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+    <div>
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4">
+            <StyledDiv>สินค้า</StyledDiv>
+          </Typography>
+          <StyledDiv>
+            <Button
+              variant="contained"
+              color="inherit"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={handleOpen}
+            >
+              <StyledDiv>เพิ่มสินค้า </StyledDiv>
+            </Button>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box
+                sx={style}
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                autoComplete="off"
+              >
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  <StyledDiv>เพิ่มสินค้า</StyledDiv>
+                </Typography>
+                <TextField fullWidth margin="normal" label="ชื่อสินค้า" variant="outlined" />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="ราคา"
+                  type="number"
+                  variant="outlined"
                 />
+                <TextField
+                  select // ใช้ prop select เพื่อให้เป็น dropdown
+                  fullWidth
+                  margin="normal"
+                  label="ประเภท"
+                  variant="outlined"
+                  required
+                >
+                  {categories.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <Button
+                  variant="outlined" // แก้ไขจาก "contained" เป็น "outlined"
+                  component="label"
+                  sx={{ mt: 2, mr: 2 }} // เพิ่มระยะห่างด้านขวา (mr)
+                >
+                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
+                    อัปโหลด
+                  </StyledDiv>
+                  <input type="file" hidden /> {/* เพิ่ม required ที่นี่ */}
+                </Button>
+                {/* ใช้ Box เพื่อเว้นบรรทัด */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <Button type="submit" variant="contained" color="primary" sx={{ width: '50%' }}>
+                    <StyledDiv>บันทึก</StyledDiv>
+                  </Button>
+                </Box>{' '}
+                {/* ตรวจสอบให้แน่ใจว่ามีการปิดแท็ก <Box> ที่นี่ */}
+              </Box>
+            </Modal>
+          </StyledDiv>
+        </Stack>
 
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+        <TextField
+          label="ค้นหาสินค้า เช่น ชาไทย"
+          variant="outlined"
+          size="small" // ทำให้ TextField มีขนาดเล็กลง
+          margin="normal"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{ maxWidth: '50%' }}
         />
-      </Card>
-    </Container>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 1000 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ลำดับ</TableCell>
+                    <TableCell>ID</TableCell>
+                    <TableCell>รูปภาพ</TableCell>
+                    <TableCell>บัญชีผู้ใช้</TableCell>
+                    <TableCell>ชือ-นามสกุล</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>สถานะ</TableCell>
+                    <TableCell>เบอร์โทรศัพท์</TableCell>
+                    <TableCell>จัดการ</TableCell>
+                    <TableCell>อยู่ในระบบนาน</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user, index) => (
+                      <TableRow
+                        key={user._id}
+                        sx={{
+                          '&:nth-of-type(odd)': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                          },
+                          '&:nth-of-type(even)': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                          },
+                        }}
+                      >
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{user._id}</TableCell>
+                        <TableCell>
+                          {/* Placeholder for user image */}
+                          <img src={user.imageUrl || 'placeholder.jpg'} alt={user.username} />
+                        </TableCell>
+                        <TableCell>{user.username}</TableCell>
+                        <TableCell>
+                          {user.firstname} {user.lastname}
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.role}</TableCell>
+                        <TableCell>{user.phone}</TableCell>
+                        <TableCell> {formatDateAndCalculateDays(user.created)}</TableCell>
+                        <TableCell>
+                          <a
+                            href="#"
+                            style={{ marginRight: '8px', display: 'inline-block' }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                            }}
+                          >
+                            {}
+                          </a>
+                          {}
+                          <Icon
+                            icon="mingcute:edit-line"
+                            width="2em"
+                            height="2em"
+                            onClick={() => confirmDelete(user._id)}
+                          />
+                          <a
+                            href="#"
+                            style={{ marginRight: '8px', display: 'inline-block' }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              // Implement edit functionality or redirect here
+                            }}
+                          >
+                            {/* Use an appropriate icon component or element for editing */}
+                          </a>
+                          {/* Use the user._id from the map function */}
+                          <Icon
+                            icon="mingcute:delete-fill"
+                            width="2em"
+                            height="2em"
+                            onClick={() => confirmDelete(user._id)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        <Typography variant="subtitle1" gutterBottom>
+                          <StyledDiv>ไม่พบสินค้า</StyledDiv>
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
+      </Container>
+    </div>
   );
 }
