@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -7,9 +9,10 @@ import { RouterLink } from 'src/routes/components';
 
 import Logo from 'src/components/logo';
 
-// ----------------------------------------------------------------------
-
 export default function NotFoundView() {
+  const StyledDiv = styled.div`
+    font-family: 'Prompt', sans-serif;
+  `;
   const renderHeader = (
     <Box
       component="header"
@@ -45,26 +48,19 @@ export default function NotFoundView() {
           }}
         >
           <Typography variant="h3" sx={{ mb: 3 }}>
-            Sorry, page not found!
+            <StyledDiv>ขออภัยไม่พบหน้านี้</StyledDiv>
           </Typography>
-
-          <Typography sx={{ color: 'text.secondary' }}>
-            Sorry, we couldn’t find the page you’re looking for. Perhaps you’ve mistyped the URL? Be
-            sure to check your spelling.
-          </Typography>
-
           <Box
             component="img"
             src="/assets/illustrations/illustration_404.svg"
             sx={{
               mx: 'auto',
               height: 260,
-              my: { xs: 5, sm: 10 },
+              my: { xs: 4, sm: 4 },
             }}
           />
-
           <Button href="/" size="large" variant="contained" component={RouterLink}>
-            Go to Home
+            <StyledDiv>ไปหน้าเข้าสู่ระบบ</StyledDiv>
           </Button>
         </Box>
       </Container>
