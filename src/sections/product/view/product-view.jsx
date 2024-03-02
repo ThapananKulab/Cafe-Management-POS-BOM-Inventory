@@ -163,7 +163,21 @@ export default function ProductPage() {
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                   <StyledDiv>เพิ่มสินค้า</StyledDiv>
                 </Typography>
-                <TextField fullWidth margin="normal" label="ชื่อสินค้า" variant="outlined" />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="ชื่อสินค้า"
+                  variant="outlined"
+                  name="productname" // Add this line
+                />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="ราคา"
+                  type="number"
+                  variant="outlined"
+                  name="price" // Add this line
+                />
                 <TextField
                   select
                   fullWidth
@@ -179,13 +193,6 @@ export default function ProductPage() {
                     </MenuItem>
                   ))}
                 </TextField>
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="ราคา"
-                  type="number"
-                  variant="outlined"
-                />
                 <Button
                   variant="outlined" // แก้ไขจาก "contained" เป็น "outlined"
                   component="label"
