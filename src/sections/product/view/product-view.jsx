@@ -43,9 +43,9 @@ export default function ProductPage() {
   };
 
   const categories = [
-    { value: 'cool', label: 'เย็น' },
-    { value: 'hot', label: 'ร้อน' },
-    { value: 'mix', label: 'ปั่น' },
+    { value: 'เย็น', label: 'เย็น' },
+    { value: 'ร้อน', label: 'ร้อน' },
+    { value: 'ปั่น', label: 'ปั่น' },
     // เพิ่มประเภทสินค้าตามที่ต้องการ
   ];
 
@@ -94,13 +94,11 @@ export default function ProductPage() {
   //
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const productData = {
       productname: event.target.productname.value,
       type: event.target.type.value,
       price: event.target.price.value,
     };
-
     try {
       const response = await fetch(
         'https://cafe-project-server11.onrender.com/api/products/insert',
@@ -112,7 +110,6 @@ export default function ProductPage() {
           body: JSON.stringify(productData),
         }
       );
-
       if (response.ok) {
         const responseData = await response.json();
         console.log(responseData);
