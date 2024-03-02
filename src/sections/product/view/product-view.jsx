@@ -102,13 +102,10 @@ export default function ProductPage() {
     formData.append('image', event.target.image.files[0]);
 
     try {
-      const response = await fetch(
-        'https://cafe-project-server11.onrender.com/api/products/insertU',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const response = await fetch('http://localhost:3333/api/products/insertU', {
+        method: 'POST',
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error('Failed to submit the form');
@@ -130,6 +127,14 @@ export default function ProductPage() {
       product.price.toString().toLowerCase().includes(search.toLowerCase()) ||
       product.type.toLowerCase().includes(search.toLowerCase())
   );
+
+  const [fileName, setFileName] = useState(''); // สำหรับเก็บชื่อไฟล์
+
+  // ฟังก์ชันสำหรับการเปลี่ยนไฟล์
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // ได้ไฟล์แรกจากการเลือก
+    setFileName(file ? file.name : ''); // อัพเดตชื่อไฟล์หรือล้างชื่อ
+  };
 
   return (
     <div>
@@ -193,17 +198,14 @@ export default function ProductPage() {
                     </MenuItem>
                   ))}
                 </TextField>
-                <Button
-                  variant="outlined" // แก้ไขจาก "contained" เป็น "outlined"
-                  component="label"
-                  sx={{ mt: 2, mr: 2 }} // เพิ่มระยะห่างด้านขวา (mr)
-                >
+                <Button variant="outlined" component="label" sx={{ mt: 2, mr: 2 }}>
                   <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
                     อัปโหลด
                   </StyledDiv>
-                  <input type="file" hidden name="image" />
+                  <input type="file" hidden name="image" onChange={handleFileChange} />
                 </Button>
+                {fileName && <Box sx={{ mt: 2 }}>ไฟล์ที่เลือก: {fileName}</Box>}
                 {/* ใช้ Box เพื่อเว้นบรรทัด */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                   <Button type="submit" variant="contained" color="primary" sx={{ width: '50%' }}>
