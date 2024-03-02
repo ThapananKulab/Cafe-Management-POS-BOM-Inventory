@@ -99,25 +99,20 @@ export default function ProductPage() {
     formData.append('productname', event.target.productname.value);
     formData.append('type', event.target.type.value);
     formData.append('price', event.target.price.value);
-    formData.append('image', event.target.image.files[0]);
+    // formData.append('image', event.target.image.files[0]);
 
     try {
-      const response = await fetch('http://localhost:3333/api/products/insertU', {
+      const response = await fetch('http://localhost:3333/api/products/insert', {
         method: 'POST',
         body: formData,
       });
-
       if (!response.ok) {
         throw new Error('Failed to submit the form');
       }
-
       const result = await response.json();
       console.log(result);
-
-      // Handle success (e.g., showing a success message, clearing the form, etc.)
     } catch (error) {
       console.error('Error submitting the form:', error);
-      // Handle error (e.g., showing an error message)
     }
   };
 
