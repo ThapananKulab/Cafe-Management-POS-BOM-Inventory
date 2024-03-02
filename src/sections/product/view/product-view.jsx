@@ -92,10 +92,36 @@ export default function ProductPage() {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Form submitted');
-    handleClose();
+
+    const formData = new FormData();
+    formData.append('productname', event.target.productname.value);
+    formData.append('type', event.target.type.value);
+    formData.append('price', event.target.price.value);
+    formData.append('image', event.target.image.files[0]);
+
+    try {
+      const response = await fetch(
+        'https://cafe-project-server11.onrender.com/api/products/insertU',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to submit the form');
+      }
+
+      const result = await response.json();
+      console.log(result);
+
+      // Handle success (e.g., showing a success message, clearing the form, etc.)
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+      // Handle error (e.g., showing an error message)
+    }
   };
 
   const filteredProducts = products.filter(
@@ -139,19 +165,13 @@ export default function ProductPage() {
                 </Typography>
                 <TextField fullWidth margin="normal" label="ชื่อสินค้า" variant="outlined" />
                 <TextField
-                  fullWidth
-                  margin="normal"
-                  label="ราคา"
-                  type="number"
-                  variant="outlined"
-                />
-                <TextField
-                  select // ใช้ prop select เพื่อให้เป็น dropdown
+                  select
                   fullWidth
                   margin="normal"
                   label="ประเภท"
                   variant="outlined"
                   required
+                  name="type"
                 >
                   {categories.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -159,6 +179,13 @@ export default function ProductPage() {
                     </MenuItem>
                   ))}
                 </TextField>
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="ราคา"
+                  type="number"
+                  variant="outlined"
+                />
                 <Button
                   variant="outlined" // แก้ไขจาก "contained" เป็น "outlined"
                   component="label"
@@ -168,7 +195,7 @@ export default function ProductPage() {
                     <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
                     อัปโหลด
                   </StyledDiv>
-                  <input type="file" hidden /> {/* เพิ่ม required ที่นี่ */}
+                  <input type="file" hidden name="image" />
                 </Button>
                 {/* ใช้ Box เพื่อเว้นบรรทัด */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
