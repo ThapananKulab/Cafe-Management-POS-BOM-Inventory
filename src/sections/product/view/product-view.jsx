@@ -53,7 +53,7 @@ export default function ProductPage() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState(''); // สร้าง state สำหรับจัดการคำค้นหา
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -95,24 +95,53 @@ export default function ProductPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('productname', event.target.productname.value);
-    formData.append('type', event.target.type.value);
-    formData.append('price', event.target.price.value);
-    // formData.append('image', event.target.image.files[0]);
+    const productData = {
+      productname: event.target.productname.value,
+      type: event.target.type.value,
+      price: event.target.price.value,
+    };
 
     try {
-      const response = await fetch('http://localhost:3333/api/products/insert', {
-        method: 'POST',
-        body: formData,
-      });
-      if (!response.ok) {
-        throw new Error('Failed to submit the form');
+      const response = await fetch(
+        'https://cafe-project-server11.onrender.com/api/products/insert',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+        }
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData);
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: responseData.message || 'Product created successfully!',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          timer: 1500,
+        });
+        handleClose();
+      } else {
+        console.error('Server responded with status:', response.status);
+        Swal.fire({
+          title: 'Error!',
+          text: 'There was an error creating the product. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
       }
-      const result = await response.json();
-      console.log(result);
     } catch (error) {
-      console.error('Error submitting the form:', error);
+      console.error('Fetch error:', error);
+      // Use SweetAlert for error message
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to send product data. Please check your network connection.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
