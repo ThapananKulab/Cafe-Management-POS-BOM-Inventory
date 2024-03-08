@@ -10,6 +10,7 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const ProductPage = lazy(() => import('src/pages/product'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const FormAdmin = lazy(() => import('src/pages/form-admin'));
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +40,10 @@ export default function Router() {
     {
       path: '*',
       element: <Navigate to="/404" replace />,
+    },
+    {
+      path: '/formadmin',
+      element: <FormAdmin />,
     },
   ]);
 

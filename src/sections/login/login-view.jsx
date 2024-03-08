@@ -54,7 +54,7 @@ export default function LoginView() {
       });
 
       if (!response.ok) {
-        const errorResponse = await response.json(); // Attempt to get more error info from the response body
+        const errorResponse = await response.json();
         throw new Error(errorResponse.message || 'Network response was not ok');
       }
 
