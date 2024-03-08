@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
 import styled from 'styled-components';
 import React, { useState } from 'react';
 
@@ -43,7 +44,7 @@ export default function LoginView() {
     event.preventDefault();
 
     try {
-      const response = await fetch('https://cafe-project-server11.onrender.com/api/login', {
+      const response = await fetch('http://localhost:3333/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,14 +53,21 @@ export default function LoginView() {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorResponse = await response.json(); // Attempt to get more error info from the response body
+        throw new Error(errorResponse.message || 'Network response was not ok');
       }
 
       const result = await response.json();
 
       if (result.message === 'Success') {
         localStorage.setItem('token', result.token);
-        router.push('/dashboard');
+
+        const decodedToken = jwtDecode(result.token);
+        if (decodedToken.user.role === 'เจ้าของร้าน') {
+          router.push('/dashboard');
+        } else {
+          router.push('/order');
+        }
       } else {
         Swal.fire({
           icon: 'error',
@@ -72,7 +80,8 @@ export default function LoginView() {
       Swal.fire({
         icon: 'error',
         title: 'Network Error',
-        text: 'There was an issue connecting to the server. Please try again later.',
+        text:
+          error.message || 'There was an issue connecting to the server. Please try again later.',
       });
     }
   };

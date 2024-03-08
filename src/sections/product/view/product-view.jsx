@@ -35,10 +35,10 @@ export default function ProductPage() {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'background.paper', // สามารถเปลี่ยนเป็นสีที่ต้องการ เช่น 'white', '#f7f7f7'
-    borderRadius: '16px', // ทำให้มุมโค้งมน
-    border: 'none', // ถ้าต้องการลบขอบด้านนอกออก หรือปรับเป็น '1px solid #e0e0e0' เพื่อดูเรียบร้อย
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // ปรับค่าเงาให้ดูนุ่มนวลขึ้น
+    bgcolor: 'background.paper',
+    borderRadius: '16px',
+    border: 'none',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     p: 4,
   };
 
@@ -81,7 +81,7 @@ export default function ProductPage() {
         try {
           await axios.delete(
             `https://cafe-project-server11.onrender.com/api/products/${productId}`
-          ); // Ensure this URL matches your actual API endpoint
+          );
           Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
           setProducts(products.filter((product) => product._id !== productId));
         } catch (error) {
