@@ -1,44 +1,67 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 
-function FormAdmin() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('Form Submitted');
-  };
+export default function LoginView() {
+  const StyledDiv = styled.div`
+    font-family: 'Prompt', sans-serif;
+  `;
+
+  const renderForm = (
+    <form>
+      <Stack spacing={3}>
+        <TextField name="username" label="ชื่อบัญชีผู้ใช้" />
+        <TextField name="username" label="ชื่อบัญชีผู้ใช้" />
+        <TextField name="username" label="ชื่อบัญชีผู้ใช้" />
+        <TextField name="username" label="ชื่อบัญชีผู้ใช้" />
+      </Stack>
+
+      <Box marginTop={3}>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          color="warning"
+          sx={{ color: 'white' }}
+        >
+          <StyledDiv>เข้าสู่ระบบ</StyledDiv>
+        </LoadingButton>
+      </Box>
+    </form>
+  );
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      margin="auto"
-      width="100%"
+      sx={{
+        height: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
     >
-      <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-        {[...Array(5)].map((_, index) => (
-          <Box key={index} marginY={1} width="75%">
-            <TextField
-              fullWidth
-              id={`outlined-basic-${index}`}
-              label={`ช่องกรอกข้อมูล ${index + 1}`}
-              variant="outlined"
-              sx={{ borderRadius: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }} // กำหนดระดับความโค้งของกรอบ
-            />
+      <Stack alignItems="center" sx={{ flexGrow: 1, justifyContent: 'center', marginTop: '-10vh' }}>
+        <Card
+          sx={{
+            p: 5,
+            width: 1,
+            maxWidth: 420,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" component="div" textAlign="center">
+              <StyledDiv>แก้ไขโปรไฟล์</StyledDiv>
+            </Typography>
           </Box>
-        ))}
-        <Box marginTop={2}>
-          <Button type="submit" variant="contained" color="primary">
-            Submit
-          </Button>
-        </Box>
-      </form>
+          {renderForm}
+        </Card>
+      </Stack>
     </Box>
   );
 }
-
-export default FormAdmin;
