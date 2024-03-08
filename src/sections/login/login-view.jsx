@@ -72,9 +72,8 @@ export default function LoginView() {
       } else {
         Swal.fire({
           icon: 'error',
-          title: 'Username<br>หรือ Password ไม่ถูกต้อง',
+          title: 'Username หรือ Password <br> ไม่ถูกต้อง',
           text: result.message,
-          html: true, // This option is not needed for newer versions of SweetAlert2 as they auto-detect HTML
         });
       }
     } catch (error) {
