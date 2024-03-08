@@ -72,7 +72,7 @@ export default function LoginView() {
       } else {
         Swal.fire({
           icon: 'error',
-          title: 'Oops...',
+          title: 'Username หรือ Password ไม่ถูกต้อง',
           text: result.message,
         });
       }
