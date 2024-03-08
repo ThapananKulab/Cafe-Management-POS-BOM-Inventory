@@ -15,20 +15,21 @@ import { account } from 'src/_mock/account';
 
 // ----------------------------------------------------------------------
 
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
-];
+// const MENU_OPTIONS = [
+//   {
+//     label: 'Home',
+//     icon: 'eva:home-fill',
+//   },
+//   {
+//     label: 'Profile',
+//     icon: 'eva:person-fill',
+//     path: '/formadmin',
+//   },
+//   {
+//     label: 'Settings',
+//     icon: 'eva:settings-2-fill',
+//   },
+// ];
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +51,9 @@ export default function AccountPopover() {
     } catch (error) {
       console.error('Error logging out:', error);
     }
+  };
+  const handleUpdateAdmin = () => {
+    router.push('/formadmin');
   };
 
   return (
@@ -105,13 +109,15 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        {MENU_OPTIONS.map((option) => (
+        {/* {MENU_OPTIONS.map((option) => (
           <MenuItem key={option.label} onClick={handleClose}>
             {option.label}
           </MenuItem>
-        ))}
+        ))} */}
 
-        <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
+        <MenuItem onClick={handleUpdateAdmin} sx={{ typography: 'body2', color: 'main', py: 1.5 }}>
+          แก้ไขโปรไฟล์
+        </MenuItem>
 
         <MenuItem
           disableRipple
