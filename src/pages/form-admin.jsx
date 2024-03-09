@@ -87,7 +87,6 @@ export default function LoginView() {
           }}
           disabled
         />
-        {/* Make other fields editable based on isEditing state */}
         <TextField
           name="firstname"
           label="ชื่อจริง"
@@ -122,7 +121,7 @@ export default function LoginView() {
         <Button
           onClick={handleEditClick}
           variant="outlined"
-          sx={{ width: 'fit-content', flexGrow: 1, mr: 1 }} // Ensure button adjusts to its content with some flexibility
+          sx={{ width: 'fit-content', flexGrow: 1, mr: 1 }}
         >
           {isEditing ? 'Cancel' : 'Edit'}
         </Button>
@@ -131,8 +130,8 @@ export default function LoginView() {
           type="submit"
           variant="contained"
           color="warning"
-          sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'white' }} // Match the flexibility and margin adjustments
-          disabled={!isEditing} // Disable the submit button if not in editing mode
+          sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'white' }}
+          disabled={!isEditing}
         >
           <StyledDiv>Save Changes</StyledDiv>
         </LoadingButton>
@@ -165,8 +164,8 @@ export default function LoginView() {
             color="primary"
             sx={{
               position: 'absolute',
-              left: 16, // ย้ายจากขอบซ้ายเล็กน้อย เพื่อป้องกันไม่ให้ปุ่มและข้อความทับซ้อนกัน
-              top: 25, // ตั้งค่าตำแหน่งด้านบนเพื่อให้ปุ่มอยู่เหนือข้อความ
+              left: 16,
+              top: 25,
               transform: 'translateY(-50%)',
               opacity: 2.8,
               '&:hover': {
@@ -195,7 +194,7 @@ export default function LoginView() {
                   p: 5,
                   width: 1,
                   maxWidth: 420,
-                  position: 'relative', // Make sure the card is positioned relatively
+                  position: 'relative',
                 }}
               >
                 <Button
@@ -205,8 +204,8 @@ export default function LoginView() {
                   sx={{
                     position: 'absolute',
                     left: 6,
-                    top: 25, // Adjust if necessary for better placement
-                    zIndex: 10, // Ensure the button is above all other elements in the card
+                    top: 25,
+                    zIndex: 10,
                     opacity: 0.9,
                     '&:hover': {
                       opacity: 1,
@@ -215,7 +214,6 @@ export default function LoginView() {
                 >
                   <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
                 </Button>
-                {/* The rest of your component */}
               </Card>
 
               <StyledDiv>แก้ไขโปรไฟล์</StyledDiv>
