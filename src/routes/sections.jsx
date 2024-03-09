@@ -11,6 +11,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const ProductPage = lazy(() => import('src/pages/product'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const FormAdmin = lazy(() => import('src/pages/form-admin'));
+export const EditProducts = lazy(() => import('src/pages/edit-product'));
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +45,10 @@ export default function Router() {
     {
       path: '/formadmin',
       element: <FormAdmin />,
+    },
+    {
+      path: '/edit-product',
+      element: <EditProducts />,
     },
   ]);
 

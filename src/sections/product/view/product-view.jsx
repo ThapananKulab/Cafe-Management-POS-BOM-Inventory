@@ -306,14 +306,13 @@ export default function ProductPage() {
                             icon="mingcute:edit-line"
                             width="2em"
                             height="2em"
-                            onClick={() => confirmDelete(product._id)}
+                            // onClick={() => confirmDelete(product._id)}
                           />
                           <a
                             href="#"
                             style={{ marginRight: '8px', display: 'inline-block' }}
                             onClick={(e) => {
                               e.preventDefault();
-                              // Implement edit functionality or redirect here
                             }}
                           >
                             {/* Use an appropriate icon component or element for editing */}
