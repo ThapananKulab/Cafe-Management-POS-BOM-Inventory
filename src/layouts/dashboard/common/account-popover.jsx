@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import Swal from 'sweetalert2';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -13,27 +15,43 @@ import { useRouter } from 'src/routes/hooks';
 
 import { account } from 'src/_mock/account';
 
-// ----------------------------------------------------------------------
-
-// const MENU_OPTIONS = [
-//   {
-//     label: 'Home',
-//     icon: 'eva:home-fill',
-//   },
-//   {
-//     label: 'Profile',
-//     icon: 'eva:person-fill',
-//     path: '/formadmin',
-//   },
-//   {
-//     label: 'Settings',
-//     icon: 'eva:settings-2-fill',
-//   },
-// ];
-
-// ----------------------------------------------------------------------
-
 export default function AccountPopover() {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://cafe-project-server11.onrender.com/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
+
   const [open, setOpen] = useState(null);
 
   const router = useRouter();
@@ -71,8 +89,8 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={account.photoURL}
-          alt={account.displayName}
+          src={user?.image}
+          alt={user?.username}
           sx={{
             width: 36,
             height: 36,
@@ -100,10 +118,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {user?.firstname} {user?.lastname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {user?.email}
           </Typography>
         </Box>
 

@@ -58,6 +58,7 @@ export default function LoginView() {
     };
     fetchData();
   }, [navigate]);
+
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
