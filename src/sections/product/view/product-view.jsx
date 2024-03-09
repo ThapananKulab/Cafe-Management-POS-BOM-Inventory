@@ -46,6 +46,7 @@ export default function ProductPage() {
     { value: 'เย็น', label: 'เย็น' },
     { value: 'ร้อน', label: 'ร้อน' },
     { value: 'ปั่น', label: 'ปั่น' },
+    // เพิ่มประเภทสินค้าตามที่ต้องการ
   ];
 
   const [open, setOpen] = useState(false);
@@ -93,22 +94,28 @@ export default function ProductPage() {
   //
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const productData = {
-      productname: event.target.productname.value,
-      type: event.target.type.value,
-      price: event.target.price.value,
-    };
+
+    // Initialize a FormData object
+    const formData = new FormData();
+    // Append the text fields
+    formData.append('productname', event.target.productname.value);
+    formData.append('type', event.target.type.value);
+    formData.append('price', event.target.price.value);
+    // Append the file, assuming 'image' is the name attribute of your file input
+    if (event.target.image.files[0]) {
+      formData.append('image', event.target.image.files[0]);
+    }
+
     try {
       const response = await fetch(
-        'https://cafe-project-server11.onrender.com/api/products/insert',
+        'https://cafe-project-server11.onrender.com/api/products/insertReact',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(productData),
+          // Removed 'Content-Type': 'application/json', header
+          body: formData, // Send formData object
         }
       );
+
       if (response.ok) {
         const responseData = await response.json();
         console.log(responseData);
@@ -119,6 +126,7 @@ export default function ProductPage() {
           confirmButtonText: 'OK',
           timer: 1500,
         });
+        // Assuming handleClose is a method to close the modal
         handleClose();
       } else {
         console.error('Server responded with status:', response.status);
@@ -131,7 +139,6 @@ export default function ProductPage() {
       }
     } catch (error) {
       console.error('Fetch error:', error);
-      // Use SweetAlert for error message
       Swal.fire({
         title: 'Error!',
         text: 'Failed to send product data. Please check your network connection.',
@@ -148,11 +155,12 @@ export default function ProductPage() {
       product.type.toLowerCase().includes(search.toLowerCase())
   );
 
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState(''); // สำหรับเก็บชื่อไฟล์
 
+  // ฟังก์ชันสำหรับการเปลี่ยนไฟล์
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setFileName(file ? file.name : '');
+    const file = event.target.files[0]; // ได้ไฟล์แรกจากการเลือก
+    setFileName(file ? file.name : ''); // อัพเดตชื่อไฟล์หรือล้างชื่อ
   };
 
   return (
@@ -187,15 +195,6 @@ export default function ProductPage() {
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                   <StyledDiv>เพิ่มสินค้า</StyledDiv>
                 </Typography>
-                <Button variant="outlined" component="label" sx={{ mt: 2, mr: 2 }}>
-                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
-                    อัปโหลดรูปภาพ
-                  </StyledDiv>
-                  <input type="file" hidden name="image" onChange={handleFileChange} />
-                </Button>
-                {fileName && <Box sx={{ mt: 2 }}>ไฟล์ที่เลือก: {fileName}</Box>}
-                {/* ใช้ Box เพื่อเว้นบรรทัด */}
                 <TextField
                   fullWidth
                   margin="normal"
@@ -226,6 +225,15 @@ export default function ProductPage() {
                     </MenuItem>
                   ))}
                 </TextField>
+                <Button variant="outlined" component="label" sx={{ mt: 2, mr: 2 }}>
+                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
+                    อัปโหลด
+                  </StyledDiv>
+                  <input type="file" hidden name="image" onChange={handleFileChange} />
+                </Button>
+                {fileName && <Box sx={{ mt: 2 }}>ไฟล์ที่เลือก: {fileName}</Box>}
+                {/* ใช้ Box เพื่อเว้นบรรทัด */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                   <Button type="submit" variant="contained" color="primary" sx={{ width: '50%' }}>
                     <StyledDiv>บันทึก</StyledDiv>
@@ -279,9 +287,8 @@ export default function ProductPage() {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
-                          {/* Placeholder for product image */}
                           <img
-                            src={product.imageUrl}
+                            src={`http://localhost:3333/images/${product.image}`}
                             alt={product.productname}
                             style={{ width: 50, height: 50 }}
                           />
@@ -311,12 +318,10 @@ export default function ProductPage() {
                             style={{ marginRight: '8px', display: 'inline-block' }}
                             onClick={(e) => {
                               e.preventDefault();
-                              // Implement edit functionality or redirect here
                             }}
                           >
                             {/* Use an appropriate icon component or element for editing */}
                           </a>
-                          {/* Use the product._id from the map function */}
                           <Icon
                             icon="mingcute:delete-fill"
                             width="2em"
