@@ -46,7 +46,6 @@ export default function ProductPage() {
     { value: 'เย็น', label: 'เย็น' },
     { value: 'ร้อน', label: 'ร้อน' },
     { value: 'ปั่น', label: 'ปั่น' },
-    // เพิ่มประเภทสินค้าตามที่ต้องการ
   ];
 
   const [open, setOpen] = useState(false);
@@ -149,12 +148,11 @@ export default function ProductPage() {
       product.type.toLowerCase().includes(search.toLowerCase())
   );
 
-  const [fileName, setFileName] = useState(''); // สำหรับเก็บชื่อไฟล์
+  const [fileName, setFileName] = useState('');
 
-  // ฟังก์ชันสำหรับการเปลี่ยนไฟล์
   const handleFileChange = (event) => {
-    const file = event.target.files[0]; // ได้ไฟล์แรกจากการเลือก
-    setFileName(file ? file.name : ''); // อัพเดตชื่อไฟล์หรือล้างชื่อ
+    const file = event.target.files[0];
+    setFileName(file ? file.name : '');
   };
 
   return (
@@ -189,6 +187,15 @@ export default function ProductPage() {
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                   <StyledDiv>เพิ่มสินค้า</StyledDiv>
                 </Typography>
+                <Button variant="outlined" component="label" sx={{ mt: 2, mr: 2 }}>
+                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
+                    อัปโหลดรูปภาพ
+                  </StyledDiv>
+                  <input type="file" hidden name="image" onChange={handleFileChange} />
+                </Button>
+                {fileName && <Box sx={{ mt: 2 }}>ไฟล์ที่เลือก: {fileName}</Box>}
+                {/* ใช้ Box เพื่อเว้นบรรทัด */}
                 <TextField
                   fullWidth
                   margin="normal"
@@ -219,15 +226,6 @@ export default function ProductPage() {
                     </MenuItem>
                   ))}
                 </TextField>
-                <Button variant="outlined" component="label" sx={{ mt: 2, mr: 2 }}>
-                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
-                    อัปโหลด
-                  </StyledDiv>
-                  <input type="file" hidden name="image" onChange={handleFileChange} />
-                </Button>
-                {fileName && <Box sx={{ mt: 2 }}>ไฟล์ที่เลือก: {fileName}</Box>}
-                {/* ใช้ Box เพื่อเว้นบรรทัด */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                   <Button type="submit" variant="contained" color="primary" sx={{ width: '50%' }}>
                     <StyledDiv>บันทึก</StyledDiv>
@@ -306,13 +304,14 @@ export default function ProductPage() {
                             icon="mingcute:edit-line"
                             width="2em"
                             height="2em"
-                            // onClick={() => confirmDelete(product._id)}
+                            onClick={() => confirmDelete(product._id)}
                           />
                           <a
                             href="#"
                             style={{ marginRight: '8px', display: 'inline-block' }}
                             onClick={(e) => {
                               e.preventDefault();
+                              // Implement edit functionality or redirect here
                             }}
                           >
                             {/* Use an appropriate icon component or element for editing */}
