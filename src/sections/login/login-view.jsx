@@ -65,7 +65,7 @@ export default function LoginView() {
 
         const decodedToken = jwtDecode(result.token);
         if (decodedToken.user.role === 'เจ้าของร้าน') {
-          router.push('/dashboard');
+          router.push('/formadmin');
         } else {
           router.push('/order');
         }
