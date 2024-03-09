@@ -281,7 +281,7 @@ export default function ProductPage() {
                         <TableCell>
                           {/* Placeholder for product image */}
                           <img
-                            src={product.imageUrl || 'placeholder.jpg'}
+                            src={product.imageUrl}
                             alt={product.productname}
                             style={{ width: 50, height: 50 }}
                           />
