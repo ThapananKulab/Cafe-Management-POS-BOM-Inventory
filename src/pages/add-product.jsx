@@ -32,7 +32,7 @@ const ProductForm = () => {
   
       try {
         const response = await axios.post(
-          'http://localhost:3333/api/products/insertReact',
+          'https://cafe-project-server11.onrender.com/api/products/insertReact',
           formData,
           {
             headers: {
@@ -48,7 +48,7 @@ const ProductForm = () => {
             timer: 1500, 
           });
         }
-        navigate.push('/product');
+        navigate('/add-product')
         console.log(response.data);
       } catch (error) {
         console.error('Error uploading the product:', error);
