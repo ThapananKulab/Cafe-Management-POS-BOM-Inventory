@@ -27,8 +27,8 @@ const navConfigUser = [
   },
   {
     title: 'วัตถุดิบ',
-    path: '/blog',
-    icon: icon('ic_blog'),
+    path: '/raw',
+    icon: icon('ic_raw'),
   },
 
   // {
