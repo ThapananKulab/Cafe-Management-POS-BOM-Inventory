@@ -73,7 +73,7 @@ export default function AccountPopover() {
   const handleUpdateAdmin = () => {
     router.push('/formadmin');
   };
-  const imageUrl = user?.image ? `http://localhost:3333/images-user/${user.image}` : null;
+  const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images-user/${user.image}` : null;
 
 
   return (
