@@ -93,7 +93,7 @@ export default function Nav({ openNav, onCloseNav }) {
     </Box>
   );
 
-  
+
  const renderMenu = (
   <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
     {user?.role === 'เจ้าของร้าน' ? (

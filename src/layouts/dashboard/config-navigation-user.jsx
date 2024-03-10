@@ -25,6 +25,11 @@ const navConfigUser = [
     path: '/blog',
     icon: icon('ic_blog'),
   },
+  {
+    title: 'วัตถุดิบ',
+    path: '/blog',
+    icon: icon('ic_blog'),
+  },
 
   // {
   //   title: 'login',

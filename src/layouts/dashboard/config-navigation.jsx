@@ -26,10 +26,16 @@ const navConfig = [
     icon: icon('ic_products'),
   },
   {
+    title: 'วัตถุดิบ',
+    path: '/raw',
+    icon: icon('ic_raw'),
+  },
+  {
     title: 'blog',
     path: '/blog',
     icon: icon('ic_blog'),
   },
+
   
 
   // {
