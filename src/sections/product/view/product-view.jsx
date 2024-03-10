@@ -78,11 +78,6 @@ export default function ProductPage() {
   };
 
 
-  const handleAddProductClick = () => {
-    // Navigate to the /add-product route
-    navigate('/add-product');
-  };
-
 
   const filteredProducts = products.filter(
     (product) =>
@@ -101,14 +96,15 @@ export default function ProductPage() {
             <StyledDiv>สินค้า</StyledDiv>
           </Typography>
           <StyledDiv>
-          <Button
-      variant="contained"
-      color="inherit"
-      startIcon={<Iconify icon="eva:plus-fill" />}
-      onClick={handleAddProductClick}
-    >
-      <StyledDiv>เพิ่มสินค้า </StyledDiv>
-    </Button>
+            <Button
+              variant="contained"
+              color="inherit"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => navigate('/add-product')}
+
+            >
+              <StyledDiv>เพิ่มสินค้า </StyledDiv>
+            </Button>
           
            
           </StyledDiv>
@@ -157,7 +153,7 @@ export default function ProductPage() {
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
                           <img
-                            src={`https://cafe-project-server11.onrender.com/images/${product.image}`}
+                            src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`}
                             alt={product.productname}
                             style={{ width: 50, height: 50 }}
                           />

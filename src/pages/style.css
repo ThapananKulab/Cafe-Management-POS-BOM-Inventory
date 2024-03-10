@@ -1,4 +1,92 @@
+/* style.css */
+
+/* Common styles for all screens */
 .App {
   font-family: sans-serif;
   text-align: center;
+}
+
+/* style.css */
+
+/* Common styles for all screens */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  width: 90%;
+  max-width: 400px; /* Set a maximum width for better responsiveness */
+}
+
+.frame {
+  width: 100%;
+  padding: 30px;
+  border: 2px solid #333;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.frame h2 {
+  margin-bottom: 30px;
+  font-size: 24px;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+  }
+
+  .frame {
+    padding: 20px;
+  }
+
+  .frame h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+}
+
+.file-input-container {
+  position: relative;
+  margin-top: 16px; /* Adjust the margin as needed */
+
+  /* Style the file input */
+  .file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  /* Style the button */
+  Button {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+
+.frame form {
+  margin-top: 20px; /* Adjust the margin as needed */
+}
+
+.file-input-container {
+  margin-top: 10px; /* Adjust the margin as needed */
+}
+
+.frame {
+  width: 100%;
+  padding: 30px; /* Adjust the padding to add space between the frame border and form elements */
+  border: 2px solid #333;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #f0f0f0;
 }

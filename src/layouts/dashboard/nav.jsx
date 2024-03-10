@@ -60,6 +60,7 @@ export default function Nav({ openNav, onCloseNav }) {
     };
     fetchData();
   }, [navigate]);
+  const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images/${user.image}` : null;
 
   const upLg = useResponsive('up', 'lg');
 
@@ -76,7 +77,8 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar src={user?.image} alt="photoURL" />
+      
+      <Avatar src={imageUrl} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">
