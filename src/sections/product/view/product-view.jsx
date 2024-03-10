@@ -2,17 +2,15 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
-  Box,
   Grid,
   Paper,
   Table,
   Stack,
-  Modal,
   Button,
-  MenuItem,
   TableRow,
   Container,
   TableBody,
@@ -29,30 +27,18 @@ export default function ProductPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    borderRadius: '16px',
-    border: 'none',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    p: 4,
-  };
 
-  const categories = [
-    { value: 'เย็น', label: 'เย็น' },
-    { value: 'ร้อน', label: 'ร้อน' },
-    { value: 'ปั่น', label: 'ปั่น' },
-  ];
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  // const categories = [
+  //   { value: 'เย็น', label: 'เย็น' },
+  //   { value: 'ร้อน', label: 'ร้อน' },
+  //   { value: 'ปั่น', label: 'ปั่น' },
+  // ];
+
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -90,54 +76,13 @@ export default function ProductPage() {
       }
     });
   };
-  //
-  const handleSubmit = async (event) => {
-    event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('productname', event.target.productname.value);
-    formData.append('type', event.target.type.value);
-    formData.append('price', event.target.price.value);
-    if (event.target.image.files[0]) {
-      formData.append('image', event.target.image.files[0]);
-    }
 
-    try {
-      const response = await fetch('https://cafe-project-server11.onrender.com/api/products/insertReact', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log(responseData);
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: responseData.message || 'Product created successfully!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          timer: 1500,
-        });
-        handleClose();
-      } else {
-        console.error('Server responded with status:', response.status);
-        Swal.fire({
-          title: 'Error!',
-          text: 'There was an error creating the product. Please try again.',
-          icon: 'error',
-          confirmButtonText: 'OK',
-        });
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      Swal.fire({
-        title: 'Error!',
-        text: 'Failed to send product data. Please check your network connection.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
-    }
+  const handleAddProductClick = () => {
+    // Navigate to the /add-product route
+    navigate('/add-product');
   };
+
 
   const filteredProducts = products.filter(
     (product) =>
@@ -146,13 +91,7 @@ export default function ProductPage() {
       product.type.toLowerCase().includes(search.toLowerCase())
   );
 
-  const [fileName, setFileName] = useState(''); // สำหรับเก็บชื่อไฟล์
 
-  // ฟังก์ชันสำหรับการเปลี่ยนไฟล์
-  const handleFileChange = (event) => {
-    const file = event.target.files[0]; // ได้ไฟล์แรกจากการเลือก
-    setFileName(file ? file.name : ''); // อัพเดตชื่อไฟล์หรือล้างชื่อ
-  };
 
   return (
     <div>
@@ -162,77 +101,16 @@ export default function ProductPage() {
             <StyledDiv>สินค้า</StyledDiv>
           </Typography>
           <StyledDiv>
-            <Button
-              variant="contained"
-              color="inherit"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={handleOpen}
-            >
-              <StyledDiv>เพิ่มสินค้า </StyledDiv>
-            </Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box
-                sx={style}
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                autoComplete="off"
-              >
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  <StyledDiv>เพิ่มสินค้า</StyledDiv>
-                </Typography>
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="ชื่อสินค้า"
-                  variant="outlined"
-                  name="productname" // Add this line
-                />
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="ราคา"
-                  type="number"
-                  variant="outlined"
-                  name="price" // Add this line
-                />
-                <TextField
-                  select
-                  fullWidth
-                  margin="normal"
-                  label="ประเภท"
-                  variant="outlined"
-                  required
-                  name="type"
-                >
-                  {categories.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <Button variant="outlined" component="label" sx={{ mt: 2, mr: 2 }}>
-                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
-                    อัปโหลด
-                  </StyledDiv>
-                  <input type="file" hidden name="image" onChange={handleFileChange} />
-                </Button>
-                {fileName && <Box sx={{ mt: 2 }}>ไฟล์ที่เลือก: {fileName}</Box>}
-                {/* ใช้ Box เพื่อเว้นบรรทัด */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                  <Button type="submit" variant="contained" color="primary" sx={{ width: '50%' }}>
-                    <StyledDiv>บันทึก</StyledDiv>
-                  </Button>
-                </Box>{' '}
-                {/* ตรวจสอบให้แน่ใจว่ามีการปิดแท็ก <Box> ที่นี่ */}
-              </Box>
-            </Modal>
+          <Button
+      variant="contained"
+      color="inherit"
+      startIcon={<Iconify icon="eva:plus-fill" />}
+      onClick={handleAddProductClick}
+    >
+      <StyledDiv>เพิ่มสินค้า </StyledDiv>
+    </Button>
+          
+           
           </StyledDiv>
         </Stack>
 
