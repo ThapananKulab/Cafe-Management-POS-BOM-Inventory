@@ -180,7 +180,9 @@ export default function UserPage() {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{user._id}</TableCell>
                         <TableCell>
-                          <img src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`} alt={user.username} />
+                          <img src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`} alt={user.username} 
+      
+                           />
                         </TableCell>
                         <TableCell>{user.username}</TableCell>
                         <TableCell>

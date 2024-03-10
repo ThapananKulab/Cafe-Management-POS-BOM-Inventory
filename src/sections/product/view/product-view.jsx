@@ -151,9 +151,8 @@ export default function ProductPage() {
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
                           <img
-                            src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`}
-                            alt={product.productname}
-                            style={{ width: 50, height: 50 }}
+                            src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`} alt={product.productname}
+                            style={{ width: 150, height: 150 }}
                           />
                         </TableCell>
                         <TableCell>{product.productname}</TableCell>
