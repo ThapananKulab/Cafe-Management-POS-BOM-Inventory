@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
+import { Icon,Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
 
 import './style.css';
 
@@ -19,6 +19,10 @@ const ProductForm = () => {
     { value: 'ร้อน', label: 'ร้อน' },
     { value: 'ปั่น', label: 'ปั่น' },
   ];
+
+  const handleBack = () => {
+    navigate('/product');
+  };
 
   
     const handleSubmit = async (e) => {
@@ -59,6 +63,23 @@ const ProductForm = () => {
         <div className="form-container">
             <div className="container">
                 <div className="frame">
+                <Button
+                  onClick={handleBack}
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    position: 'absolute',
+                    left: 6,
+                    top: 25,
+                    zIndex: 10,
+                    opacity: 0.9,
+                    '&:hover': {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
+                </Button>
                     <h2>เพิ่มสินค้า</h2>
                     <form onSubmit={handleSubmit}>
                         <TextField

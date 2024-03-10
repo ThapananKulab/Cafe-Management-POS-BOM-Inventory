@@ -158,23 +158,7 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Button
-            onClick={handleBack}
-            variant="outlined"
-            color="primary"
-            sx={{
-              position: 'absolute',
-              left: 16,
-              top: 25,
-              transform: 'translateY(-50%)',
-              opacity: 2.8,
-              '&:hover': {
-                opacity: 1,
-              },
-            }}
-          >
-            <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
-          </Button>
+
 
           <Box>
             <Typography
@@ -189,14 +173,7 @@ export default function LoginView() {
               }}
             >
               <br />
-              <Card
-                sx={{
-                  p: 5,
-                  width: 1,
-                  maxWidth: 420,
-                  position: 'relative',
-                }}
-              >
+             
                 <Button
                   onClick={handleBack}
                   variant="outlined"
@@ -214,7 +191,7 @@ export default function LoginView() {
                 >
                   <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
                 </Button>
-              </Card>
+
 
               <StyledDiv>แก้ไขโปรไฟล์</StyledDiv>
             </Typography>

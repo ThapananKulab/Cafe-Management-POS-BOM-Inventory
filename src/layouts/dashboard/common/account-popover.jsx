@@ -73,6 +73,8 @@ export default function AccountPopover() {
   const handleUpdateAdmin = () => {
     router.push('/formadmin');
   };
+  const imageUrl = user?.image ? `http://localhost:3333/images-user/${user.image}` : null;
+
 
   return (
     <>
@@ -88,8 +90,9 @@ export default function AccountPopover() {
           }),
         }}
       >
+        
         <Avatar
-          src={user?.image}
+          src={imageUrl}
           alt={user?.username}
           sx={{
             width: 36,
@@ -127,11 +130,6 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        {/* {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
-            {option.label}
-          </MenuItem>
-        ))} */}
 
         <MenuItem onClick={handleUpdateAdmin} sx={{ typography: 'body2', color: 'main', py: 1.5 }}>
           แก้ไขโปรไฟล์
