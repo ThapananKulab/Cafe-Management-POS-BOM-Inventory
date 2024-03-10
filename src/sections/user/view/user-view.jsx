@@ -6,14 +6,11 @@ import { differenceInDays } from 'date-fns';
 import React, { useState, useEffect } from 'react';
 
 import {
-  Box,
   Grid,
   Paper,
   Table,
   Stack,
-  Modal,
   Button,
-  MenuItem,
   TableRow,
   Container,
   TableBody,
@@ -30,36 +27,34 @@ export default function UserPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper', // สามารถเปลี่ยนเป็นสีที่ต้องการ เช่น 'white', '#f7f7f7'
-    borderRadius: '16px', // ทำให้มุมโค้งมน
-    border: 'none', // ถ้าต้องการลบขอบด้านนอกออก หรือปรับเป็น '1px solid #e0e0e0' เพื่อดูเรียบร้อย
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // ปรับค่าเงาให้ดูนุ่มนวลขึ้น
-    p: 4,
-  };
+  // const style = {
+  //   position: 'absolute',
+  //   top: '50%',
+  //   left: '50%',
+  //   transform: 'translate(-50%, -50%)',
+  //   width: 400,
+  //   bgcolor: 'background.paper', // สามารถเปลี่ยนเป็นสีที่ต้องการ เช่น 'white', '#f7f7f7'
+  //   borderRadius: '16px', // ทำให้มุมโค้งมน
+  //   border: 'none', // ถ้าต้องการลบขอบด้านนอกออก หรือปรับเป็น '1px solid #e0e0e0' เพื่อดูเรียบร้อย
+  //   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // ปรับค่าเงาให้ดูนุ่มนวลขึ้น
+  //   p: 4,
+  // };
 
-  const categories = [
-    { value: 'cool', label: 'เย็น' },
-    { value: 'hot', label: 'ร้อน' },
-    { value: 'mix', label: 'ปั่น' },
-    // เพิ่มประเภทสินค้าตามที่ต้องการ
-  ];
+  // const categories = [
+  //   { value: 'cool', label: 'เย็น' },
+  //   { value: 'hot', label: 'ร้อน' },
+  //   { value: 'mix', label: 'ปั่น' },
+  //   // เพิ่มประเภทสินค้าตามที่ต้องการ
+  // ];
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState(''); // สร้าง state สำหรับจัดการคำค้นหา
+  const [search, setSearch] = useState('');
+
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://cafe-project-server11.onrender.com/api/users');
+        const response = await axios.get('http://localhost:3333/api/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -83,7 +78,7 @@ export default function UserPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`https://cafe-project-server11.onrender.com/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
+          await axios.delete(`http://localhost:3333/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
           Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {
@@ -94,11 +89,6 @@ export default function UserPage() {
     });
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('Form submitted');
-    handleClose();
-  };
 
   const filteredUsers = users.filter(
     (user) =>
@@ -138,68 +128,10 @@ export default function UserPage() {
               variant="contained"
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={handleOpen}
             >
               <StyledDiv>เพิ่มสินค้า </StyledDiv>
             </Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box
-                sx={style}
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                autoComplete="off"
-              >
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  <StyledDiv>เพิ่มสินค้า</StyledDiv>
-                </Typography>
-                <TextField fullWidth margin="normal" label="ชื่อสินค้า" variant="outlined" />
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="ราคา"
-                  type="number"
-                  variant="outlined"
-                />
-                <TextField
-                  select // ใช้ prop select เพื่อให้เป็น dropdown
-                  fullWidth
-                  margin="normal"
-                  label="ประเภท"
-                  variant="outlined"
-                  required
-                >
-                  {categories.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <Button
-                  variant="outlined" // แก้ไขจาก "contained" เป็น "outlined"
-                  component="label"
-                  sx={{ mt: 2, mr: 2 }} // เพิ่มระยะห่างด้านขวา (mr)
-                >
-                  <StyledDiv style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Icon icon="mdi:file-image" style={{ fontSize: 'inherit' }} />
-                    อัปโหลด
-                  </StyledDiv>
-                  <input type="file" hidden /> {/* เพิ่ม required ที่นี่ */}
-                </Button>
-                {/* ใช้ Box เพื่อเว้นบรรทัด */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                  <Button type="submit" variant="contained" color="primary" sx={{ width: '50%' }}>
-                    <StyledDiv>บันทึก</StyledDiv>
-                  </Button>
-                </Box>{' '}
-                {/* ตรวจสอบให้แน่ใจว่ามีการปิดแท็ก <Box> ที่นี่ */}
-              </Box>
-            </Modal>
+         
           </StyledDiv>
         </Stack>
 
@@ -248,8 +180,7 @@ export default function UserPage() {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{user._id}</TableCell>
                         <TableCell>
-                          {/* Placeholder for user image */}
-                          <img src={user.imageUrl || 'placeholder.jpg'} alt={user.username} />
+                          <img src={user.image} alt={user.image} />
                         </TableCell>
                         <TableCell>{user.username}</TableCell>
                         <TableCell>
