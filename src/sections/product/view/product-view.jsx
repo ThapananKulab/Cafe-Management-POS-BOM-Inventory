@@ -46,7 +46,6 @@ export default function ProductPage() {
     { value: 'เย็น', label: 'เย็น' },
     { value: 'ร้อน', label: 'ร้อน' },
     { value: 'ปั่น', label: 'ปั่น' },
-    // เพิ่มประเภทสินค้าตามที่ต้องการ
   ];
 
   const [open, setOpen] = useState(false);
@@ -95,27 +94,20 @@ export default function ProductPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Initialize a FormData object
     const formData = new FormData();
-    // Append the text fields
     formData.append('productname', event.target.productname.value);
     formData.append('type', event.target.type.value);
     formData.append('price', event.target.price.value);
-    // Append the file, assuming 'image' is the name attribute of your file input
     if (event.target.image.files[0]) {
       formData.append('image', event.target.image.files[0]);
     }
 
     try {
-      const response = await fetch(
-        'https://cafe-project-server11.onrender.com/api/products/insertReact',
-        {
-          method: 'POST',
-          // Removed 'Content-Type': 'application/json', header
-          body: formData, // Send formData object
-        }
-      );
-
+      const response = await fetch('https://cafe-project-server11.onrender.com/api/products/insertReact', {
+        method: 'POST',
+        body: formData,
+      });
+      
       if (response.ok) {
         const responseData = await response.json();
         console.log(responseData);
@@ -126,7 +118,6 @@ export default function ProductPage() {
           confirmButtonText: 'OK',
           timer: 1500,
         });
-        // Assuming handleClose is a method to close the modal
         handleClose();
       } else {
         console.error('Server responded with status:', response.status);
@@ -288,7 +279,7 @@ export default function ProductPage() {
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
                           <img
-                            src={`http://localhost:3333/images/${product.image}`}
+                            src={`https://cafe-project-server11.onrender.com/images/${product.image}`}
                             alt={product.productname}
                             style={{ width: 50, height: 50 }}
                           />
