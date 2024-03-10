@@ -21,6 +21,7 @@ import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
+import navConfigUser from './config-navigation-user';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export default function Nav({ openNav, onCloseNav }) {
     };
     fetchData();
   }, [navigate]);
+
   const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images-user/${user.image}` : null;
 
   const upLg = useResponsive('up', 'lg');
@@ -91,13 +93,21 @@ export default function Nav({ openNav, onCloseNav }) {
     </Box>
   );
 
-  const renderMenu = (
-    <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-      {navConfig.map((item) => (
+  
+ const renderMenu = (
+  <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
+    {user?.role === 'เจ้าของร้าน' ? (
+      navConfig.map((item) => (
         <NavItem key={item.title} item={item} />
-      ))}
-    </Stack>
-  );
+      ))
+    ) : (
+      navConfigUser.map((item) => (
+        <NavItem key={item.title} item={item} />
+      ))
+    )}
+  </Stack>
+);
+
 
   const renderContent = (
     <Scrollbar

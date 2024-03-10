@@ -54,7 +54,7 @@ export default function UserPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/users');
+        const response = await axios.get('https://cafe-project-server11.onrender.com/api/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -78,7 +78,7 @@ export default function UserPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:3333/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
+          await axios.delete(`https://cafe-project-server11.onrender.com/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
           Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {
@@ -180,7 +180,7 @@ export default function UserPage() {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{user._id}</TableCell>
                         <TableCell>
-                          <img src={user.image} alt={user.image} />
+                          <img src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`} alt={user.username} />
                         </TableCell>
                         <TableCell>{user.username}</TableCell>
                         <TableCell>

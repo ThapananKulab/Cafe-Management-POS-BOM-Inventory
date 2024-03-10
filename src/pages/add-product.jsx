@@ -1,9 +1,10 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Icon } from '@iconify/react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Icon,Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
+import { Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
 
 import './style.css';
 
@@ -60,28 +61,28 @@ const ProductForm = () => {
     };
 
     return (
-        <div className="form-container">
-            <div className="container">
-                <div className="frame">
-                <Button
-                  onClick={handleBack}
-                  variant="outlined"
-                  color="primary"
-                  sx={{
-                    position: 'absolute',
-                    left: 6,
-                    top: 25,
-                    zIndex: 10,
-                    opacity: 0.9,
-                    '&:hover': {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
-                </Button>
-                    <h2>เพิ่มสินค้า</h2>
-                    <form onSubmit={handleSubmit}>
+      <div className="form-container">
+      <div className="container">
+        <Button
+          onClick={handleBack}
+          variant="outlined"
+          color="primary"
+          sx={{
+            position: 'absolute',
+            left: 6,
+            top: 25,
+            zIndex: 10,
+            opacity: 0.9,
+            '&:hover': {
+              opacity: 1,
+            },
+          }}
+        >
+          <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
+        </Button>
+        <div className="frame">
+          <h2>เพิ่มสินค้า</h2>
+          <form onSubmit={handleSubmit}>
                         <TextField
                             type="text"
                             value={productname}

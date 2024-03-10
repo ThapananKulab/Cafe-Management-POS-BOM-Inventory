@@ -215,7 +215,6 @@ export default function LoginView() {
                 >
                   <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
                 </Button>
-                {/* The rest of your component */}
               </Card>
 
               <StyledDiv>แก้ไขโปรไฟล์</StyledDiv>
