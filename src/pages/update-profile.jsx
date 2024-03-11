@@ -114,15 +114,14 @@ export default function UpdateProfile() {
     <form>
       <Stack spacing={3}>
       <TextField
-  name="id"
-  label="ชื่อบัญชีผู้ใช้"
-  value={user ? user._id : ''}
-  InputProps={{
-    readOnly: true,
-  }}
-  disabled
-/>
-
+          name="update_id"
+          label="ชื่อบัญชีผู้ใช้"
+          value={user ? user._id: ''}s
+          InputProps={{
+            readOnly: true,
+          }}
+          disabled
+        />
         <TextField
           name="username"
           label="ชื่อบัญชีผู้ใช้"
