@@ -11,7 +11,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const ProductPage = lazy(() => import('src/pages/product'));
 export const RawPage = lazy(() => import('src/pages/raw'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-export const FormAdmin = lazy(() => import('src/pages/form-admin'));
+export const UpdateProfile = lazy(() => import('src/pages/update-profile'));
 export const EditProducts = lazy(() => import('src/pages/edit-product'));
 export const AddProducts = lazy(() => import('src/pages/add-product'));
 export const AddUser = lazy(() => import('src/pages/add-user'));
@@ -48,8 +48,8 @@ export default function Router() {
       element: <Navigate to="/404" replace />,
     },
     {
-      path: '/formadmin',
-      element: <FormAdmin />,
+      path: '/update-profile',
+      element: <UpdateProfile />,
     },
     {
       path: '/edit-product',

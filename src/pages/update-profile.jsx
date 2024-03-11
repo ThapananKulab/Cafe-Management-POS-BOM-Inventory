@@ -12,15 +12,59 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-export default function LoginView() {
+export default function UpdateProfile() {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);
+  const handleEditClick = async () => {
+    if (isEditing) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3333/api/users/updateUU', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            updateP_id: user.update_id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const result = await response.json();
+        if (result.success) {
+          setIsEditing(false);
+          Swal.fire({
+            icon: 'success',
+            title: 'บันทึกข้อมูลสำเร็จ',
+            text: 'ข้อมูลของคุณได้รับการอัปเดตแล้ว',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: result.message,
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } else {
+      setIsEditing(true);
+    }
   };
-
+  
+  
   const handleChange = (event) => {
     const { name, value } = event.target;
     setUser({ ...user, [name]: value });
@@ -69,6 +113,15 @@ export default function LoginView() {
   const renderForm = (
     <form>
       <Stack spacing={3}>
+      <TextField
+          name="id"
+          label="ชื่อบัญชีผู้ใช้"
+          value={user ? user._id: ''}s
+          InputProps={{
+            readOnly: true,
+          }}
+          disabled
+        />
         <TextField
           name="username"
           label="ชื่อบัญชีผู้ใช้"

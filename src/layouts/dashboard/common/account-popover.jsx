@@ -71,7 +71,7 @@ export default function AccountPopover() {
     }
   };
   const handleUpdateAdmin = () => {
-    router.push('/formadmin');
+    router.push('/update-profile');
   };
   const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images-user/${user.image}` : null;
 

@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
-Grid,
+  Grid,
   List,
   Paper,
   Avatar,
@@ -45,13 +46,20 @@ const CartTemplate = () => {
   const calculateTotalPrice = (items) => items.reduce((total, item) => total + item.price, 0);
 
   return (
+    <>
+
+    <Helmet>
+        <title> ขายสินค้า </title>
+      </Helmet>
+
     <Container maxWidth="md">
       <Typography variant="h4" align="center" gutterBottom>
         Shopping Cart
       </Typography>
       <Button variant="outlined" size="large" onClick={() => navigate('/dashboard')}>
-          Large
+          กลับ
         </Button>
+        <br />
       <Divider />
       <Grid container spacing={2} justifyContent="flex-end">
         <Grid item xs={12} sm={6}>
@@ -94,6 +102,8 @@ const CartTemplate = () => {
         </Grid>
       </Grid>
     </Container>
+
+      </>
   );
 };
 export default CartTemplate;
