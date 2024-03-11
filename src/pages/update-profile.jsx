@@ -17,27 +17,46 @@ export default function UpdateProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
-  const handleEditClick = async () => {
-    if (isEditing) {
-      try {
-        const token = localStorage.getItem('token');
-        await fetch('http://localhost:3333/api/users/updateUU', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            phone: user.phone,
-            address: user.address,
-          }),
-        });
-        
-        // ...
+        const handleEditClick = async () => {
+          if (isEditing) {
+            try {
+              const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3333/api/users/updateUU', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          updateP_id: user.id,  // Use the correct property for the user ID
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+        }),
+      });
+
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const result = await response.json();
+        if (result.success) {
+          setIsEditing(false);
+          Swal.fire({
+            icon: 'success',
+            title: 'บันทึกข้อมูลสำเร็จ',
+            text: 'ข้อมูลของคุณได้รับการอัปเดตแล้ว',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: result.message,
+          });
+        }
       } catch (error) {
         console.error('Error:', error);
       }
@@ -45,7 +64,6 @@ export default function UpdateProfile() {
       setIsEditing(true);
     }
   };
-  
   
   
   const handleChange = (event) => {
