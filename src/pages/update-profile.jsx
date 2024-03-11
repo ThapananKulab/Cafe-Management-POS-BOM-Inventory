@@ -28,6 +28,7 @@ export default function UpdateProfile() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
+            updateP_id: user.update_id,
             firstname: user.firstname,
             lastname: user.lastname,
             email: user.email,
@@ -35,7 +36,7 @@ export default function UpdateProfile() {
             address: user.address,
           }),
         });
-        
+  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -113,14 +114,15 @@ export default function UpdateProfile() {
     <form>
       <Stack spacing={3}>
       <TextField
-          name="updateP_id"
-          label="ชื่อบัญชีผู้ใช้"
-          value={user ? user.id: ''}s
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled
-        />
+  name="id"
+  label="ชื่อบัญชีผู้ใช้"
+  value={user ? user._id : ''}
+  InputProps={{
+    readOnly: true,
+  }}
+  disabled
+/>
+
         <TextField
           name="username"
           label="ชื่อบัญชีผู้ใช้"
