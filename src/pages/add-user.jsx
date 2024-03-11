@@ -21,8 +21,8 @@ const UserForm = () => {
   const navigate = useNavigate();
 
   const roles = [
-    { value: 'user', label: 'User' },
-    { value: 'admin', label: 'Admin' },
+    { value: 'user', label: 'พนักงาน' },
+    { value: 'admin', label: 'เจ้าของ' },
   ];
 
   const handleBack = () => {
