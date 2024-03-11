@@ -19,6 +19,7 @@ const ProductForm = () => {
     { value: 'เย็น', label: 'เย็น' },
     { value: 'ร้อน', label: 'ร้อน' },
     { value: 'ปั่น', label: 'ปั่น' },
+    { value: 'ทั่วไป', label: 'ทั่วไป' },
   ];
 
   const handleBack = () => {

@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
 import { differenceInDays } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -27,6 +28,7 @@ export default function UserPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
+  const navigate = useNavigate();
   // const style = {
   //   position: 'absolute',
   //   top: '50%',
@@ -128,8 +130,9 @@ export default function UserPage() {
               variant="contained"
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => navigate('/add-user')}
             >
-              <StyledDiv>เพิ่มสินค้า </StyledDiv>
+              <StyledDiv>เพิ่มบัญชีผู้ใช้ </StyledDiv>
             </Button>
          
           </StyledDiv>
