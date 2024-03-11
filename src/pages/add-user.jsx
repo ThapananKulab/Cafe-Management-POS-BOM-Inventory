@@ -21,8 +21,8 @@ const UserForm = () => {
   const navigate = useNavigate();
 
   const roles = [
-    { value: 'admin', label: 'Admin' },
     { value: 'user', label: 'User' },
+    { value: 'admin', label: 'Admin' },
   ];
 
   const handleBack = () => {
@@ -31,7 +31,7 @@ const UserForm = () => {
 
   const handleUserSubmit = async (e) => {
     e.preventDefault();
-
+  
     const userFormData = new FormData();
     userFormData.append('username', username);
     userFormData.append('password', password);
@@ -41,33 +41,62 @@ const UserForm = () => {
     userFormData.append('phone', phone);
     userFormData.append('address', address);
     userFormData.append('role', role);
-    userFormData.append('image', image);
-
+    userFormData.append('image', image); // Always append the image
+  
     try {
       const response = await axios.post(
-        'http://localhost:3333/api/users/insertReact',
+        'https://cafe-project-server11.onrender.com/api/users/insertReact',
         userFormData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
+  
+      console.log('Server Response:', response.data);
+  
       if (response.data.success) {
         Swal.fire({
           icon: 'success',
-          title: `User registration successful for ${username}`,
+          title: `เพิ่ม ${username} สำเร็จ`,
           showConfirmButton: false,
           timer: 1500,
         });
+  
+        navigate('/add-user');
+      } else if (response.data.username && username !== response.data.username) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Warning',
+          text: 'Invalid username. Please provide a valid username.',
+        });
+      } else {
+        console.log('Error Message:', response.data.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'ผิดพลาด',
+          text: response.data.message,
+        });
       }
-      navigate('/add-user');
-      console.log(response.data);
     } catch (error) {
       console.error('Error registering user:', error);
+  
+      if (error.response && error.response.data) {
+        console.log('Server Error Response:', error.response.data);
+        const errorMessage = error.response.data.message;
+        Swal.fire({
+          icon: 'error',
+          title: 'ผิดพลาด',
+          text: errorMessage || 'Unknown error occurred',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'ผิดพลาด',
+          text: 'Unknown error occurred',
+        });
+      }
     }
   };
-
+  
+  
   return (
     <div className="form-container">
       <div className="container">
