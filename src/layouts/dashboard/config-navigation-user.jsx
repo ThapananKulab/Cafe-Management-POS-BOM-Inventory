@@ -33,7 +33,7 @@ const navConfigUser = [
   {
     title: 'ขายสินค้า',
     path: '/pos',
-    icon: icon('ic_blog'),
+    icon: icon('ic_sell'),
   },
 
   // {
