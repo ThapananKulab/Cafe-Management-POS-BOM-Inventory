@@ -30,6 +30,11 @@ const navConfigUser = [
     path: '/raw',
     icon: icon('ic_raw'),
   },
+  {
+    title: 'ขายสินค้า',
+    path: '/pos',
+    icon: icon('ic_blog'),
+  },
 
   // {
   //   title: 'login',

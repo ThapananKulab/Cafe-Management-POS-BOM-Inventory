@@ -15,6 +15,7 @@ export const FormAdmin = lazy(() => import('src/pages/form-admin'));
 export const EditProducts = lazy(() => import('src/pages/edit-product'));
 export const AddProducts = lazy(() => import('src/pages/add-product'));
 export const AddUser = lazy(() => import('src/pages/add-user'));
+export const Pos = lazy(() => import('src/pages/pos'));
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +62,10 @@ export default function Router() {
     {
       path: '/add-user',
       element: <AddUser/>,
+    },
+    {
+      path: '/pos',
+      element: <Pos/>,
     },
   ]);
 

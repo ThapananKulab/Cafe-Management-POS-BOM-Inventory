@@ -35,6 +35,11 @@ const navConfig = [
     path: '/blog',
     icon: icon('ic_blog'),
   },
+  {
+    title: 'ขายสินค้า',
+    path: '/pos',
+    icon: icon('ic_blog'),
+  },
 
   
 
