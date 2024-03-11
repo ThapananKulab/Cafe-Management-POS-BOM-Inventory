@@ -150,8 +150,7 @@ export default function ProductPage() {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
-                          <img
-                            src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`} alt={product.productname}
+                        <img src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`} alt={product.productname} 
                             style={{ width: 150, height: 'auto' }}
                           />
                         </TableCell>

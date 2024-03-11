@@ -81,7 +81,7 @@ export default function UserPage() {
       if (result.isConfirmed) {
         try {
           await axios.delete(`https://cafe-project-server11.onrender.com/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
-          Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
+          Swal.fire('ลบ!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {
           console.error('There was an error deleting the user:', error);
@@ -184,7 +184,6 @@ export default function UserPage() {
                         <TableCell>{user._id}</TableCell>
                         <TableCell>
                           <img src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`} alt={user.username} 
-      
                            />
                         </TableCell>
                         <TableCell>{user.username}</TableCell>
