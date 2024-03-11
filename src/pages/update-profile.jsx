@@ -21,14 +21,14 @@ export default function UpdateProfile() {
     if (isEditing) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3333/api/users/updateUU', {
+        await fetch('http://localhost:3333/api/users/updateUU', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            updateP_id: user.update_id,
+            id: user.id,
             firstname: user.firstname,
             lastname: user.lastname,
             email: user.email,
@@ -36,26 +36,8 @@ export default function UpdateProfile() {
             address: user.address,
           }),
         });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const result = await response.json();
-        if (result.success) {
-          setIsEditing(false);
-          Swal.fire({
-            icon: 'success',
-            title: 'บันทึกข้อมูลสำเร็จ',
-            text: 'ข้อมูลของคุณได้รับการอัปเดตแล้ว',
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: result.message,
-          });
-        }
+        
+        // ...
       } catch (error) {
         console.error('Error:', error);
       }
@@ -63,6 +45,7 @@ export default function UpdateProfile() {
       setIsEditing(true);
     }
   };
+  
   
   
   const handleChange = (event) => {
@@ -113,15 +96,16 @@ export default function UpdateProfile() {
   const renderForm = (
     <form>
       <Stack spacing={3}>
-      <TextField
+        <TextField
           name="id"
           label="ชื่อบัญชีผู้ใช้"
-          value={user ? user._id: ''}s
+          value={user ? user.id : ''}
           InputProps={{
             readOnly: true,
           }}
           disabled
         />
+
         <TextField
           name="username"
           label="ชื่อบัญชีผู้ใช้"
