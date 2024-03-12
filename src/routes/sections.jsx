@@ -16,6 +16,7 @@ export const EditProducts = lazy(() => import('src/pages/edit-product'));
 export const AddProducts = lazy(() => import('src/pages/add-product'));
 export const AddUser = lazy(() => import('src/pages/add-user'));
 export const Pos = lazy(() => import('src/pages/pos'));
+export const UpdateProfileUser = lazy(() => import('src/pages/update-profile-user'));
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,10 @@ export default function Router() {
     {
       path: '/pos',
       element: <Pos/>,
+    },
+    {
+      path: '/update-profile-user',
+      element: <UpdateProfileUser/>,
     },
   ]);
 

@@ -1,77 +1,22 @@
+import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Icon } from '@iconify/react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
+import {Box,Grid,Button,TextField, Container, Typography } from '@mui/material';
 
-export default function UpdateProfile() {
-  const [user, setUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+const UpdateUserPage = () => {
+  const [updateP_id, setUpdateP_id] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [role, setRole] = useState('');
   const navigate = useNavigate();
 
-  const handleEditClick = async () => {
-    if (isEditing) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3333/api/users/updateUU', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            updateP_id: user.update_id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            phone: user.phone,
-            address: user.address,
-          }),
-        });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const result = await response.json();
-        if (result.success) {
-          setIsEditing(false);
-          Swal.fire({
-            icon: 'success',
-            title: 'บันทึกข้อมูลสำเร็จ',
-            text: 'ข้อมูลของคุณได้รับการอัปเดตแล้ว',
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: result.message,
-          });
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    } else {
-      setIsEditing(true);
-    }
-  };
-  
-  
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setUser({ ...user, [name]: value });
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch('https://cafe-project-server11.onrender.com/api/authen', {
@@ -86,7 +31,14 @@ export default function UpdateProfile() {
         }
         const result = await response.json();
         if (result.status === 'ok') {
-          setUser(result.decoded.user);
+          const userData = result.decoded.user;
+          setUpdateP_id(userData.id || '');
+          setFirstname(userData.firstname || '');
+          setLastname(userData.lastname || '');
+          setEmail(userData.email || '');
+          setPhone(userData.phone || '');
+          setAddress(userData.address || '');
+          setRole(userData.role || '');
         } else {
           localStorage.removeItem('token');
           Swal.fire({
@@ -100,159 +52,123 @@ export default function UpdateProfile() {
         console.error('Error:', error);
       }
     };
-    fetchData();
+
+    fetchUserData();
   }, [navigate]);
-  const StyledDiv = styled.div`
-    font-family: 'Prompt', sans-serif;
-  `;
 
-  const handleBack = () => {
-    navigate('/dashboard');
+
+  const handleUpdateUser = async () => {
+    try {
+      const response = await axios.post('http://localhost:3333/api/users/updateProfile', {
+        updateP_id,
+        firstname,
+        lastname,
+        email,
+        phone,
+        address,
+        role,
+      });
+      console.log(response.data);
+      Swal.fire({
+        icon: 'success',
+        title: 'สำเร็จ',
+        text: 'การอัปเดตโปรไฟล์ผู้ใช้เสร็จสมบูรณ์',
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
+  
 
-  const renderForm = (
-    <form>
-      <Stack spacing={3}>
-      <TextField
-          name="update_id"
-          label="ชื่อบัญชีผู้ใช้"
-          value={user ? user._id: ''}s
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled
-        />
+return (
+  <Box mt={5}>
+  <Container maxWidth="sm" style={{ margin: 'auto' }}>
+    <Typography variant="h4" component="h1" gutterBottom>
+      แก้ไขโปรไฟล์
+    </Typography>
+    <Box mt={3}>{}</Box>
+    <Grid container spacing={2} justify="center">
+      <Grid item xs={12} style={{ display: 'none' }}>
         <TextField
-          name="username"
-          label="ชื่อบัญชีผู้ใช้"
-          value={user ? user.username : ''}
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled
-        />
-        <TextField
-          name="role"
-          label="ตำแหน่ง"
-          value={user ? user.role : ''}
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled
-        />
-        <TextField
-          name="firstname"
-          label="ชื่อจริง"
-          value={user ? user.firstname : ''}
-          onChange={handleChange}
-          disabled={!isEditing}
-        />
-        <TextField
-          name="lastname"
-          label="นามสกุล"
-          value={user ? user.lastname : ''}
-          onChange={handleChange}
-          disabled={!isEditing}
-        />
-        <TextField
-          name="phone"
-          label="เบอร์โทรศัพท์"
-          value={user ? user.phone : ''}
-          onChange={handleChange}
-          disabled={!isEditing}
-        />
-        <TextField
-          name="address"
-          label="ที่อยู่"
-          value={user ? user.address : ''}
-          onChange={handleChange}
-          disabled={!isEditing}
-        />
-      </Stack>
-
-      <Box marginTop={3} display="flex" justifyContent="space-between" gap={2}>
-        <Button
-          onClick={handleEditClick}
+          fullWidth
+          label="User ID"
+          value={updateP_id}
+          onChange={(e) => setUpdateP_id(e.target.value)}
           variant="outlined"
-          sx={{ width: 'fit-content', flexGrow: 1, mr: 1 }}
-        >
-          {isEditing ? 'Cancel' : 'Edit'}
-        </Button>
-        <LoadingButton
-          size="large"
-          type="submit"
-          variant="contained"
-          color="warning"
-          sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'white' }}
-          disabled={!isEditing}
-        >
-          <StyledDiv>Save Changes</StyledDiv>
-        </LoadingButton>
-      </Box>
-    </form>
-  );
+          disabled  // ที่นี่ใช้ disabled prop เพื่อปิดการแก้ไข
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="ชื่อ"
+          value={firstname}
+          onChange={(e) => setFirstname(e.target.value)}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="นามสกุล"
+          value={lastname}
+          onChange={(e) => setLastname(e.target.value)}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          label="เบอร์โทรศัพท์"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          label="ที่อยู่"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          label="ตำแหน่ง"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12}>
+  <Button
+    fullWidth
+    variant="contained"
+    style={{ color: 'white', backgroundColor: 'orange' }} // Change 'orange' to the desired color
+    onClick={handleUpdateUser}
+  >
+    แก้ไขโปรไฟล์
+  </Button>
+</Grid>
 
-  return (
-    <Box
-      sx={{
-        height: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}
-    >
-      <br />
-
-      <Stack alignItems="center" sx={{ flexGrow: 1, justifyContent: 'center', marginTop: '-10vh' }}>
-        <Card
-          sx={{
-            p: 5,
-            width: 1,
-            maxWidth: 420,
-          }}
-        >
+    </Grid>
+  </Container>
+</Box>
+);
+};
 
 
-          <Box>
-            <Typography
-              variant="h4"
-              component="div"
-              textAlign="center"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <br />
-             
-                <Button
-                  onClick={handleBack}
-                  variant="outlined"
-                  color="primary"
-                  sx={{
-                    position: 'absolute',
-                    left: 6,
-                    top: 25,
-                    zIndex: 10,
-                    opacity: 0.9,
-                    '&:hover': {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
-                </Button>
-
-
-              <StyledDiv>แก้ไขโปรไฟล์</StyledDiv>
-            </Typography>
-          </Box>
-
-          {renderForm}
-        </Card>
-      </Stack>
-    </Box>
-  );
-}
+export default UpdateUserPage;

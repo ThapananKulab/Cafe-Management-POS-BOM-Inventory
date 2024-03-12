@@ -92,6 +92,8 @@ export default function UserPage() {
   };
 
 
+
+
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(search.toLowerCase()) ||
@@ -210,7 +212,7 @@ export default function UserPage() {
                             icon="mingcute:edit-line"
                             width="2em"
                             height="2em"
-                            onClick={() => confirmDelete(user._id)}
+                            onClick={() => navigate('/update-profile-user', { state: { userId: user._id } })}
                           />
                           <a
                             href="#"
