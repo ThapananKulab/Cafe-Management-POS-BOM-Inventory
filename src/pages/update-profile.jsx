@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import React, { useState, useEffect } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 
-import {Box,Grid,Button,TextField, Container, Typography } from '@mui/material';
+import {Box,Card,Grid,Button,TextField, Container, Typography } from '@mui/material';
 
 const UpdateUserPage = () => {
   const [updateP_id, setUpdateP_id] = useState('');
@@ -60,21 +60,34 @@ const UpdateUserPage = () => {
 
   const handleUpdateUser = async () => {
     try {
-      const response = await axios.post('http://localhost:3333/api/users/updateProfile', {
-        updateP_id,
-        firstname,
-        lastname,
-        email,
-        phone,
-        address,
-        role,
+      const confirmed = await Swal.fire({
+        title: 'ยืนยันการอัปเดตข้อมูล',
+        text: 'คุณแน่ใจหรือไม่ว่าต้องการอัปเดตข้อมูล?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่',
       });
-      console.log(response.data);
-      Swal.fire({
-        icon: 'success',
-        title: 'สำเร็จ',
-        text: 'อัปเดตสำเร็จ',
-      });
+  
+      if (confirmed.isConfirmed) {
+        const response = await axios.post('https://cafe-project-server11.onrender.com/api/users/updateProfile', {
+          updateP_id,
+          firstname,
+          lastname,
+          email,
+          phone,
+          address,
+          role,
+        });
+        console.log(response.data);
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: 'อัปเดตสำเร็จ',
+        });
+      } else {
+        console.log('User canceled the update.');
+      }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -82,8 +95,15 @@ const UpdateUserPage = () => {
   
 
   return (
-    <Box mt={5}>
+    <Box sx={{height: 1,display: 'flex',flexDirection: 'column',justifyContent: 'center',}}>
       <Container maxWidth="sm" style={{ margin: 'auto' }}>
+      <Card
+          sx={{
+            p: 5,
+            width: 1,
+            maxWidth: 420,
+          }}
+        >
       <Grid item xs={3}> {/* ทำการย่อขนาดของ Grid item เป็น xs={3} */}
         <Link to="/dashboard" style={{ textDecoration: 'none' }}>
             <Button  variant="outlined" color="primary">
@@ -163,14 +183,20 @@ const UpdateUserPage = () => {
             />
           </Grid>
           <Grid item xs={12}>
+          <Box marginTop={3} display="flex" justifyContent="space-between" gap={2}>
             <Button
-              style={{ color: 'white', backgroundColor: 'orange' }}
+              size="large"
+              variant="contained"
+              color="warning"
+              sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'white' }}
               onClick={handleUpdateUser}
             >
               แก้ไขโปรไฟล์
             </Button>
+            </Box>
           </Grid>
         </Grid>
+        </Card>
       </Container>
     </Box>
   );
