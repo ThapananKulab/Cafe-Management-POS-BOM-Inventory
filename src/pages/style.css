@@ -27,7 +27,7 @@
   border: 2px solid #333;
   border-radius: 12px;
   text-align: center;
-  background-color: #f0f0f0;
+  background-color: white;
 }
 
 .frame h2 {
@@ -73,7 +73,6 @@
   }
 }
 
-
 .frame form {
   margin-top: 20px; /* Adjust the margin as needed */
 }
@@ -88,5 +87,5 @@
   border: 2px solid #333;
   border-radius: 12px;
   text-align: center;
-  background-color: #f0f0f0;
+  background-color: white;
 }

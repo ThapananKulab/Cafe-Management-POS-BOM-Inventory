@@ -4,18 +4,18 @@ import { Icon } from '@iconify/react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
+import { Box, Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
 
 import './style.css';
 
 const ProductForm = () => {
-    const [productname, setProductname] = useState('');
-    const [type, setType] = useState('');
-    const [price, setPrice] = useState('');
-    const [image, setImage] = useState(null);
-    const navigate = useNavigate();
+  const [productname, setProductname] = useState('');
+  const [type, setType] = useState('');
+  const [price, setPrice] = useState('');
+  const [image, setImage] = useState(null);
+  const navigate = useNavigate();
 
-      const categories = [
+  const categories = [
     { value: 'เย็น', label: 'เย็น' },
     { value: 'ร้อน', label: 'ร้อน' },
     { value: 'ปั่น', label: 'ปั่น' },
@@ -26,108 +26,105 @@ const ProductForm = () => {
     navigate('/product');
   };
 
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      const formData = new FormData();
-      formData.append('productname', productname);
-      formData.append('type', type);
-      formData.append('price', price);
-      formData.append('image', image);
-  
-      try {
-        const response = await axios.post(
-          'https://cafe-project-server11.onrender.com/api/products/insertReact',
-          // 'http://localhost:3333/api/products/insertReact',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-        if (response.data.success) {
-          Swal.fire({
-            icon: 'success',
-            title: `เพิ่ม ${ productname} สำเร็จ`,
-            showConfirmButton: false,
-            timer: 1500, 
-          });
-        }
-        navigate('/add-product')
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error uploading the product:', error);
-      }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    return (
-      <div className="form-container">
+    const formData = new FormData();
+    formData.append('productname', productname);
+    formData.append('type', type);
+    formData.append('price', price);
+    formData.append('image', image);
+
+    try {
+      const response = await axios.post(
+        'https://cafe-project-server11.onrender.com/api/products/insertReact',
+        // 'http://localhost:3333/api/products/insertReact',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: `เพิ่ม ${productname} สำเร็จ`,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+      navigate('/add-product');
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error uploading the product:', error);
+    }
+  };
+
+  return (
+    <div className="form-container">
       <div className="container">
-        <Button
-          onClick={handleBack}
-          variant="outlined"
-          color="primary"
-          sx={{
-            position: 'absolute',
-            left: 6,
-            top: 25,
-            zIndex: 10,
-            opacity: 0.9,
-            '&:hover': {
-              opacity: 1,
-            },
-          }}
-        >
-          <Icon icon="mingcute:back-fill" /> กลับสู่หน้าหลัก
-        </Button>
         <div className="frame">
           <h2>เพิ่มสินค้า</h2>
           <form onSubmit={handleSubmit}>
-                        <TextField
-                            type="text"
-                            value={productname}
-                            onChange={(e) => setProductname(e.target.value)}
-                            label="Product Name"
-                            variant="outlined"
-                            fullWidth
-                            required
-                        />
-                        <FormControl fullWidth variant="outlined" required>
-                            <InputLabel>Type</InputLabel>
-                            <Select
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                                label="Type"
-                            >
-                                {categories.map((category) => (
-                                    <MenuItem key={category.value} value={category.value}>
-                                        {category.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            type="number"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            label="Price"
-                            variant="outlined"
-                            fullWidth
-                            required
-                        />
-                        <br/><br/>
-                        <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
-                        <br/><br/>
-                        <Button type="submit" variant="outlined" color="primary">
-                            Submit
-                        </Button>
-                    </form>
-                </div>
-            </div>
+            <TextField
+              type="text"
+              value={productname}
+              onChange={(e) => setProductname(e.target.value)}
+              label="Product Name"
+              variant="outlined"
+              fullWidth
+              required
+            />
+            <FormControl fullWidth variant="outlined" required>
+              <InputLabel>Type</InputLabel>
+              <Select value={type} onChange={(e) => setType(e.target.value)} label="Type">
+                {categories.map((category) => (
+                  <MenuItem key={category.value} value={category.value}>
+                    {category.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              label="Price"
+              variant="outlined"
+              fullWidth
+              required
+            />
+            <br />
+            <br />
+            <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
+            <br />
+            <br />
+            <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mb: 2 }}>
+              <Button
+                onClick={handleBack}
+                variant="contained"
+                color="error"
+                size="large"
+                sx={{ width: '180px', fontSize: 28 }}
+              >
+                <Icon icon="material-symbols:cancel-outline" sx={{ fontSize: 28 }} />
+              </Button>
+              <Button
+                type="submit"
+                variant="outlined"
+                color="primary"
+                size="large"
+                sx={{ width: '180px', fontSize: 28 }}
+              >
+                <Icon icon="formkit:submit" sx={{ fontSize: 28 }} />
+              </Button>
+            </Box>
+          </form>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ProductForm;

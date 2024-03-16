@@ -86,7 +86,7 @@ export default function RawPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">
-            <StyledDiv>สินค้า</StyledDiv>
+            <StyledDiv>วัตถุดิบ</StyledDiv>
           </Typography>
           <StyledDiv>
             <Button
@@ -101,7 +101,7 @@ export default function RawPage() {
         </Stack>
 
         <TextField
-          label="ค้นหาสินค้า เช่น น้ำตาล"
+          label="ค้นหาวัตถุดิบ เช่น น้ำตาล"
           variant="outlined"
           size="small" // ทำให้ TextField มีขนาดเล็กลง
           margin="normal"
@@ -184,7 +184,7 @@ export default function RawPage() {
                     <TableRow>
                       <TableCell colSpan={6} align="center">
                         <Typography variant="subtitle1" gutterBottom>
-                          <StyledDiv>ไม่พบสินค้า</StyledDiv>
+                          <StyledDiv>ไม่พบวัตถุดิบ</StyledDiv>
                         </Typography>
                       </TableCell>
                     </TableRow>
