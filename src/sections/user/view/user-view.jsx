@@ -165,61 +165,57 @@ export default function UserPage() {
                 </TableHead>
                 <TableBody>
                   {filteredUsers.length > 0 ? (
-                    filteredUsers.map((user, index) => {
-                      if (user.role === 'เจ้าของร้าน') {
-                        // If the user's role is "เจ้าของร้าน", don't display the row.
-                        return null; // Skip this user
-                      }
-
-                      // Otherwise, render the TableRow as normal.
-                      return (
-                        <TableRow
-                          key={user._id}
-                          sx={{
-                            '&:nth-of-type(odd)': {
-                              backgroundColor: 'rgba(0, 0, 0, 0.02)',
-                            },
-                            '&:nth-of-type(even)': {
-                              backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                            },
-                          }}
-                        >
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{user._id}</TableCell>
-                          <TableCell>
-                            <img
-                              src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`}
-                              alt={user.username}
-                            />
-                          </TableCell>
-                          <TableCell>{user.username}</TableCell>
-                          <TableCell>
-                            {user.firstname} {user.lastname}
-                          </TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.role}</TableCell>
-                          <TableCell>{user.phone}</TableCell>
-                          <TableCell>{formatDateAndCalculateDays(user.created)}</TableCell>
-                          <TableCell>
-                            {/* Edit and Delete Icons */}
-                            <Icon
-                              icon="mingcute:edit-line"
-                              width="2em"
-                              height="2em"
-                              onClick={() =>
-                                navigate('/update-profile-user', { state: { userId: user._id } })
-                              }
-                            />
-                            <Icon
-                              icon="mingcute:delete-fill"
-                              width="2em"
-                              height="2em"
-                              onClick={() => confirmDelete(user._id)}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
+                    filteredUsers.map((user, index) => (
+                      <TableRow
+                        key={user._id}
+                        sx={{
+                          '&:nth-of-type(odd)': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                          },
+                          '&:nth-of-type(even)': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                          },
+                        }}
+                      >
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{user._id}</TableCell>
+                        <TableCell>
+                          <img
+                            src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`}
+                            alt={user.username}
+                          />
+                        </TableCell>
+                        <TableCell>{user.username}</TableCell>
+                        <TableCell>
+                          {user.firstname} {user.lastname}
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.role}</TableCell>
+                        <TableCell>{user.phone}</TableCell>
+                        <TableCell>{formatDateAndCalculateDays(user.created)}</TableCell>
+                        <TableCell>
+                          {/* ตรวจสอบว่า user.role ไม่ใช่ 'เจ้าของร้าน' ถ้าใช่ไม่แสดงไอคอน */}
+                          {user.role !== 'เจ้าของร้าน' && (
+                            <>
+                              <Icon
+                                icon="mingcute:edit-line"
+                                width="2em"
+                                height="2em"
+                                onClick={() =>
+                                  navigate('/update-profile-user', { state: { userId: user._id } })
+                                }
+                              />
+                              <Icon
+                                icon="mingcute:delete-fill"
+                                width="2em"
+                                height="2em"
+                                onClick={() => confirmDelete(user._id)}
+                              />
+                            </>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
                   ) : (
                     <TableRow>
                       <TableCell colSpan={10} align="center">

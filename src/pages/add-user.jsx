@@ -60,8 +60,7 @@ const UserForm = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-
-        navigate('/add-user');
+        navigate('/user');
       } else if (response.data.username && username !== response.data.username) {
         Swal.fire({
           icon: 'warning',
