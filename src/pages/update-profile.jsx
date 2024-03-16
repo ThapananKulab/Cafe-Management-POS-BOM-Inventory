@@ -2,9 +2,9 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import React, { useState, useEffect } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import {Box,Card,Grid,Button,TextField, Container, Typography } from '@mui/material';
+import { Box, Card, Grid, Button, TextField, Container, Typography } from '@mui/material';
 
 const UpdateUserPage = () => {
   const [updateP_id, setUpdateP_id] = useState('');
@@ -14,6 +14,9 @@ const UpdateUserPage = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [role, setRole] = useState('');
+  const [currentImage, setCurrentImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,6 +43,7 @@ const UpdateUserPage = () => {
           setPhone(userData.phone || '');
           setAddress(userData.address || '');
           setRole(userData.role || '');
+          setCurrentImage(userData.image || '');
         } else {
           localStorage.removeItem('token');
           Swal.fire({
@@ -57,150 +61,166 @@ const UpdateUserPage = () => {
     fetchUserData();
   }, [navigate]);
 
-
   const handleUpdateUser = async () => {
     try {
-      const confirmed = await Swal.fire({
-        title: 'ยืนยันการอัปเดตข้อมูล',
-        text: 'คุณแน่ใจหรือไม่ว่าต้องการอัปเดตข้อมูล?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่',
-      });
-  
-      if (confirmed.isConfirmed) {
-        const response = await axios.post('https://cafe-project-server11.onrender.com/api/users/updateProfile', {
-          updateP_id,
-          firstname,
-          lastname,
-          email,
-          phone,
-          address,
-          role,
-        });
-        console.log(response.data);
-        Swal.fire({
-          icon: 'success',
-          title: 'สำเร็จ',
-          text: 'อัปเดตสำเร็จ',
-        });
-      } else {
-        console.log('User canceled the update.');
+      const formData = new FormData();
+      formData.append('updateP_id', updateP_id);
+      formData.append('firstname', firstname);
+      formData.append('lastname', lastname);
+      formData.append('email', email);
+      formData.append('phone', phone);
+      formData.append('address', address);
+      formData.append('role', role);
+      if (selectedImage) {
+        formData.append('image', selectedImage); // ตรวจสอบชื่อ field ที่ถูกต้องสำหรับรูปภาพ
       }
+
+      const response = await axios.post(
+        'https://cafe-project-server11.onrender.com/api/users/updateProfile',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      console.log(response.data);
+      Swal.fire({
+        icon: 'success',
+        title: 'สำเร็จ',
+        text: 'อัปเดตสำเร็จ',
+      });
     } catch (error) {
       console.error('Error:', error);
     }
   };
-  
 
   return (
-    <Box sx={{height: 1,display: 'flex',flexDirection: 'column',justifyContent: 'center',}}>
+    <Box sx={{ height: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <Container maxWidth="sm" style={{ margin: 'auto' }}>
-      <Card
+        <Card
           sx={{
             p: 5,
             width: 1,
             maxWidth: 420,
           }}
         >
-      <Grid item xs={3}> {/* ทำการย่อขนาดของ Grid item เป็น xs={3} */}
-        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-            <Button  variant="outlined" color="primary">
-            <Icon icon="icon-park-solid:back" /> กลับ
-            </Button>
-          </Link>
-        </Grid>
-        <Box mt={2}>{}</Box>
-        <Typography variant="h4" component="h1" gutterBottom>
-          แก้ไขโปรไฟล์
-        </Typography>
-        <Box mt={3}>{}</Box>
-        <Grid container spacing={2} justify="center">
-          <Grid item xs={12} style={{ display: 'none' }}>
-            <TextField
-              fullWidth
-              label="User ID"
-              value={updateP_id}
-              onChange={(e) => setUpdateP_id(e.target.value)}
-              variant="outlined"
-              disabled
-            />
+          <Grid item xs={3}>
+            {' '}
+            {/* ทำการย่อขนาดของ Grid item เป็น xs={3} */}
+            <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+              <Button variant="outlined" color="primary">
+                <Icon icon="icon-park-solid:back" /> กลับ
+              </Button>
+            </Link>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="ชื่อ"
-              value={firstname}
-              onChange={(e) => setFirstname(e.target.value)}
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="นามสกุล"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
-              variant="outlined"
-            />
-          </Grid>
+          <Box mt={2}>{}</Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            แก้ไขโปรไฟล์
+          </Typography>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="เบอร์โทรศัพท์"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="ที่อยู่"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="ตำแหน่ง"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12}>
-          <Box marginTop={3} display="flex" justifyContent="space-between" gap={2}>
-            <Button
-              size="large"
-              variant="contained"
-              color="warning"
-              sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'white' }}
-              onClick={handleUpdateUser}
-            >
-              แก้ไขโปรไฟล์
-            </Button>
+            <Box mt={2} textAlign="center">
+              {currentImage && (
+                <img
+                  src={currentImage}
+                  alt="Current"
+                  style={{ maxWidth: '100%', maxHeight: '200px' }}
+                />
+              )}
+              <input
+                type="file"
+                onChange={(e) => setSelectedImage(e.target.files[0])}
+                style={{ display: 'block', margin: '10px auto' }}
+              />
             </Box>
           </Grid>
-        </Grid>
+
+          <Box mt={3}>{}</Box>
+          <Grid container spacing={2} justify="center">
+            <Grid item xs={12} style={{ display: 'none' }}>
+              <TextField
+                fullWidth
+                label="User ID"
+                value={updateP_id}
+                onChange={(e) => setUpdateP_id(e.target.value)}
+                variant="outlined"
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="ชื่อ"
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="นามสกุล"
+                value={lastname}
+                onChange={(e) => setLastname(e.target.value)}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="เบอร์โทรศัพท์"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="ที่อยู่"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="ตำแหน่ง"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box marginTop={3} display="flex" justifyContent="space-between" gap={2}>
+                <Button
+                  size="large"
+                  variant="contained"
+                  color="warning"
+                  sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'white' }}
+                  onClick={handleUpdateUser}
+                >
+                  แก้ไขโปรไฟล์
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
         </Card>
       </Container>
     </Box>
   );
-};  
-
+};
 
 export default UpdateUserPage;

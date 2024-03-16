@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
-import { Grid,Button,TextField, Container, Typography } from '@mui/material';
+import { Grid, Button, TextField, Container, Typography } from '@mui/material';
 
 const UpdateUserPage = () => {
   const [updateP_id, setUpdateP_id] = useState('');
@@ -15,9 +15,11 @@ const UpdateUserPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3333/api/users/65efdec4f6785a50d2e55636`);
+        const response = await axios.get(
+          `http://localhost:3333/api/users/65efdec4f6785a50d2e55636`
+        );
         const userData = response.data;
-  
+
         setUpdateP_id(userData._id || '');
         setFirstname(userData.firstname || '');
         setLastname(userData.lastname || '');
@@ -29,7 +31,7 @@ const UpdateUserPage = () => {
         console.error(error.response.data);
       }
     };
-  
+
     fetchUserData();
   }, []);
 
@@ -122,12 +124,7 @@ const UpdateUserPage = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleUpdateUser}
-          >
+          <Button fullWidth variant="contained" color="primary" onClick={handleUpdateUser}>
             Update User
           </Button>
         </Grid>
