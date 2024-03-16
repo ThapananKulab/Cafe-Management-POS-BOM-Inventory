@@ -75,12 +75,14 @@ const UpdateUserPage = () => {
         formData.append('image', selectedImage); // ตรวจสอบชื่อ field ที่ถูกต้องสำหรับรูปภาพ
       }
 
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         'https://cafe-project-server11.onrender.com/api/users/updateProfile',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`, // Make sure to include the token in the authorization header
           },
         }
       );
@@ -123,7 +125,7 @@ const UpdateUserPage = () => {
             <Box mt={2} textAlign="center">
               {currentImage && (
                 <img
-                  src={currentImage}
+                  src={currentImage || 'path/to/default/image.jpg'}
                   alt="Current"
                   style={{ maxWidth: '100%', maxHeight: '200px' }}
                 />
