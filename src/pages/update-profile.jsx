@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
-import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
 
 import { Box, Card, Grid, Button, TextField, Container, Typography } from '@mui/material';
 
@@ -16,6 +16,7 @@ const UpdateUserPage = () => {
   const [role, setRole] = useState('');
   const [image, setCurrentImage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -65,12 +66,16 @@ const UpdateUserPage = () => {
     fetchUserData();
   }, [navigate]);
 
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-      // Create a temporary URL for the selected file to update the preview
       setCurrentImage(URL.createObjectURL(file));
+      console.log(e.target.files); // Here's the change
     }
   };
 
@@ -142,21 +147,33 @@ const UpdateUserPage = () => {
                   src={image}
                   alt="Current"
                   style={{
-                    maxWidth: '100px', // Set a specific size for the width
-                    maxHeight: '100px', // Set a specific size for the height
-                    borderRadius: '50%', // This makes it circular
-                    objectFit: 'cover', // This makes sure the image covers the space without stretching
-                    border: '2px solid #ddd', // Optional: adds a slight border around the image
-                    padding: '5px', // Optional: adds some space between the border and the image
-                    backgroundColor: '#fff', // Optional: in case the image doesn't cover the whole circle, this gives a background color
+                    maxWidth: '100px',
+                    maxHeight: '100px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '2px solid #ddd',
+                    padding: '5px',
+                    backgroundColor: '#fff',
+                    display: 'block', // Ensure the image is a block-level element to adhere to textAlign center
+                    marginLeft: 'auto', // These two lines center the image if its container is flex.
+                    marginRight: 'auto',
                   }}
                 />
               )}
               <input
+                ref={fileInputRef}
                 type="file"
+                style={{ display: 'none' }}
                 onChange={handleImageChange}
-                style={{ display: 'block', margin: '10px auto' }}
               />
+              <Button
+                variant="outlined"
+                component="span"
+                onClick={handleButtonClick}
+                style={{ display: 'block', margin: '10px auto 0' }}
+              >
+                Upload
+              </Button>
             </Box>
           </Grid>
 
