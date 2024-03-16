@@ -111,16 +111,27 @@ const UpdateUserPage = () => {
   };
 
   return (
-    <Box sx={{ height: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <Container maxWidth="sm" style={{ margin: 'auto' }}>
+    <Box
+      sx={{
+        height: '100vh', // ตั้งค่าความสูงของ Box ให้เต็มหน้าจอ
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center', // ให้ content อยู่กึ่งกลางแนวตั้ง
+        alignItems: 'center', // ให้ content อยู่กึ่งกลางแนวนอน
+      }}
+    >
+      {' '}
+      <Container maxWidth="sm">
         <Card
           sx={{
             p: 5,
-            width: 1,
-            maxWidth: 420,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: 1, // Take up 100% of the Container width
           }}
         >
-          <Box mt={5}>{}</Box>
+          <Box mt={10}>{}</Box>
           <Typography variant="h4" component="h1" gutterBottom>
             แก้ไขโปรไฟล์
           </Typography>
