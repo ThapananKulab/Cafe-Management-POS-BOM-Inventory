@@ -28,7 +28,6 @@ export default function RawPage() {
     font-family: 'Prompt', sans-serif;
   `;
 
-
   // const categories = [
   //   { value: 'เย็น', label: 'เย็น' },
   //   { value: 'ร้อน', label: 'ร้อน' },
@@ -38,7 +37,6 @@ export default function RawPage() {
   const [raws, setRaws] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchRaws = async () => {
@@ -64,9 +62,7 @@ export default function RawPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(
-            `https://cafe-project-server11.onrender.com/api/raws/${rawId}`
-          );
+          await axios.delete(`https://cafe-project-server11.onrender.com/api/raws/${rawId}`);
           Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
           setRaws(raws.filter((raw) => raw._id !== rawId));
         } catch (error) {
@@ -77,17 +73,13 @@ export default function RawPage() {
     });
   };
 
-
-
   const filteredRaws = raws.filter(
     (raw) =>
       raw.rawname.toLowerCase().includes(search.toLowerCase()) ||
       raw.rawquantity.toString().toLowerCase().includes(search.toLowerCase()) ||
-      raw.rawunit.toLowerCase().includes(search.toLowerCase())||
+      raw.rawunit.toLowerCase().includes(search.toLowerCase()) ||
       raw.rawunitprice.toString().toLowerCase().includes(search.toLowerCase())
   );
-
-
 
   return (
     <div>
@@ -101,10 +93,9 @@ export default function RawPage() {
               variant="contained"
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/add-product')}
-
+              onClick={() => navigate('/add-raw')}
             >
-              <StyledDiv>เพิ่มสินค้า </StyledDiv>
+              <StyledDiv>เพิ่มวัตถุดิบ </StyledDiv>
             </Button>
           </StyledDiv>
         </Stack>

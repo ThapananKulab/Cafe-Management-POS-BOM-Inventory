@@ -2378,6 +2378,11 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
+es6-promise@^3.1.2, es6-promise@^3.2.1:
+  version "3.3.1"
+  resolved "https://registry.npmjs.org/es6-promise/-/es6-promise-3.3.1.tgz"
+  integrity sha512-SOp9Phqvqn7jtEUxPWdWfWoLmyt2VaJ6MpvP9Comy1MceMXqE6bxvaTu4iaxpYYPzhny28Lc+M87/c2cPK6lDg==
+
 esbuild@*, esbuild@^0.18.10, esbuild@>=0.11.0, esbuild@0.*, "esbuild@0.17.x || 0.18.x":
   version "0.18.20"
   resolved "https://registry.npmjs.org/esbuild/-/esbuild-0.18.20.tgz"
@@ -3381,6 +3386,13 @@ html-void-elements@^2.0.0:
   resolved "https://registry.npmjs.org/html-void-elements/-/html-void-elements-2.0.1.tgz"
   integrity sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A==
 
+http-post-message@^0.2:
+  version "0.2.3"
+  resolved "https://registry.npmjs.org/http-post-message/-/http-post-message-0.2.3.tgz"
+  integrity sha512-76heerrzYhvWptJfWxUarHw2O3fkMqF48bbq/S6XFWHUc34o8tkySBwtReXuAKJAECZWVu8U0TYLckFcwtSdrg==
+  dependencies:
+    es6-promise "^3.2.1"
+
 human-signals@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/human-signals/-/human-signals-2.1.0.tgz"
@@ -4001,6 +4013,11 @@ lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz"
   integrity sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
+  integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
 lodash.merge@^4.6.2, lodash.merge@4.6.2:
   version "4.6.2"
@@ -5434,6 +5451,37 @@ postcss@8.4.31:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
+powerbi-client-react@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/powerbi-client-react/-/powerbi-client-react-1.4.0.tgz"
+  integrity sha512-AfS96lP+emEc4drguCUqLG0s4cFa15OM9eqDaP1sJZ+ca0V+FdvFeI1bD6EyC3smPlpRcl862uSzYexVeUxdIQ==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    powerbi-client "^2.21.1"
+
+powerbi-client@^2.21.1, powerbi-client@^2.22.4:
+  version "2.22.4"
+  resolved "https://registry.npmjs.org/powerbi-client/-/powerbi-client-2.22.4.tgz"
+  integrity sha512-1MuKp+F2W5aCfvCSPt/14UGWnJnxOVxO8PSFTgHOnMQYok6G3NyPNTCtfluudd18r/EkgLccNO2tLUtpKwRALA==
+  dependencies:
+    http-post-message "^0.2"
+    powerbi-models "^1.12.3"
+    powerbi-router "^0.1"
+    window-post-message-proxy "^0.2.7"
+
+powerbi-models@^1.12.3:
+  version "1.14.0"
+  resolved "https://registry.npmjs.org/powerbi-models/-/powerbi-models-1.14.0.tgz"
+  integrity sha512-JUBuw/PKHSwSBD2/XubMGJafE8jQsP1evhK2WiXeFHbB9QluUeuGuSMlSxEkworNC+SFR7pGKknniCZqYoDNLw==
+
+powerbi-router@^0.1:
+  version "0.1.5"
+  resolved "https://registry.npmjs.org/powerbi-router/-/powerbi-router-0.1.5.tgz"
+  integrity sha512-DFJCKxwh/DqMZXtHSo6xZl87mbRviZGn4P7Oi2rT0L4HMI4AjnWIrwg0JCSM7ymBzYnNe5UmrsCaf2Upur5RQA==
+  dependencies:
+    es6-promise "^3.2.1"
+    route-recognizer "^0.1.11"
+
 prebuild-install@^7.1.1:
   version "7.1.1"
   resolved "https://registry.npmjs.org/prebuild-install/-/prebuild-install-7.1.1.tgz"
@@ -5679,7 +5727,7 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@*, "react@^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18", "react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.6.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17 || ^18", "react@^17.0.0 || ^18.0.0", react@^18, react@^18.2.0, "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=0.13, react@>=16, react@>=16.6.0, react@>=16.8, react@>=16.8.0, react@>=18:
+react@*, "react@^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18", "react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.6.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17 || ^18", "react@^17.0.0 || ^18.0.0", react@^18, react@^18.2.0, "react@>= 16", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=0.13, react@>=16, react@>=16.6.0, react@>=16.8, react@>=16.8.0, react@>=18:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
@@ -5898,6 +5946,11 @@ rollup@^3.27.1:
   integrity sha512-oWzmBZwvYrU0iJHtDmhsm662rC15FRXmcjCk1xD771dFDx5jJ02ufAQQTn0etB2emNk4J9EZg/yWKpsn9BWGRw==
   optionalDependencies:
     fsevents "~2.3.2"
+
+route-recognizer@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.npmjs.org/route-recognizer/-/route-recognizer-0.1.11.tgz"
+  integrity sha512-7JNu5mXQVa39zxmUKyk/bfpeF2WyEC5JKVTJO5HATcoUQpcQsI3eLzhwGU69xeOagQxfOQ+yr2sSv0G8xy+vQA==
 
 run-applescript@^5.0.0:
   version "5.0.0"
@@ -7173,6 +7226,13 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+window-post-message-proxy@^0.2.7:
+  version "0.2.8"
+  resolved "https://registry.npmjs.org/window-post-message-proxy/-/window-post-message-proxy-0.2.8.tgz"
+  integrity sha512-lAxMnXcKMR3UjFmeIWnl+1OdUBZI8l3RlCbr3TUALFpnWK6H6i6x+AHSp7Hs7PFGb08ct8BLT8CrCtESo+PyTQ==
+  dependencies:
+    es6-promise "^3.1.2"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
   version "7.0.0"
