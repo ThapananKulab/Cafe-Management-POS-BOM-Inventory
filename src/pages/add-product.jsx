@@ -75,8 +75,9 @@ const ProductForm = () => {
               variant="outlined"
               fullWidth
               required
+              sx={{ mb: 2 }}
             />
-            <FormControl fullWidth variant="outlined" required>
+            <FormControl fullWidth variant="outlined" required sx={{ mb: 2 }}>
               <InputLabel>Type</InputLabel>
               <Select value={type} onChange={(e) => setType(e.target.value)} label="Type">
                 {categories.map((category) => (
@@ -94,9 +95,8 @@ const ProductForm = () => {
               variant="outlined"
               fullWidth
               required
+              sx={{ mb: 2 }}
             />
-            <br />
-            <br />
             <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
             <br />
             <br />
