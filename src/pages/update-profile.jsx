@@ -14,7 +14,7 @@ const UpdateUserPage = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [role, setRole] = useState('');
-  const [currentImage, setCurrentImage] = useState('');
+  const [image, setCurrentImage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
 
   const navigate = useNavigate();
@@ -43,7 +43,11 @@ const UpdateUserPage = () => {
           setPhone(userData.phone || '');
           setAddress(userData.address || '');
           setRole(userData.role || '');
-          setCurrentImage(userData.image || '');
+          setCurrentImage(
+            userData.image
+              ? `https://cafe-project-server11.onrender.com/images-user/${userData.image}`
+              : null
+          );
         } else {
           localStorage.removeItem('token');
           Swal.fire({
@@ -61,6 +65,15 @@ const UpdateUserPage = () => {
     fetchUserData();
   }, [navigate]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      // Create a temporary URL for the selected file to update the preview
+      setCurrentImage(URL.createObjectURL(file));
+    }
+  };
+
   const handleUpdateUser = async () => {
     try {
       const formData = new FormData();
@@ -74,7 +87,6 @@ const UpdateUserPage = () => {
       if (selectedImage) {
         formData.append('image', selectedImage); // ตรวจสอบชื่อ field ที่ถูกต้องสำหรับรูปภาพ
       }
-
       const token = localStorage.getItem('token');
       const response = await axios.post(
         'https://cafe-project-server11.onrender.com/api/users/updateProfile',
@@ -108,31 +120,30 @@ const UpdateUserPage = () => {
             maxWidth: 420,
           }}
         >
-          <Grid item xs={3}>
-            {' '}
-            {/* ทำการย่อขนาดของ Grid item เป็น xs={3} */}
-            <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-              <Button variant="outlined" color="primary">
-                <Icon icon="icon-park-solid:back" /> กลับ
-              </Button>
-            </Link>
-          </Grid>
-          <Box mt={2}>{}</Box>
+          <Box mt={5}>{}</Box>
           <Typography variant="h4" component="h1" gutterBottom>
             แก้ไขโปรไฟล์
           </Typography>
           <Grid item xs={12}>
             <Box mt={2} textAlign="center">
-              {currentImage && (
+              {image && (
                 <img
-                  src={currentImage || 'path/to/default/image.jpg'}
+                  src={image}
                   alt="Current"
-                  style={{ maxWidth: '100%', maxHeight: '200px' }}
+                  style={{
+                    maxWidth: '100px', // Set a specific size for the width
+                    maxHeight: '100px', // Set a specific size for the height
+                    borderRadius: '50%', // This makes it circular
+                    objectFit: 'cover', // This makes sure the image covers the space without stretching
+                    border: '2px solid #ddd', // Optional: adds a slight border around the image
+                    padding: '5px', // Optional: adds some space between the border and the image
+                    backgroundColor: '#fff', // Optional: in case the image doesn't cover the whole circle, this gives a background color
+                  }}
                 />
               )}
               <input
                 type="file"
-                onChange={(e) => setSelectedImage(e.target.files[0])}
+                onChange={handleImageChange}
                 style={{ display: 'block', margin: '10px auto' }}
               />
             </Box>
@@ -146,6 +157,16 @@ const UpdateUserPage = () => {
                 label="User ID"
                 value={updateP_id}
                 onChange={(e) => setUpdateP_id(e.target.value)}
+                variant="outlined"
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="ตำแหน่ง"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
                 variant="outlined"
                 disabled
               />
@@ -197,16 +218,17 @@ const UpdateUserPage = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="ตำแหน่ง"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12}>
               <Box marginTop={3} display="flex" justifyContent="space-between" gap={2}>
+                <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    color="primary"
+                    sx={{ width: 'fit-content', flexGrow: 1, ml: 1, color: 'black' }}
+                  >
+                    <Icon icon="icon-park-solid:back" /> กลับ
+                  </Button>
+                </Link>
                 <Button
                   size="large"
                   variant="contained"

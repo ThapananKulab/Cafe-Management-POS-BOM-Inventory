@@ -62,7 +62,9 @@ export default function Nav({ openNav, onCloseNav }) {
     fetchData();
   }, [navigate]);
 
-  const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images-user/${user.image}` : null;
+  const imageUrl = user?.image
+    ? `https://cafe-project-server11.onrender.com/images-user/${user.image}`
+    : null;
 
   const upLg = useResponsive('up', 'lg');
 
@@ -79,7 +81,6 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      
       <Avatar src={imageUrl} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
@@ -93,21 +94,13 @@ export default function Nav({ openNav, onCloseNav }) {
     </Box>
   );
 
-
- const renderMenu = (
-  <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-    {user?.role === 'เจ้าของร้าน' ? (
-      navConfig.map((item) => (
-        <NavItem key={item.title} item={item} />
-      ))
-    ) : (
-      navConfigUser.map((item) => (
-        <NavItem key={item.title} item={item} />
-      ))
-    )}
-  </Stack>
-);
-
+  const renderMenu = (
+    <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
+      {user?.role === 'เจ้าของร้าน'
+        ? navConfig.map((item) => <NavItem key={item.title} item={item} />)
+        : navConfigUser.map((item) => <NavItem key={item.title} item={item} />)}
+    </Stack>
+  );
 
   const renderContent = (
     <Scrollbar
