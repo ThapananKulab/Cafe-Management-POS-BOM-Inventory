@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import { faker } from '@faker-js/faker';
 import React, { useState, useEffect } from 'react';
 
@@ -37,9 +38,9 @@ export default function AppView() {
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        สวัสดี 👋
-        <br />
-        เวลาปัจจุบันคือ {timeString} นาฬิกา
+        {/* สวัสดี 👋 */}
+        {/* <br /> */}
+        เวลาปัจจุบันคือ {timeString} <Icon icon="twemoji:alarm-clock" />
       </Typography>
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
