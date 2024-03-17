@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
+import { useTheme } from '@mui/material/styles';
 import {
   Grid,
   Paper,
@@ -37,6 +38,7 @@ export default function ProductPage() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const theme = useTheme(); // ใช้ useTheme เพื่อเข้าถึง theme
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -86,6 +88,16 @@ export default function ProductPage() {
       product.type.toLowerCase().includes(search.toLowerCase())
   );
 
+  const getStatusComponent = (quantity) => {
+    if (quantity === 0) {
+      return <Typography style={{ color: 'red' }}>สินค้าหมด</Typography>;
+    }
+    if (quantity > 0) {
+      return <Typography style={{ color: 'green' }}>คงอยู่</Typography>;
+    }
+    return <Typography style={{ color: theme.palette.warning.main }}> กำลังดำเนินการ</Typography>;
+  };
+
   return (
     <div>
       <Container>
@@ -122,11 +134,13 @@ export default function ProductPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell>ลำดับ</TableCell>
-                    <TableCell>ID</TableCell>
+                    {/* <TableCell>ID</TableCell> */}
                     <TableCell>รูปภาพ</TableCell>
                     <TableCell>ชื่อสินค้า</TableCell>
                     <TableCell align="right">ราคา</TableCell>
                     <TableCell align="center">ประเภทสินค้า</TableCell>
+                    <TableCell align="center">จำนวนคงเหลือ</TableCell>
+                    <TableCell align="center">สถานะ</TableCell>
                     <TableCell align="left">จัดการ</TableCell>
                   </TableRow>
                 </TableHead>
@@ -145,7 +159,7 @@ export default function ProductPage() {
                         }}
                       >
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell>{product._id}</TableCell>
+                        {/* <TableCell>{product._id}</TableCell> */}
                         <TableCell>
                           <img
                             src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`}
@@ -156,6 +170,15 @@ export default function ProductPage() {
                         <TableCell>{product.productname}</TableCell>
                         <TableCell align="right">{product.price}</TableCell>
                         <TableCell align="center">{product.type}</TableCell>
+                        <TableCell align="center">
+                          <Typography>
+                            {product.quantity < 0 ? 0 : product.quantity}{' '}
+                            {/* Displays 0 if quantity is less than 0, otherwise displays the actual quantity */}
+                          </Typography>
+                        </TableCell>
+
+                        <TableCell align="center">{getStatusComponent(product.quantity)}</TableCell>
+
                         <TableCell>
                           <a
                             href="#"

@@ -37,6 +37,11 @@ const navConfig = [
         path: '/product',
         icon: icon('ic_productsM'),
       },
+      {
+        title: 'นำเข้าสินค้า',
+        path: '/product/add-quantity',
+        icon: icon('ic-improduct'),
+      },
     ],
   },
   {

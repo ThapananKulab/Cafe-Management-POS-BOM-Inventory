@@ -25,6 +25,11 @@ const navConfigUser = [
         path: '/product',
         icon: icon('ic_productsM'),
       },
+      {
+        title: 'นำเข้าสินค้า',
+        path: '/product/add-quantity',
+        icon: icon('ic-improduct'),
+      },
     ],
   },
   // {
@@ -49,11 +54,11 @@ const navConfigUser = [
     // path: '/raw',
     icon: icon('ic-order'),
   },
-  {
-    title: 'แจ้งเตือน',
-    // path: '/raw',
-    icon: icon('ic-notic'),
-  },
+  // {
+  //   title: 'แจ้งเตือน',
+  //   // path: '/raw',
+  //   icon: icon('ic-notic'),
+  // },
   {
     title: 'ขายสินค้า',
     path: '/pos',

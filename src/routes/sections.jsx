@@ -20,6 +20,7 @@ export const AddUser = lazy(() => import('src/pages/add-user'));
 export const Pos = lazy(() => import('src/pages/pos'));
 export const EditRaw = lazy(() => import('src/pages/edit-raw'));
 export const AddRaw = lazy(() => import('src/pages/add-raw'));
+export const ProductAddQuantity = lazy(() => import('src/pages/product-addquantity'));
 
 // ----------------------------------------------------------------------
 
@@ -86,6 +87,10 @@ export default function Router() {
     {
       path: '/add-raw',
       element: <AddRaw />,
+    },
+    {
+      path: '/product/add-quantity',
+      element: <ProductAddQuantity />,
     },
     {
       path: '/edit-raw/:rawId',

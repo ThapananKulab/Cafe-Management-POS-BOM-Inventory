@@ -91,7 +91,7 @@ const CartTemplate = () => {
     });
 
     if (!productExists) {
-      newCartItems = [{ ...productToAdd, quantity: 1 }, ...updatedCartItems];
+      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1 }]; // เพิ่มท้าย array
     } else {
       newCartItems = [...updatedCartItems];
     }
@@ -137,11 +137,14 @@ const CartTemplate = () => {
             variant="h6"
             color="inherit"
             noWrap
-            style={{ width: '100%', maxWidth: 'none' }}
+            style={{ cursor: 'pointer' }} // Make it look clickable
+            onClick={() => navigate('/dashboard')} // Use navigate to change the route
           >
+            <Icon icon="mdi:network-pos" style={{ marginRight: 8 }} />
             POS
           </Typography>
-          <Box display="flex" justifyContent="center" flexGrow={1}>
+
+          <Box display="flex" justifyContent="right" flexGrow={1}>
             <Typography variant="h6" color="inherit" noWrap>
               <Icon icon="teenyicons:clock-outline" />
               &nbsp;{currentTime}
@@ -209,6 +212,9 @@ const CartTemplate = () => {
                   <Typography gutterBottom variant="h5" component="h2">
                     {product.productname}
                   </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {product.type}
+                  </Typography>
                   <Typography
                     variant="h6"
                     component="p"
@@ -216,19 +222,33 @@ const CartTemplate = () => {
                   >
                     ราคา {product.price} ฿
                   </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {product.type}
-                  </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button
+                  {product.quantity > 0 ? (
+                    <Button
+                      size="medium"
+                      color="primary"
+                      onClick={() => handleAddToCart(product)}
+                      style={{ minWidth: 'auto', padding: '6px 12px' }}
+                    >
+                      <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
+                    </Button>
+                  ) : (
+                    <Typography variant="body2" style={{ color: 'red' }}>
+                      สินค้าหมด
+                    </Typography>
+                  )}
+                </CardActions>
+
+                <CardActions>
+                  {/* <Button
                     size="medium" // หรือไม่ต้องใส่ size ไปเลยเพื่อให้ได้ขนาดมาตรฐาน
                     color="primary"
                     onClick={() => handleAddToCart(product)}
                     style={{ minWidth: 'auto', padding: '6px 12px' }} // ปรับขนาดและระยะห่างของ padding ตามต้องการ
                   >
                     <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                  </Button>
+                  </Button> */}
                 </CardActions>
               </Card>
             </Grid>
@@ -245,7 +265,7 @@ const CartTemplate = () => {
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            สินค้าในตะกร้า
+            รายการเมนู
           </Typography>
           <List>
             {cartItems.map((item) => (
@@ -269,7 +289,18 @@ const CartTemplate = () => {
             ))}
             <Divider />
             <ListItem>
-              <ListItemText primary="Total" secondary={`฿ ${totalPrice}`} />
+              <ListItemText
+                primary={
+                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                    Total
+                  </Typography>
+                }
+                secondary={
+                  <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
+                    ฿ {totalPrice}
+                  </Typography>
+                }
+              />
             </ListItem>
           </List>
           <Button
