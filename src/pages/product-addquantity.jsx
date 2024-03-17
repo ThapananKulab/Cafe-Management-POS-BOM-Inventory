@@ -16,7 +16,10 @@ const ProductList = () => {
 
   const increaseQuantity = (productId) => {
     axios
-      .post(`http://localhost:3333/api/products/increaseQuantity/${productId}`, { increaseBy: 1 })
+      .post(
+        `https://cafe-project-server11.onrender.com/api/products/increaseQuantity/${productId}`,
+        { increaseBy: 1 }
+      )
       .then((response) => {
         // Update the product in the local state to reflect the new quantity
         setProducts(
@@ -30,7 +33,10 @@ const ProductList = () => {
 
   const decreaseQuantity = (productId) => {
     axios
-      .post(`http://localhost:3333/api/products/decreaseQuantity/${productId}`, { decreaseBy: 1 })
+      .post(
+        `https://cafe-project-server11.onrender.com/api/products/decreaseQuantity/${productId}`,
+        { decreaseBy: 1 }
+      )
       .then((response) => {
         // Update the product in the local state to reflect the new quantity
         setProducts(
