@@ -28,7 +28,6 @@ export default function ProductPage() {
     font-family: 'Prompt', sans-serif;
   `;
 
-
   // const categories = [
   //   { value: 'เย็น', label: 'เย็น' },
   //   { value: 'ร้อน', label: 'ร้อน' },
@@ -38,7 +37,6 @@ export default function ProductPage() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -52,6 +50,10 @@ export default function ProductPage() {
 
     fetchProducts();
   }, []);
+
+  const editProduct = (productId) => {
+    navigate(`/edit-product/${productId}`);
+  };
 
   const confirmDelete = (productId) => {
     Swal.fire({
@@ -77,16 +79,12 @@ export default function ProductPage() {
     });
   };
 
-
-
   const filteredProducts = products.filter(
     (product) =>
       product.productname.toLowerCase().includes(search.toLowerCase()) ||
       product.price.toString().toLowerCase().includes(search.toLowerCase()) ||
       product.type.toLowerCase().includes(search.toLowerCase())
   );
-
-
 
   return (
     <div>
@@ -101,7 +99,6 @@ export default function ProductPage() {
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => navigate('/add-product')}
-
             >
               <StyledDiv>เพิ่มสินค้า </StyledDiv>
             </Button>
@@ -150,7 +147,9 @@ export default function ProductPage() {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{product._id}</TableCell>
                         <TableCell>
-                        <img src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`} alt={product.productname} 
+                          <img
+                            src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`}
+                            alt={product.productname}
                             style={{ width: 150, height: 'auto' }}
                           />
                         </TableCell>
@@ -172,8 +171,9 @@ export default function ProductPage() {
                             icon="mingcute:edit-line"
                             width="2em"
                             height="2em"
-                            onClick={() => confirmDelete(product._id)}
+                            onClick={() => editProduct(product._id)} // Updated this line
                           />
+
                           <a
                             href="#"
                             style={{ marginRight: '8px', display: 'inline-block' }}

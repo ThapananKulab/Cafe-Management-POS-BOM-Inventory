@@ -54,9 +54,14 @@ export default function Router() {
       element: <UpdateProfile />,
     },
     {
-      path: '/edit-product',
+      path: '/edit-product/:productId', // Added dynamic segment :productId
       element: <EditProducts />,
     },
+    // {
+    //   path: '/edit-product/:productId',
+    //   element: <EditProducts />,
+    // },
+
     {
       path: '/add-product',
       element: <AddProducts />,
