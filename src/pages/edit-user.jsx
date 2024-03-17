@@ -3,7 +3,17 @@ import { Icon } from '@iconify/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import React, { useRef, useState, useEffect } from 'react';
 
-import { Box, Card, Grid, Button, TextField, Container, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  Grid,
+  Button,
+  Select,
+  MenuItem,
+  TextField,
+  Container,
+  Typography,
+} from '@mui/material';
 
 const UserForm = () => {
   // State hooks
@@ -65,20 +75,24 @@ const UserForm = () => {
     }
 
     try {
-      await axios.post(`http://localhost:3333/api/users/updateUser/${userId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await axios.post(
+        `https://cafe-project-server11.onrender.com/api/users/updateUser/${userId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       navigate('/user'); // Adjust as needed
     } catch (error) {
       console.error('Error updating user:', error);
     }
   };
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
+  // const handleButtonClick = () => {
+  //   fileInputRef.current.click();
+  // };
 
   return (
     <Box
@@ -95,7 +109,7 @@ const UserForm = () => {
           sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', width: 1 }}
         >
           <Typography variant="h4" component="h1" gutterBottom>
-            แก้ไขโปรไฟล์
+            แก้ไขโปรไฟล์ คุณ: {firstname} {lastname}
           </Typography>
           <form onSubmit={handleSubmit}>
             {/* Image Upload Section */}
@@ -125,30 +139,43 @@ const UserForm = () => {
                   style={{ display: 'none' }}
                   onChange={handleImageChange}
                 />
-                <Button
+                {/* <Button
                   variant="outlined"
                   component="span"
                   onClick={handleButtonClick}
                   style={{ display: 'block', margin: '10px auto 0' }}
                 >
                   Upload
-                </Button>
+                </Button> */}
               </Box>
             </Grid>
 
             <Box mt={3}>{}</Box>
-            <Grid container spacing={2} justify="center">
-              <div>Product ID: {userId}</div>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="ตำแหน่ง"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  variant="outlined"
-                  disabled
-                />
+            <Grid container spacing={2} justifyContent="center" alignItems="center">
+              <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
+                {/* <Typography variant="h6" gutterBottom>
+                  User ID: {userId}
+                </Typography> */}
+                <Box sx={{ minWidth: 120, textAlign: 'center' }}>
+                  <Typography variant="subtitle1">ตำแหน่ง</Typography>
+                  <Select
+                    fullWidth
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    displayEmpty
+                    inputProps={{ 'aria-label': 'Without label' }}
+                    variant="outlined"
+                    sx={{ textAlign: 'left' }} // Adjust the text alignment inside the select
+                  >
+                    <MenuItem value="" disabled>
+                      Select Role
+                    </MenuItem>
+                    <MenuItem value="เจ้าของร้าน">เจ้าของร้าน</MenuItem>
+                    <MenuItem value="พนักงาน">พนักงาน</MenuItem>
+                  </Select>
+                </Box>
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth

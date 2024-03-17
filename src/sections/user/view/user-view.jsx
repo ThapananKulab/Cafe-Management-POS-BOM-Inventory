@@ -156,15 +156,15 @@ export default function UserPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell>ลำดับ</TableCell>
-                    <TableCell>ID</TableCell>
+                    {/* <TableCell>ID</TableCell> */}
                     <TableCell>รูปภาพ</TableCell>
                     <TableCell>บัญชีผู้ใช้</TableCell>
                     <TableCell>ชือ-นามสกุล</TableCell>
                     <TableCell>Email</TableCell>
                     <TableCell>สถานะ</TableCell>
                     <TableCell>เบอร์โทรศัพท์</TableCell>
-                    <TableCell>จัดการ</TableCell>
                     <TableCell>อยู่ในระบบนาน</TableCell>
+                    <TableCell>จัดการ</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -182,7 +182,7 @@ export default function UserPage() {
                         }}
                       >
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell>{user._id}</TableCell>
+                        {/* <TableCell>{user._id}</TableCell> */}
                         <TableCell>
                           <img
                             src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`}
