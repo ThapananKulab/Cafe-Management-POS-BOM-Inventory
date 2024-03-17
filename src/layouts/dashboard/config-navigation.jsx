@@ -12,8 +12,15 @@ const navConfig = [
   },
   {
     title: 'พนักงาน',
-    path: '/user',
+    // path: '/user',
     icon: icon('ic_user'),
+    subItems: [
+      {
+        title: 'จัดการพนักงาน',
+        path: '/user',
+        icon: icon('ic-manager'),
+      },
+    ],
   },
   // {
   //   title: 'products',
@@ -30,18 +37,16 @@ const navConfig = [
     path: '/raw',
     icon: icon('ic_raw'),
   },
-  {
-    title: 'blog',
-    path: '/blog',
-    icon: icon('ic_blog'),
-  },
+  // {
+  //   title: 'blog',
+  //   path: '/blog',
+  //   icon: icon('ic_blog'),
+  // },
   {
     title: 'ขายสินค้า',
     path: '/pos',
     icon: icon('ic_sell'),
   },
-
-  
 
   // {
   //   title: 'login',

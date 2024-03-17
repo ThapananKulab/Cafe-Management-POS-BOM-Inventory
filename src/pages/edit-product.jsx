@@ -78,7 +78,7 @@ const ProductForm = () => {
         <div className="frame">
           <h2>แก้ไขสินค้า</h2>
           {/* แสดง Product ID ที่นี่ */}
-          <div>Product ID: {productId}</div>
+          {/* <div>Product ID: {productId}</div> */}
           <form onSubmit={handleSubmit}>
             <TextField
               type="text"
@@ -110,6 +110,8 @@ const ProductForm = () => {
               sx={{ mb: 2 }}
             />
             <input type="file" onChange={handleImageChange} />
+            <br />
+            <br />
             <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mb: 2 }}>
               <Button
                 onClick={handleBack}

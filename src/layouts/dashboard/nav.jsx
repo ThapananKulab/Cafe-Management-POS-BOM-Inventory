@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 
 import { usePathname } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
+// import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -166,36 +166,94 @@ Nav.propTypes = {
 // ----------------------------------------------------------------------
 
 function NavItem({ item }) {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const active = item.path === pathname;
 
-  return (
-    <ListItemButton
-      component={RouterLink}
-      href={item.path}
-      sx={{
-        minHeight: 44,
-        borderRadius: 0.75,
-        typography: 'body2',
-        color: 'text.secondary',
-        textTransform: 'capitalize',
-        fontWeight: 'fontWeightMedium',
-        ...(active && {
-          color: 'primary.main',
-          fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-          '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
-          },
-        }),
-      }}
-    >
-      <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
-        {item.icon}
-      </Box>
+  const handleToggle = () => {
+    setOpen(!open);
+  };
 
-      <Box component="span">{item.title} </Box>
-    </ListItemButton>
+  //   return (
+  //     <ListItemButton
+  //       component={RouterLink}
+  //       href={item.path}
+  //       sx={{
+  //         minHeight: 44,
+  //         borderRadius: 0.75,
+  //         typography: 'body2',
+  //         color: 'text.secondary',
+  //         textTransform: 'capitalize',
+  //         fontWeight: 'fontWeightMedium',
+  //         ...(active && {
+  //           color: 'primary.main',
+  //           fontWeight: 'fontWeightSemiBold',
+  //           bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+  //           '&:hover': {
+  //             bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+  //           },
+  //         }),
+  //       }}
+  //     >
+  //       <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
+  //         {item.icon}
+  //       </Box>
+
+  //       <Box component="span">{item.title} </Box>
+  //     </ListItemButton>
+  //   );
+  // }
+  return (
+    <>
+      <ListItemButton
+        onClick={item.subItems ? handleToggle : () => navigate(item.path)}
+        sx={{
+          minHeight: 44,
+          borderRadius: 0.75,
+          typography: 'body2',
+          color: 'text.secondary',
+          textTransform: 'capitalize',
+          fontWeight: 'fontWeightMedium',
+          ...(active && {
+            color: 'primary.main',
+            fontWeight: 'fontWeightSemiBold',
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+            '&:hover': {
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+            },
+          }),
+        }}
+      >
+        <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
+          {item.icon}
+        </Box>
+
+        <Box component="span" sx={{ flexGrow: 1 }}>
+          {item.title}
+        </Box>
+
+        {item.subItems && (
+          <Box
+            component="span"
+            sx={{
+              transform: open ? 'rotate(90deg)' : 'rotate(0)',
+              transition: 'transform 0.2s',
+            }}
+          >
+            {/* เปลี่ยนไปใช้ไอคอนของคุณเองที่นี่ */}
+            {/* ตัวอย่าง: ไอคอน ">" ที่หมุนเมื่อ open */}
+          </Box>
+        )}
+      </ListItemButton>
+      {item.subItems && open && (
+        <Box sx={{ pl: 4 }}>
+          {item.subItems.map((subItem) => (
+            <NavItem key={subItem.title} item={subItem} />
+          ))}
+        </Box>
+      )}
+    </>
   );
 }
 

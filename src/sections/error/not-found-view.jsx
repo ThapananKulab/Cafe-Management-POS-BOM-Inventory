@@ -59,7 +59,7 @@ export default function NotFoundView() {
               my: { xs: 4, sm: 4 },
             }}
           />
-          <Button href="/" size="large" variant="contained" component={RouterLink}>
+          <Button href="/dashboard" size="large" variant="contained" component={RouterLink}>
             <StyledDiv>ไปหน้าเข้าสู่ระบบ</StyledDiv>
           </Button>
         </Box>

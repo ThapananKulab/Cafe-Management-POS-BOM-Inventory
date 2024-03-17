@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
@@ -22,6 +23,18 @@ export const AddRaw = lazy(() => import('src/pages/add-raw'));
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const getUserRoleFromToken = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode(token);
+      return decoded.user.role; // ตัวอย่างเช่น เราสมมติว่า structure ของ decoded token มี user.role
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  };
   const routes = useRoutes([
     {
       element: (
@@ -33,7 +46,10 @@ export default function Router() {
       ),
       children: [
         { path: 'dashboard', element: <DasboardPage /> },
-        { path: 'user', element: <UserPage /> },
+        {
+          path: 'user',
+          element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <UserPage /> : <Navigate to="/404" />,
+        },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'product', element: <ProductPage /> },
@@ -54,17 +70,13 @@ export default function Router() {
       element: <UpdateProfile />,
     },
     {
-      path: '/edit-product/:productId', // Added dynamic segment :productId
+      path: '/edit-product/:productId',
       element: <EditProducts />,
     },
-    // {
-    //   path: '/edit-product/:productId',
-    //   element: <EditProducts />,
-    // },
-
     {
       path: '/add-product',
       element: <AddProducts />,
+      // element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <AddProducts /> : <Navigate to="/404" />,
     },
     {
       path: '/add-user',
@@ -86,3 +98,5 @@ export default function Router() {
 
   return routes;
 }
+
+// element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <AddProducts /> : <Navigate to="/404" />,
