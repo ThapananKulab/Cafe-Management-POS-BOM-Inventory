@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import React, { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -19,12 +20,27 @@ import AppConversionRates from '../app-conversion-rates';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, []);
+
+  const timeString = currentTime.toLocaleTimeString('th-TH', {
+    hour12: false,
+  });
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Hi, Welcome 👋
+        สวัสดี 👋
+        <br />
+        เวลาปัจจุบันคือ {timeString} นาฬิกา
       </Typography>
-
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary

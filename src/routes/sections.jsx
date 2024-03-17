@@ -17,7 +17,7 @@ export const EditProducts = lazy(() => import('src/pages/edit-product'));
 export const AddProducts = lazy(() => import('src/pages/add-product'));
 export const AddUser = lazy(() => import('src/pages/add-user'));
 export const Pos = lazy(() => import('src/pages/pos'));
-export const UpdateProfileUser = lazy(() => import('src/pages/update-profile-user'));
+export const EditRaw = lazy(() => import('src/pages/edit-raw'));
 export const AddRaw = lazy(() => import('src/pages/add-raw'));
 
 // ----------------------------------------------------------------------
@@ -70,10 +70,6 @@ export default function Router() {
       element: <UpdateProfile />,
     },
     {
-      path: '/edit-product/:productId',
-      element: <EditProducts />,
-    },
-    {
       path: '/add-product',
       element: <AddProducts />,
       // element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <AddProducts /> : <Navigate to="/404" />,
@@ -87,12 +83,16 @@ export default function Router() {
       element: <Pos />,
     },
     {
-      path: '/update-profile-user',
-      element: <UpdateProfileUser />,
-    },
-    {
       path: '/add-raw',
       element: <AddRaw />,
+    },
+    {
+      path: '/edit-raw/:rawId',
+      element: <EditRaw />,
+    },
+    {
+      path: '/edit-product/:productId',
+      element: <EditProducts />,
     },
   ]);
 

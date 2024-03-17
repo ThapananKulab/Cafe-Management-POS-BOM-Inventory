@@ -27,6 +27,9 @@ export default function RawPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
+  const editRaw = (rawId) => {
+    navigate(`/edit-raw/${rawId}`);
+  };
 
   // const categories = [
   //   { value: 'เย็น', label: 'เย็น' },
@@ -145,6 +148,7 @@ export default function RawPage() {
                         <TableCell align="center">{raw.rawquantity}</TableCell>
                         <TableCell align="center">{raw.rawunit}</TableCell>
                         <TableCell align="center">{raw.rawunitprice}</TableCell>
+
                         <TableCell>
                           <a
                             href="#"
@@ -160,7 +164,7 @@ export default function RawPage() {
                             icon="mingcute:edit-line"
                             width="2em"
                             height="2em"
-                            onClick={() => confirmDelete(raw._id)}
+                            onClick={() => editRaw(raw._id)} // Updated this line
                           />
                           <a
                             href="#"

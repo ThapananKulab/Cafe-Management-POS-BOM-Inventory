@@ -37,6 +37,16 @@ const navConfig = [
     path: '/raw',
     icon: icon('ic_raw'),
   },
+  {
+    title: 'ออเดอร์',
+    // path: '/raw',
+    icon: icon('ic-order'),
+  },
+  {
+    title: 'แจ้งเตือน',
+    // path: '/raw',
+    icon: icon('ic-notic'),
+  },
   // {
   //   title: 'blog',
   //   path: '/blog',

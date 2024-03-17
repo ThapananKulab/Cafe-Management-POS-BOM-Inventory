@@ -17,18 +17,42 @@ const navConfigUser = [
   // },
   {
     title: 'สินค้า',
-    path: '/product',
+    // path: '/product',
     icon: icon('ic_products'),
+    subItems: [
+      {
+        title: 'จัดการสินค้า',
+        path: '/product',
+        icon: icon('ic_productsM'),
+      },
+    ],
   },
-  {
-    title: 'blog',
-    path: '/blog',
-    icon: icon('ic_blog'),
-  },
+  // {
+  //   title: 'blog',
+  //   path: '/blog',
+  //   icon: icon('ic_blog'),
+  // },
   {
     title: 'วัตถุดิบ',
-    path: '/raw',
+    // path: '/raw',
     icon: icon('ic_raw'),
+    subItems: [
+      {
+        title: 'จัดการวัตถุดิบ',
+        path: '/raw',
+        icon: icon('ic_milk'),
+      },
+    ],
+  },
+  {
+    title: 'ออเดอร์',
+    // path: '/raw',
+    icon: icon('ic-order'),
+  },
+  {
+    title: 'แจ้งเตือน',
+    // path: '/raw',
+    icon: icon('ic-notic'),
   },
   {
     title: 'ขายสินค้า',
