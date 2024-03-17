@@ -1,5 +1,6 @@
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
+import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -204,6 +205,7 @@ function NavItem({ item }) {
   //     </ListItemButton>
   //   );
   // }
+
   return (
     <>
       <ListItemButton
@@ -237,12 +239,17 @@ function NavItem({ item }) {
           <Box
             component="span"
             sx={{
-              transform: open ? 'rotate(90deg)' : 'rotate(0)',
+              display: 'flex',
+              alignItems: 'center',
+              transform: open ? 'rotate(0deg)' : 'rotate(-90deg)',
               transition: 'transform 0.2s',
             }}
           >
-            {/* เปลี่ยนไปใช้ไอคอนของคุณเองที่นี่ */}
-            {/* ตัวอย่าง: ไอคอน ">" ที่หมุนเมื่อ open */}
+            {open ? (
+              <Icon icon="mdi:arrow-down-drop-circle" />
+            ) : (
+              <Icon icon="mdi:arrow-down-drop-circle" />
+            )}
           </Box>
         )}
       </ListItemButton>

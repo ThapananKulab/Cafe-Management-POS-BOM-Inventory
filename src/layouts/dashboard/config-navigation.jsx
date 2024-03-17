@@ -29,13 +29,27 @@ const navConfig = [
   // },
   {
     title: 'สินค้า',
-    path: '/product',
+    // path: '/product',
     icon: icon('ic_products'),
+    subItems: [
+      {
+        title: 'จัดการสินค้า',
+        path: '/product',
+        icon: icon('ic_productsM'),
+      },
+    ],
   },
   {
     title: 'วัตถุดิบ',
-    path: '/raw',
+    // path: '/raw',
     icon: icon('ic_raw'),
+    subItems: [
+      {
+        title: 'จัดการวัตถุดิบ',
+        path: '/raw',
+        icon: icon('ic_milk'),
+      },
+    ],
   },
   {
     title: 'ออเดอร์',

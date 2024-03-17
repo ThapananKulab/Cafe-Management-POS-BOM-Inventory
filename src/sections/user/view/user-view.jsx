@@ -90,6 +90,10 @@ export default function UserPage() {
     });
   };
 
+  const editUser = (userId) => {
+    navigate(`/edit-user/${userId}`);
+  };
+
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(search.toLowerCase()) ||
@@ -201,9 +205,7 @@ export default function UserPage() {
                                 icon="mingcute:edit-line"
                                 width="2em"
                                 height="2em"
-                                onClick={() =>
-                                  navigate('/update-profile-user', { state: { userId: user._id } })
-                                }
+                                onClick={() => editUser(user._id)} // Updated this line
                               />
                               <Icon
                                 icon="mingcute:delete-fill"
