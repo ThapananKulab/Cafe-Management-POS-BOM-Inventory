@@ -162,9 +162,9 @@ export default function ProductPage() {
                         {/* <TableCell>{product._id}</TableCell> */}
                         <TableCell>
                           <img
-                            src={`https://cafe-project-server11.onrender.com/images-product/${product.image}`}
+                            src={product.image.url}
                             alt={product.productname}
-                            style={{ width: 150, height: 'auto' }}
+                            style={{ width: 100, height: 'auto' }}
                           />
                         </TableCell>
                         <TableCell>{product.productname}</TableCell>
