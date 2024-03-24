@@ -1,9 +1,15 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Box,
+  Grid,
+  Paper,
+  Stack,
   Button,
   Select,
   MenuItem,
@@ -13,9 +19,13 @@ import {
   InputLabel,
   IconButton,
   FormControl,
+  InputAdornment,
 } from '@mui/material';
 
 function AddRecipe() {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [inventoryItems, setInventoryItems] = useState([]);
   const [recipe, setRecipe] = useState({
     title: '',
@@ -39,40 +49,74 @@ function AddRecipe() {
     }));
   };
 
-  // Handle adding, updating, and removing ingredients
-  // Similar to previously shared methods
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { ingredients } = recipe;
+
+    // ตรวจสอบว่ามีส่วนผสมซ้ำกันในรายการหรือไม่
+    const uniqueIngredients = new Set();
+    const hasDuplicate = ingredients.some((ingredient) => {
+      if (uniqueIngredients.has(ingredient.inventoryItemId)) {
+        return true; // พบส่วนผสมซ้ำ
+      }
+      uniqueIngredients.add(ingredient.inventoryItemId);
+      return false;
+    });
+    if (hasDuplicate) {
+      toast.error('ห้ามมีส่วนผสมซ้ำ', {
+        autoClose: 1000,
+      });
+      return;
+    }
     try {
+      const recipesResponse = await axios.get('http://localhost:3333/api/recipes/all');
+      const recipes = recipesResponse.data;
+      const isDuplicate = recipes.some(
+        (existingRecipe) => existingRecipe.name.toLowerCase() === recipe.title.toLowerCase()
+      );
+
+      if (isDuplicate) {
+        toast.error('ชื่อสูตรนี้มีอยู่แล้ว', {
+          autoClose: 1000,
+        });
+        return;
+      }
+
       const response = await axios.post('http://localhost:3333/api/recipes/add', {
-        // Ensure endpoint matches
-        name: recipe.title, // Adjust according to your schema
+        name: recipe.title,
         ingredients: recipe.ingredients.map((ingredient) => ({
           inventoryItemId: ingredient.inventoryItemId,
           quantity: ingredient.quantity,
         })),
       });
+
       console.log(response.data);
-      alert('Recipe added successfully!');
+      toast.success('เพิ่มสำเร็จ', {
+        autoClose: 1000,
+      });
     } catch (error) {
       console.error('Error adding recipe:', error);
-      alert('Failed to add recipe.');
+      toast.error('เพิ่มสูตรไม่สำเร็จ', {
+        autoClose: 1000,
+      });
     }
   };
 
-  // Function to handle adding a new ingredient field
   const addIngredient = () => {
     setRecipe((prevRecipe) => ({
       ...prevRecipe,
-      ingredients: [...prevRecipe.ingredients, { inventoryItemId: '', quantity: 1 }],
+      ingredients: [...prevRecipe.ingredients, { inventoryItemId: '', quantity: 1, name: '' }],
     }));
   };
 
-  // Function to handle updating an ingredient
   const updateIngredient = (index, field, value) => {
     const updatedIngredients = recipe.ingredients.map((ingredient, i) => {
       if (i === index) {
+        if (field === 'inventoryItemId') {
+          const selectedItem = inventoryItems.find((inventoryItem) => inventoryItem._id === value);
+          const newName = selectedItem ? selectedItem.name : '';
+          return { ...ingredient, [field]: value, name: newName };
+        }
         return { ...ingredient, [field]: value };
       }
       return ingredient;
@@ -80,7 +124,6 @@ function AddRecipe() {
     setRecipe({ ...recipe, ingredients: updatedIngredients });
   };
 
-  // Function to remove an ingredient
   const removeIngredient = (index) => {
     setRecipe((prevRecipe) => ({
       ...prevRecipe,
@@ -90,54 +133,84 @@ function AddRecipe() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
-      <Typography variant="h4" gutterBottom>
-        เพิ่มสูตรเมนู
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        {/* ย้าย TextField สำหรับ Title ไปอยู่ตรงนี้เพื่อให้อยู่บนสุด */}
-        <TextField
-          label="Title"
-          name="title"
-          value={recipe.title}
-          onChange={handleChange}
-          fullWidth
-          sx={{ mb: 2 }} // ใส่ margin-bottom เล็กน้อยเพื่อให้มีระยะห่างกับฟิลด์ถัดไป
-        />
-        {/* Ingredient selection fields */}
-        {recipe.ingredients.map((ingredient, index) => (
-          <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel>เพิ่มส่วนประกอบ</InputLabel>
-              <Select
-                value={ingredient.inventoryItemId}
-                label="Inventory Item"
-                onChange={(e) => updateIngredient(index, 'inventoryItemId', e.target.value)}
-              >
-                {inventoryItems.map((item) => (
-                  <MenuItem key={item._id} value={item._id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="จำนวนที่ใช้ หน่วย กรัม "
-              type="number"
-              value={ingredient.quantity}
-              onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
-            />
-            <IconButton onClick={() => removeIngredient(index)}>
-              <Icon icon="fluent:delete-32-filled" />
-            </IconButton>
-          </Box>
-        ))}
-        <Button onClick={addIngredient} variant="contained" sx={{ mt: 2, mb: 2 }}>
-          Add Ingredient
-        </Button>
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-          Submit
-        </Button>
-      </Box>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        {' '}
+        {/* เพิ่ม Paper เพื่อให้มีพื้นหลังและเงา */}
+        <Typography variant="h4" gutterBottom component="div">
+          <StyledDiv>เพิ่มสูตรเมนู</StyledDiv>
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            label="ชื่อสูตร"
+            name="title"
+            value={recipe.title}
+            onChange={handleChange}
+            fullWidth
+            sx={{ mb: 3 }} // ปรับ margin-bottom
+          />
+          {/* Ingredient selection fields */}
+          {recipe.ingredients.map((ingredient, index) => (
+            <Grid container spacing={2} alignItems="center" key={index} sx={{ mb: 2 }}>
+              <Grid item xs={7}>
+                <FormControl fullWidth>
+                  <InputLabel>เพิ่มส่วนประกอบ</InputLabel>
+                  <Select
+                    value={ingredient.inventoryItemId}
+                    label="Inventory Item"
+                    onChange={(e) => updateIngredient(index, 'inventoryItemId', e.target.value)}
+                  >
+                    {inventoryItems.map((item) => (
+                      <MenuItem key={item._id} value={item._id}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={3}>
+                <TextField
+                  label="จำนวน"
+                  type="number"
+                  value={ingredient.quantity}
+                  onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
+                  fullWidth
+                  // Display suffix based on the ingredient's name
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {ingredient.name &&
+                          ((ingredient.name.includes('น้ำ') || ingredient.name.includes('นม')) &&
+                          !ingredient.name.includes('น้ำตาล') &&
+                          !ingredient.name.includes('ทราย')
+                            ? 'ml'
+                            : 'กรัม')}
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton onClick={() => removeIngredient(index)} color="error">
+                  <Icon icon="streamline:delete-1-solid" />
+                </IconButton>
+              </Grid>
+            </Grid>
+          ))}
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              onClick={addIngredient}
+              variant="outlined"
+              startIcon={<Icon icon="akar-icons:plus" />}
+            >
+              เพิ่ม
+            </Button>
+            <Button type="submit" variant="contained" color="primary">
+              ตกลง
+            </Button>
+            <ToastContainer />
+          </Stack>
+        </Box>
+      </Paper>
     </Container>
   );
 }

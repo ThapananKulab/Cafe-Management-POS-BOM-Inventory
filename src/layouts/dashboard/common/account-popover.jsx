@@ -73,8 +73,7 @@ export default function AccountPopover() {
   const handleUpdateAdmin = () => {
     router.push('/update-profile');
   };
-  const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images-user/${user.image}` : null;
-
+  // const imageUrl = user?.image ? `https://cafe-project-server11.onrender.com/images-user/${user.image}` : null;
 
   return (
     <>
@@ -90,9 +89,8 @@ export default function AccountPopover() {
           }),
         }}
       >
-        
         <Avatar
-          src={imageUrl}
+          src={user?.image?.url}
           alt={user?.username}
           sx={{
             width: 36,
@@ -130,7 +128,6 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-
         <MenuItem onClick={handleUpdateAdmin} sx={{ typography: 'body2', color: 'main', py: 1.5 }}>
           แก้ไขโปรไฟล์
         </MenuItem>
@@ -141,7 +138,7 @@ export default function AccountPopover() {
           onClick={handleLogout}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
-          Logout
+          ออกจากระบบ
         </MenuItem>
       </Popover>
     </>

@@ -33,6 +33,11 @@ const navConfig = [
     icon: icon('ic_products'),
     subItems: [
       {
+        title: 'จัดการเมนู',
+        path: '/menu',
+        icon: icon('ic-drink-a'),
+      },
+      {
         title: 'จัดการสินค้า',
         path: '/product',
         icon: icon('ic_productsM'),
@@ -44,15 +49,32 @@ const navConfig = [
       },
     ],
   },
+  // {
+  //   title: 'วัตถุดิบ',
+  //   // path: '/raw',
+  //   icon: icon('ic_raw'),
+  //   subItems: [
+  //     {
+  //       title: 'จัดการวัตถุดิบ',
+  //       path: '/raw',
+  //       icon: icon('ic_milk'),
+  //     },
+  //   ],
+  // },
   {
-    title: 'วัตถุดิบ',
+    title: 'สูตรเครื่องดื่ม',
     // path: '/raw',
-    icon: icon('ic_raw'),
+    icon: icon('ic-raw2'),
     subItems: [
       {
         title: 'จัดการวัตถุดิบ',
-        path: '/raw',
-        icon: icon('ic_milk'),
+        path: '/invent',
+        icon: icon('ic-manage'),
+      },
+      {
+        title: 'จัดการสูตรเครื่องดื่ม',
+        path: '/recipe',
+        icon: icon('ic-rec'),
       },
     ],
   },

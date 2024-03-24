@@ -9,6 +9,7 @@ import { Box, Button, Select, MenuItem, TextField, InputLabel, FormControl } fro
 import './style.css';
 
 const UserForm = () => {
+  // State hooks for form fields
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [firstname, setFirstname] = useState('');
@@ -17,9 +18,10 @@ const UserForm = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [role, setRole] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(null); // For storing the uploaded image file
   const navigate = useNavigate();
 
+  // Possible roles - Adjust according to your application's needs
   const roles = [
     { value: 'พนักงาน', label: 'พนักงาน' },
     { value: 'เจ้าของร้าน', label: 'เจ้าของร้าน' },
@@ -33,6 +35,7 @@ const UserForm = () => {
     e.preventDefault();
 
     const userFormData = new FormData();
+    // Append user details to the form data
     userFormData.append('username', username);
     userFormData.append('password', password);
     userFormData.append('firstname', firstname);
@@ -41,58 +44,41 @@ const UserForm = () => {
     userFormData.append('phone', phone);
     userFormData.append('address', address);
     userFormData.append('role', role);
-    userFormData.append('image', image); // Always append the image
+    if (image) userFormData.append('image', image); // Append the image if present
 
     try {
       const response = await axios.post(
-        'https://cafe-project-server11.onrender.com/api/users/insertReact',
-        // 'http://localhost:3333/api/users/insertReact',
+        'https://cafe-project-server11.onrender.com/api/employees/add-user',
         userFormData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
-
-      console.log('Server Response:', response.data);
 
       if (response.data.success) {
         Swal.fire({
           icon: 'success',
-          title: `เพิ่ม ${username} สำเร็จ`,
+          title: 'เพิ่มสำเร็จ',
           showConfirmButton: false,
           timer: 1500,
         });
         navigate('/user');
-      } else if (response.data.username && username !== response.data.username) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Warning',
-          text: 'Invalid username. Please provide a valid username.',
-        });
       } else {
-        console.log('Error Message:', response.data.message);
         Swal.fire({
           icon: 'error',
-          title: 'ผิดพลาด',
+          title: 'Error',
           text: response.data.message,
         });
       }
     } catch (error) {
-      console.error('Error registering user:', error);
-
-      if (error.response && error.response.data) {
-        console.log('Server Error Response:', error.response.data);
-        const errorMessage = error.response.data.message;
-        Swal.fire({
-          icon: 'error',
-          title: 'ผิดพลาด',
-          text: errorMessage || 'Unknown error occurred',
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'ผิดพลาด',
-          text: 'Unknown error occurred',
-        });
-      }
+      console.error('Error creating user:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred while creating the user.',
+      });
     }
   };
 
@@ -118,7 +104,7 @@ const UserForm = () => {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    label="Username"
+                    label="ชื่อบัญชีผู้ใช้"
                     variant="outlined"
                     fullWidth
                     required
@@ -129,7 +115,7 @@ const UserForm = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    label="Password"
+                    label="รหัสผ่าน"
                     variant="outlined"
                     fullWidth
                     required
@@ -142,7 +128,7 @@ const UserForm = () => {
                   type="text"
                   value={firstname}
                   onChange={(e) => setFirstname(e.target.value)}
-                  label="First Name"
+                  label="ชื่อ"
                   variant="outlined"
                   fullWidth
                   required
@@ -151,7 +137,7 @@ const UserForm = () => {
                   type="text"
                   value={lastname}
                   onChange={(e) => setLastname(e.target.value)}
-                  label="Last Name"
+                  label="นามสกุล"
                   variant="outlined"
                   fullWidth
                   required
@@ -162,13 +148,13 @@ const UserForm = () => {
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  label="Phone"
+                  label="เบอร์โทรศัพท์"
                   variant="outlined"
                   fullWidth
                   required
                 />
                 <FormControl fullWidth variant="outlined" required>
-                  <InputLabel>Role</InputLabel>
+                  <InputLabel>ตำแหน่ง</InputLabel>
                   <Select value={role} onChange={(e) => setRole(e.target.value)} label="Role">
                     {roles.map((userRole) => (
                       <MenuItem key={userRole.value} value={userRole.value}>
@@ -197,7 +183,7 @@ const UserForm = () => {
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  label="Address"
+                  label="ที่อยู่"
                   variant="outlined"
                   fullWidth
                   required

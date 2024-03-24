@@ -11,6 +11,8 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const ProductPage = lazy(() => import('src/pages/product'));
 export const RawPage = lazy(() => import('src/pages/raw'));
+export const RecipePage = lazy(() => import('src/pages/recipe'));
+export const InventPage = lazy(() => import('src/pages/invent'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const UpdateProfile = lazy(() => import('src/pages/update-profile'));
 export const EditProducts = lazy(() => import('src/pages/edit-product'));
@@ -25,6 +27,9 @@ export const TestOL = lazy(() => import('src/pages/test-ol'));
 export const TestMenu = lazy(() => import('src/pages/test-menu'));
 export const TestReceip = lazy(() => import('src/pages/test-receip'));
 export const TestInvent = lazy(() => import('src/pages/test-invent'));
+export const MenuShow = lazy(() => import('src/pages/menu-view'));
+export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
+export const Post = lazy(() => import('src/pages/post'));
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +40,7 @@ export default function Router() {
 
     try {
       const decoded = jwtDecode(token);
-      return decoded.user.role; // ตัวอย่างเช่น เราสมมติว่า structure ของ decoded token มี user.role
+      return decoded.user.role;
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
@@ -60,6 +65,15 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'product', element: <ProductPage /> },
         { path: 'raw', element: <RawPage /> },
+        { path: 'invent', element: <InventPage /> },
+        {
+          path: '/recipe',
+          element: <RecipePage />,
+        },
+        {
+          path: '/menu',
+          element: <MenuShow />,
+        },
       ],
     },
     { index: true, element: <LoginPage /> },
@@ -113,16 +127,24 @@ export default function Router() {
       element: <TestOL />,
     },
     {
-      path: '/test-menu',
+      path: '/manage/menu',
       element: <TestMenu />,
     },
     {
-      path: '/test-receip',
+      path: '/manage/recipe',
       element: <TestReceip />,
     },
     {
-      path: '/test-invent',
+      path: '/manage/invent',
       element: <TestInvent />,
+    },
+    {
+      path: '/tp',
+      element: <TestPromtpay />,
+    },
+    {
+      path: '/sale/pos',
+      element: <Post />,
     },
   ]);
 

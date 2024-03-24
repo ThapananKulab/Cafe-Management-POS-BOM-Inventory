@@ -62,7 +62,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://cafe-project-server11.onrender.com/api/products')
+      .get('https://cafe-project-server11.onrender.com/api/menus/allMenus')
       .then((response) => {
         console.log(response.data);
         setProducts(response.data);
@@ -98,7 +98,7 @@ const CartTemplate = () => {
     setCartItems(newCartItems);
 
     setOpenAddSnackbar(true);
-    setAddMessage(`${productToAdd.productname} added to cart`);
+    setAddMessage(`${productToAdd.name} added to cart`);
   };
 
   const calculateTotalPrice = (items) =>
@@ -202,10 +202,10 @@ const CartTemplate = () => {
           {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
               <Card>
-                <CardMedia style={{ height: 140 }} image={product.image.url} title={product.name} />
+                <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="h2">
-                    {product.productname}
+                    {product.name}
                   </Typography>
                   <Typography variant="body2" color="textSecondary" component="p">
                     {product.type}
@@ -219,20 +219,14 @@ const CartTemplate = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  {product.quantity > 0 ? (
-                    <Button
-                      size="medium"
-                      color="primary"
-                      onClick={() => handleAddToCart(product)}
-                      style={{ minWidth: 'auto', padding: '6px 12px' }}
-                    >
-                      <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                    </Button>
-                  ) : (
-                    <Typography variant="body2" style={{ color: 'red' }}>
-                      สินค้าหมด
-                    </Typography>
-                  )}
+                  <Button
+                    size="medium"
+                    color="primary"
+                    onClick={() => handleAddToCart(product)}
+                    style={{ minWidth: 'auto', padding: '6px 12px' }}
+                  >
+                    <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
+                  </Button>
                 </CardActions>
 
                 <CardActions>
@@ -277,7 +271,7 @@ const CartTemplate = () => {
                 }
               >
                 <ListItemText
-                  primary={`${item.productname} x ${item.quantity}`}
+                  primary={`${item.name} x ${item.quantity}`}
                   secondary={`฿ ${item.price}`}
                 />
               </ListItem>

@@ -44,11 +44,7 @@ const UpdateUserPage = () => {
           setPhone(userData.phone || '');
           setAddress(userData.address || '');
           setRole(userData.role || '');
-          setCurrentImage(
-            userData.image
-              ? `https://cafe-project-server11.onrender.com/images-user/${userData.image}`
-              : null
-          );
+          setCurrentImage(userData.image ? userData.image.url : null);
         } else {
           localStorage.removeItem('token');
           Swal.fire({
@@ -90,16 +86,16 @@ const UpdateUserPage = () => {
       formData.append('address', address);
       formData.append('role', role);
       if (selectedImage) {
-        formData.append('image', selectedImage); // ตรวจสอบชื่อ field ที่ถูกต้องสำหรับรูปภาพ
+        formData.append('image', selectedImage);
       }
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://cafe-project-server11.onrender.com/api/users/updateProfile',
+        'https://cafe-project-server11.onrender.com/api/employees/update-profile',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`, // Make sure to include the token in the authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -118,11 +114,11 @@ const UpdateUserPage = () => {
   return (
     <Box
       sx={{
-        height: '100vh', // ตั้งค่าความสูงของ Box ให้เต็มหน้าจอ
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center', // ให้ content อยู่กึ่งกลางแนวตั้ง
-        alignItems: 'center', // ให้ content อยู่กึ่งกลางแนวนอน
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       {' '}
@@ -133,7 +129,7 @@ const UpdateUserPage = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            width: 1, // Take up 100% of the Container width
+            width: 1,
           }}
         >
           <Box mt={10}>{}</Box>
@@ -147,15 +143,15 @@ const UpdateUserPage = () => {
                   src={image}
                   alt="Current"
                   style={{
-                    maxWidth: '100px',
-                    maxHeight: '100px',
-                    borderRadius: '50%',
+                    width: '100px', // กำหนดขนาดกว้าง
+                    height: '100px', // กำหนดขนาดสูงให้เท่ากับกว้างเพื่อให้เป็นวงกลม
+                    borderRadius: '50%', // ทำให้ภาพเป็นรูปวงกลม
                     objectFit: 'cover',
                     border: '2px solid #ddd',
                     padding: '5px',
                     backgroundColor: '#fff',
-                    display: 'block', // Ensure the image is a block-level element to adhere to textAlign center
-                    marginLeft: 'auto', // These two lines center the image if its container is flex.
+                    display: 'block',
+                    marginLeft: 'auto',
                     marginRight: 'auto',
                   }}
                 />

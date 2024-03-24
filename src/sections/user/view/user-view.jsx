@@ -29,25 +29,6 @@ export default function UserPage() {
     font-family: 'Prompt', sans-serif;
   `;
   const navigate = useNavigate();
-  // const style = {
-  //   position: 'absolute',
-  //   top: '50%',
-  //   left: '50%',
-  //   transform: 'translate(-50%, -50%)',
-  //   width: 400,
-  //   bgcolor: 'background.paper', // สามารถเปลี่ยนเป็นสีที่ต้องการ เช่น 'white', '#f7f7f7'
-  //   borderRadius: '16px', // ทำให้มุมโค้งมน
-  //   border: 'none', // ถ้าต้องการลบขอบด้านนอกออก หรือปรับเป็น '1px solid #e0e0e0' เพื่อดูเรียบร้อย
-  //   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // ปรับค่าเงาให้ดูนุ่มนวลขึ้น
-  //   p: 4,
-  // };
-
-  // const categories = [
-  //   { value: 'cool', label: 'เย็น' },
-  //   { value: 'hot', label: 'ร้อน' },
-  //   { value: 'mix', label: 'ปั่น' },
-  //   // เพิ่มประเภทสินค้าตามที่ต้องการ
-  // ];
 
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
@@ -139,15 +120,34 @@ export default function UserPage() {
           </StyledDiv>
         </Stack>
 
-        <TextField
-          label="ค้นหาผู้ใช้งาน เช่น สมประสงค์"
-          variant="outlined"
-          size="small" // ทำให้ TextField มีขนาดเล็กลง
-          margin="normal"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ maxWidth: '50%' }}
-        />
+        <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+          <TextField
+            label="ค้นหาผู้ใช้งาน เช่น สมประสงค์"
+            variant="outlined"
+            size="small" // ทำให้ TextField มีขนาดเล็กลง
+            margin="normal"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ maxWidth: '50%' }}
+          />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              window.location.reload(); // รีเฟรชหน้าเว็บ
+            }}
+            sx={{
+              borderColor: 'primary.main', // ปรับสีขอบของปุ่มให้ตรงกับสีหลัก
+              color: 'primary.main', // ปรับสีข้อความ/ไอคอนให้ตรงกับสีหลัก
+              '&:hover': {
+                backgroundColor: 'transparent', // ให้พื้นหลังยังคงใสเมื่อ hover
+                borderColor: 'primary.dark', // ตัวอย่างการปรับสีขอบปุ่มเมื่อ hover
+              },
+            }}
+          >
+            <Icon icon="ic:baseline-refresh" />
+          </Button>
+        </Stack>
 
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -184,10 +184,7 @@ export default function UserPage() {
                         <TableCell>{index + 1}</TableCell>
                         {/* <TableCell>{user._id}</TableCell> */}
                         <TableCell>
-                          <img
-                            src={`https://cafe-project-server11.onrender.com/images-user/${user.image}`}
-                            alt={user.username}
-                          />
+                          <img src={user.image} alt={user.username} />
                         </TableCell>
                         <TableCell>{user.username}</TableCell>
                         <TableCell>

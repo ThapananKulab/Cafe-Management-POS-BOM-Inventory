@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
-import { useTheme } from '@mui/material/styles';
 import {
   Grid,
   Paper,
@@ -24,10 +23,13 @@ import {
 
 import Iconify from 'src/components/iconify';
 
-export default function ProductPage() {
+export default function InventPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
+  const editRaw = (rawId) => {
+    navigate(`/edit-raw/${rawId}`);
+  };
 
   // const categories = [
   //   { value: 'เย็น', label: 'เย็น' },
@@ -35,29 +37,26 @@ export default function ProductPage() {
   //   { value: 'ปั่น', label: 'ปั่น' },
   // ];
 
-  const [products, setProducts] = useState([]);
+  const [raws, setRaws] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
-  const theme = useTheme(); // ใช้ useTheme เพื่อเข้าถึง theme
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchRaws = async () => {
       try {
-        const response = await axios.get('https://cafe-project-server11.onrender.com/api/products');
-        setProducts(response.data);
+        const response = await axios.get(
+          'https://cafe-project-server11.onrender.com/api/inventoryitems/all'
+        );
+        setRaws(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchProducts();
+    fetchRaws();
   }, []);
 
-  const editProduct = (productId) => {
-    navigate(`/edit-product/${productId}`);
-  };
-
-  const confirmDelete = (productId) => {
+  const confirmDelete = (rawId) => {
     Swal.fire({
       title: 'คุณต้องการลบหรือไม่ ?',
       icon: 'warning',
@@ -69,10 +68,10 @@ export default function ProductPage() {
       if (result.isConfirmed) {
         try {
           await axios.delete(
-            `https://cafe-project-server11.onrender.com/api/products/${productId}`
+            `https://cafe-project-server11.onrender.com/api/inventoryitems/delete/${rawId}`
           );
           Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
-          setProducts(products.filter((product) => product._id !== productId));
+          setRaws(raws.filter((raw) => raw._id !== rawId));
         } catch (error) {
           console.error('There was an error deleting the product:', error);
           Swal.fire('Error!', 'There was an error deleting your product.', 'error');
@@ -81,44 +80,43 @@ export default function ProductPage() {
     });
   };
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.productname.toLowerCase().includes(search.toLowerCase()) ||
-      product.price.toString().toLowerCase().includes(search.toLowerCase()) ||
-      product.type.toLowerCase().includes(search.toLowerCase())
+  const filteredRaws = raws.filter(
+    (raw) =>
+      raw.name.toLowerCase().includes(search.toLowerCase()) || // Adjusted to 'name'
+      raw.quantityInStock.toString().toLowerCase().includes(search.toLowerCase()) || // Adjusted to 'quantityInStock'
+      raw.unit.toLowerCase().includes(search.toLowerCase()) || // No change needed here
+      raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()) // Adjusted to 'unitPrice'
   );
-
-  const getStatusComponent = (quantity) => {
-    if (quantity === 0) {
-      return <Typography style={{ color: 'red' }}>สินค้าหมด</Typography>;
-    }
-    if (quantity > 0) {
-      return <Typography style={{ color: 'green' }}>คงอยู่</Typography>;
-    }
-    return <Typography style={{ color: theme.palette.warning.main }}> กำลังดำเนินการ</Typography>;
-  };
-
   return (
     <div>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">
-            <StyledDiv>สินค้า</StyledDiv>
+            <StyledDiv>วัตถุดิบ</StyledDiv>
           </Typography>
           <StyledDiv>
+            <Button
+              variant="outlined"
+              color="inherit"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => navigate('/manage/invent')}
+            >
+              <StyledDiv>นำเข้าวัตถุดิบ</StyledDiv>
+            </Button>
+            &nbsp;
             <Button
               variant="contained"
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/add-product')}
+              onClick={() => navigate('/manage/invent')}
             >
-              <StyledDiv>เพิ่มสินค้า </StyledDiv>
+              <StyledDiv>เพิ่มวัตถุดิบ </StyledDiv>
             </Button>
           </StyledDiv>
         </Stack>
 
         <TextField
-          label="ค้นหาสินค้า เช่น ชาไทย"
+          label="ค้นหาวัตถุดิบ เช่น น้ำตาล"
           variant="outlined"
           size="small" // ทำให้ TextField มีขนาดเล็กลง
           margin="normal"
@@ -134,21 +132,19 @@ export default function ProductPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell>ลำดับ</TableCell>
-                    {/* <TableCell>ID</TableCell> */}
-                    <TableCell>รูปภาพ</TableCell>
-                    <TableCell>ชื่อสินค้า</TableCell>
-                    <TableCell align="right">ราคา</TableCell>
-                    <TableCell align="center">ประเภทสินค้า</TableCell>
-                    <TableCell align="center">จำนวนคงเหลือ</TableCell>
-                    <TableCell align="center">สถานะ</TableCell>
+                    {/* <TableCell align="center">ID</TableCell> */}
+                    <TableCell>ชื่อวัตถุดิบ</TableCell>
+                    <TableCell align="center">หน่วยนับ</TableCell>
+                    <TableCell align="center">จำนวน</TableCell>
+                    <TableCell align="center">ราคาต่อหน่วย</TableCell>
                     <TableCell align="left">จัดการ</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredProducts.length > 0 ? (
-                    filteredProducts.map((product, index) => (
+                  {filteredRaws.length > 0 ? (
+                    filteredRaws.map((raw, index) => (
                       <TableRow
-                        key={product._id}
+                        key={raw._id}
                         sx={{
                           '&:nth-of-type(odd)': {
                             backgroundColor: 'rgba(0, 0, 0, 0.02)',
@@ -159,25 +155,11 @@ export default function ProductPage() {
                         }}
                       >
                         <TableCell>{index + 1}</TableCell>
-                        {/* <TableCell>{product._id}</TableCell> */}
-                        <TableCell>
-                          <img
-                            src={product.image.url}
-                            alt={product.productname}
-                            style={{ width: 150, height: 'auto' }}
-                          />
-                        </TableCell>
-                        <TableCell>{product.productname}</TableCell>
-                        <TableCell align="right">{product.price}</TableCell>
-                        <TableCell align="center">{product.type}</TableCell>
-                        <TableCell align="center">
-                          <Typography>
-                            {product.quantity < 0 ? 0 : product.quantity}{' '}
-                            {/* Displays 0 if quantity is less than 0, otherwise displays the actual quantity */}
-                          </Typography>
-                        </TableCell>
-
-                        <TableCell align="center">{getStatusComponent(product.quantity)}</TableCell>
+                        {/* <TableCell>{raw._id}</TableCell> */}
+                        <TableCell>{raw.name}</TableCell>
+                        <TableCell align="center">{raw.unit}</TableCell>
+                        <TableCell align="center">{raw.quantityInStock}</TableCell>
+                        <TableCell align="center">{raw.unitPrice}</TableCell>
 
                         <TableCell>
                           <a
@@ -194,9 +176,8 @@ export default function ProductPage() {
                             icon="mingcute:edit-line"
                             width="2em"
                             height="2em"
-                            onClick={() => editProduct(product._id)} // Updated this line
+                            onClick={() => editRaw(raw._id)}
                           />
-
                           <a
                             href="#"
                             style={{ marginRight: '8px', display: 'inline-block' }}
@@ -210,7 +191,7 @@ export default function ProductPage() {
                             icon="mingcute:delete-fill"
                             width="2em"
                             height="2em"
-                            onClick={() => confirmDelete(product._id)}
+                            onClick={() => confirmDelete(raw._id)}
                           />
                         </TableCell>
                       </TableRow>
@@ -219,7 +200,7 @@ export default function ProductPage() {
                     <TableRow>
                       <TableCell colSpan={6} align="center">
                         <Typography variant="subtitle1" gutterBottom>
-                          <StyledDiv>ไม่พบสินค้า</StyledDiv>
+                          <StyledDiv>ไม่พบวัตถุดิบ</StyledDiv>
                         </Typography>
                       </TableCell>
                     </TableRow>
