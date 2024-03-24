@@ -31,6 +31,8 @@ export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/pos/post'));
 export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
+export const TestR = lazy(() => import('src/pages/test-r'));
+export const TestM = lazy(() => import('src/pages/test-m'));
 
 // ----------------------------------------------------------------------
 
@@ -150,6 +152,14 @@ export default function Router() {
     {
       path: '/sale/pos',
       element: <Post />,
+    },
+    {
+      path: '/test-m',
+      element: <TestM />,
+    },
+    {
+      path: '/test-r',
+      element: <TestR />,
     },
   ]);
 

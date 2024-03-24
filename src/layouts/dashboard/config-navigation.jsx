@@ -107,7 +107,7 @@ const navConfig = [
   // },
   {
     title: 'ขายสินค้า',
-    path: '/pos',
+    path: '/sale/pos',
     icon: icon('ic_sell'),
   },
 
