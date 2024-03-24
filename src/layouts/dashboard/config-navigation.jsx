@@ -49,6 +49,23 @@ const navConfig = [
       },
     ],
   },
+  {
+    title: 'วัตถุดิบ',
+    // path: '/invent',
+    icon: icon('ic_raw'),
+    subItems: [
+      {
+        title: 'จัดการวัตถุดิบ',
+        path: '/invent',
+        icon: icon('ic-manage'),
+      },
+      {
+        title: 'นำเข้าวัตถุดิบ',
+        path: '/manage/invent/update-stock',
+        icon: icon('ic-improduct'),
+      },
+    ],
+  },
   // {
   //   title: 'วัตถุดิบ',
   //   // path: '/raw',
@@ -66,11 +83,6 @@ const navConfig = [
     // path: '/raw',
     icon: icon('ic-raw2'),
     subItems: [
-      {
-        title: 'จัดการวัตถุดิบ',
-        path: '/invent',
-        icon: icon('ic-manage'),
-      },
       {
         title: 'จัดการสูตรเครื่องดื่ม',
         path: '/recipe',

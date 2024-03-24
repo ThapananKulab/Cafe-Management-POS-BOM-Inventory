@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,6 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Box,
+  Modal,
   Table,
   Paper,
   Stack,
@@ -38,6 +40,28 @@ function MenuTable() {
   const [filteredMenus, setFilteredMenus] = useState([]); // State to hold filtered menus
   const [searchQuery, setSearchQuery] = useState(''); // State to hold the search query
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
+  const [currentRecipe, setCurrentRecipe] = useState(null);
+
+  const [inventoryItems, setInventoryItems] = useState([]);
+
+  useEffect(() => {
+    // Fetch inventory items from your API
+    const fetchInventoryItems = async () => {
+      const { data } = await axios.get('http://localhost:3333/api/inventoryitems/all');
+      setInventoryItems(data);
+    };
+    fetchInventoryItems();
+  }, []);
+
+  const handleOpenModal = (selectedRecipe) => {
+    setCurrentRecipe(selectedRecipe);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -102,20 +126,32 @@ function MenuTable() {
   };
 
   const handleDeleteSelected = async () => {
-    try {
-      await Promise.all(
-        selected.map((id) => axios.delete(`http://localhost:3333/api/menus/${id}`))
-      );
-      toast.success(`${selected.length} item(s)ลบสำเร็จ`);
-      setSelected([]);
-      const response = await axios.get('http://localhost:3333/api/menus/allMenus');
-      setMenus(response.data);
-    } catch (error) {
-      console.error('Failed to delete selected menus:', error);
-
-      // Show an error toast
-      toast.error('Failed to delete selected menu items. Please try again.');
-    }
+    Swal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ไม่, ยกเลิก!',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // ลบข้อมูลด้วยการเรียก API
+          await Promise.all(
+            selected.map((id) => axios.delete(`http://localhost:3333/api/menus/${id}`))
+          );
+          toast.success(`${selected.length} item(s)ลบสำเร็จ`);
+          setSelected([]);
+          const response = await axios.get('http://localhost:3333/api/menus/allMenus');
+          setMenus(response.data);
+        } catch (error) {
+          console.error('Failed to delete selected menus:', error);
+          Swal.fire('เกิดข้อผิดพลาด!', 'ไม่สามารถลบข้อมูลได้. กรุณาลองใหม่อีกครั้ง.', 'error');
+        }
+      }
+    });
   };
 
   return (
@@ -217,11 +253,72 @@ function MenuTable() {
                       </TableCell>
                       <TableCell>{menu.description}</TableCell>
                       <TableCell>{`${menu.price.toFixed(2)} บาท`}</TableCell>
-                      <TableCell>{menu.recipe?.name}</TableCell>
+                      <TableCell
+                        onClick={() => handleOpenModal(menu.recipe)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <Iconify icon="mingcute:paper-fill" width={24} height={24} />
+                      </TableCell>
                     </TableRow>
                   );
                 })}
             </TableBody>
+            <Modal
+              open={openModal}
+              onClose={handleCloseModal}
+              aria-labelledby="recipe-modal-title"
+              aria-describedby="recipe-modal-description"
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 400,
+                  bgcolor: 'background.paper',
+                  boxShadow: 24,
+                  p: 4,
+                }}
+              >
+                <Typography id="recipe-modal-title" variant="h6" component="h2">
+                  {currentRecipe?.name}
+                </Typography>
+                <Typography id="recipe-modal-description" sx={{ mt: 2 }}>
+                  Ingredients:
+                  <ul>
+                    {currentRecipe?.ingredients.map((ingredient) => {
+                      const inventoryItem = inventoryItems.find(
+                        (item) => item._id === ingredient.inventoryItemId.toString()
+                      );
+
+                      // Default unit is 'กรัม'.
+                      let unit = 'กรัม';
+
+                      // Check if the inventory item name suggests it's a liquid, but not a type of sugar.
+                      if (
+                        inventoryItem?.name.includes('น้ำ') ||
+                        inventoryItem?.name.includes('นม')
+                      ) {
+                        if (
+                          !inventoryItem?.name.includes('น้ำตาล') &&
+                          !inventoryItem?.name.includes('ทราย')
+                        ) {
+                          unit = 'ml';
+                        }
+                      }
+
+                      return (
+                        <li key={ingredient.inventoryItemId}>
+                          {inventoryItem?.name}: {ingredient.quantity} {unit}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </Typography>
+                {/* If you have a method or other recipe details, you can display them here */}
+              </Box>
+            </Modal>
           </Table>
         </TableContainer>
         <TablePagination

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
-import { styled } from '@mui/styles';
+// import { styled } from '@mui/styles';
 import {
   Box,
   Grid,
@@ -32,16 +32,16 @@ function InventoryManager() {
 `;
   const navigate = useNavigate();
 
-  const MyButton = styled(Button)({
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    height: 48,
-    padding: '0 30px',
-  });
-  // ฟังก์ชันสำหรับการกลับไปยังหน้าก่อนหน้า
+  // const MyButton = styled(Button)({
+  //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  //   border: 0,
+  //   borderRadius: 3,
+  //   boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  //   color: 'white',
+  //   height: 48,
+  //   padding: '0 30px',
+  // });
+
   const goBack = () => navigate(-1);
   const [inventoryItems, setInventoryItems] = useState([]);
   const [newItem, setNewItem] = useState({
@@ -73,8 +73,6 @@ function InventoryManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if an item with the same name already exists
     const itemExists = inventoryItems.some(
       (item) => item.name.toLowerCase() === newItem.name.toLowerCase()
     );
@@ -83,12 +81,18 @@ function InventoryManager() {
       toast.error(`มี "${newItem.name}" อยู่แล้ว`);
       return; // Stop the function from proceeding further
     }
+    let totalQuantity = parseInt(newItem.quantityInStock, 10); // แปลงเป็นตัวเลขฐานสิบ
 
-    let totalQuantity = newItem.quantityInStock;
-
-    // Calculate totalQuantity if unit is 'ชิ้น'
-    if (newItem.unit === 'ชิ้น') {
-      totalQuantity = newItem.piecesPerUnit * newItem.numberOfUnits;
+    // ตรวจสอบถ้า 'numberOfUnits' หรือ 'piecesPerUnit' เป็น 0 หรือเป็นค่าที่ไม่ถูกต้อง
+    if (
+      ['ถุง', 'ซอง'].includes(newItem.unit) &&
+      newItem.numberOfUnits > 0 &&
+      newItem.piecesPerUnit > 0
+    ) {
+      totalQuantity = newItem.numberOfUnits * newItem.piecesPerUnit;
+    } else if (['ถุง', 'ซอง'].includes(newItem.unit)) {
+      toast.error('กรุณาตรวจสอบจำนวนหน่วยและชิ้นต่อหน่วย');
+      return; // หยุดการทำงานถัดไปหากมีค่าไม่ถูกต้อง
     }
 
     const itemToAdd = {
@@ -121,7 +125,7 @@ function InventoryManager() {
         <Button variant="outline" onClick={goBack} sx={{ mb: 2 }}>
           <Icon icon="ep:back" style={{ fontSize: '24px' }} />
         </Button>
-        <StyledDiv>จัดการวัตถุดิบ</StyledDiv>
+        <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
       </Typography>
 
       <Grid container spacing={3}>
@@ -170,15 +174,18 @@ function InventoryManager() {
                     label="หน่วยนับ"
                     onChange={handleChange}
                   >
+                    <MenuItem value="มิลลิลิตร">มิลลิลิตร</MenuItem>
                     <MenuItem value="กรัม">กรัม</MenuItem>
                     <MenuItem value="ชิ้น">ชิ้น</MenuItem>
+                    <MenuItem value="ซอง">ซอง</MenuItem>
+                    <MenuItem value="ถุง">ถุง</MenuItem>
                   </Select>
                 </FormControl>
 
-                {newItem.unit === 'กรัม' && (
+                {['กรัม', 'ชิ้น', 'มิลลิลิตร'].includes(newItem.unit) && (
                   <TextField
                     type="number"
-                    label="จำนวนใน stock"
+                    label="ปริมาณตามฉลาก"
                     name="quantityInStock"
                     value={newItem.quantityInStock}
                     onChange={handleChange}
@@ -187,11 +194,11 @@ function InventoryManager() {
                   />
                 )}
 
-                {newItem.unit === 'ชิ้น' && (
+                {['ถุง', 'ซอง'].includes(newItem.unit) && (
                   <>
                     <TextField
                       type="number"
-                      label="จำนวนชิ้นต่อหน่วย"
+                      label="จำนวนชิ้นต่อหน่วย (เช่น ในถุงมีกี่ชิ้น)"
                       name="piecesPerUnit"
                       value={newItem.piecesPerUnit}
                       onChange={handleChange}
@@ -201,7 +208,7 @@ function InventoryManager() {
 
                     <TextField
                       type="number"
-                      label="จำนวนหน่วย"
+                      label="จำนวนหน่วย (เช่น กี่ถุง)"
                       name="numberOfUnits"
                       value={newItem.numberOfUnits}
                       onChange={handleChange}
@@ -220,9 +227,12 @@ function InventoryManager() {
                   fullWidth
                   margin="normal"
                 />
-                <MyButton type="submit" sx={{ mt: 3 }}>
+                {/* <MyButton type="submit" sx={{ mt: 3 }}>
                   <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
-                </MyButton>
+                </MyButton> */}
+                <Button variant="contained" type="submit" sx={{ mt: 3 }}>
+                  <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
+                </Button>
               </Box>
             </CardContent>
           </Card>

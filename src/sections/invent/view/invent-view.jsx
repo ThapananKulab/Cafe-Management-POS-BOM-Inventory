@@ -95,15 +95,15 @@ export default function InventPage() {
             <StyledDiv>วัตถุดิบ</StyledDiv>
           </Typography>
           <StyledDiv>
-            <Button
+            {/* <Button
               variant="outlined"
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/manage/invent')}
+              onClick={() => navigate('/manage/invent/update-stock')}
             >
               <StyledDiv>นำเข้าวัตถุดิบ</StyledDiv>
             </Button>
-            &nbsp;
+            &nbsp; */}
             <Button
               variant="contained"
               color="inherit"
@@ -134,8 +134,8 @@ export default function InventPage() {
                     <TableCell>ลำดับ</TableCell>
                     {/* <TableCell align="center">ID</TableCell> */}
                     <TableCell>ชื่อวัตถุดิบ</TableCell>
-                    <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">จำนวน</TableCell>
+                    <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
                     <TableCell align="left">จัดการ</TableCell>
                   </TableRow>
@@ -157,8 +157,8 @@ export default function InventPage() {
                         <TableCell>{index + 1}</TableCell>
                         {/* <TableCell>{raw._id}</TableCell> */}
                         <TableCell>{raw.name}</TableCell>
-                        <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.quantityInStock}</TableCell>
+                        <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.unitPrice}</TableCell>
 
                         <TableCell>

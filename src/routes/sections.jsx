@@ -19,17 +19,17 @@ export const EditProducts = lazy(() => import('src/pages/edit-product'));
 export const EditUser = lazy(() => import('src/pages/edit-user'));
 export const AddProducts = lazy(() => import('src/pages/add-product'));
 export const AddUser = lazy(() => import('src/pages/add-user'));
-export const Pos = lazy(() => import('src/pages/pos'));
+export const Pos = lazy(() => import('src/pages/pos/pos'));
 export const EditRaw = lazy(() => import('src/pages/edit-raw'));
 export const AddRaw = lazy(() => import('src/pages/add-raw'));
 export const ProductAddQuantity = lazy(() => import('src/pages/product-addquantity'));
 export const TestOL = lazy(() => import('src/pages/test-ol'));
-export const TestMenu = lazy(() => import('src/pages/test-menu'));
-export const TestReceip = lazy(() => import('src/pages/test-receip'));
-export const TestInvent = lazy(() => import('src/pages/test-invent'));
-export const MenuShow = lazy(() => import('src/pages/menu-view'));
+export const TestMenu = lazy(() => import('src/pages/menu/menu-add'));
+export const TestReceip = lazy(() => import('src/pages/receip/test-receip'));
+export const TestInvent = lazy(() => import('src/pages/invent/test-invent'));
+export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
-export const Post = lazy(() => import('src/pages/post'));
+export const Post = lazy(() => import('src/pages/pos/post'));
 export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
 
 // ----------------------------------------------------------------------
@@ -140,7 +140,7 @@ export default function Router() {
       element: <TestInvent />,
     },
     {
-      path: '/mange/invent/update-stock',
+      path: '/manage/invent/update-stock',
       element: <InventUpdateStock />,
     },
     {

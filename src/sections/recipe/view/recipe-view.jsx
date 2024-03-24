@@ -193,7 +193,7 @@ function RecipeTable() {
             startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={() => navigate('/manage/recipe')}
           >
-            <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
+            <StyledDiv>เพิ่มสูตร</StyledDiv>
           </Button>
         </Stack>
         <TableContainer sx={{ maxHeight: 440 }} component={Paper}>

@@ -49,7 +49,6 @@ export default function RecipePage() {
       <Helmet>
         <title> สูตร </title>
       </Helmet>
-
       <RecipeView />
     </>
   );

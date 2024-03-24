@@ -176,7 +176,10 @@ function AddMenuItem() {
           name="description"
           value={menuItem.description}
           onChange={handleChange}
+          multiline
+          rows={4} // ตั้งค่านี้ตามความต้องการของคุณ
         />
+
         <TextField
           margin="normal"
           required
