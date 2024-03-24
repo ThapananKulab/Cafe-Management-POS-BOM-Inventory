@@ -30,6 +30,7 @@ export const TestInvent = lazy(() => import('src/pages/test-invent'));
 export const MenuShow = lazy(() => import('src/pages/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/post'));
+export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
 
 // ----------------------------------------------------------------------
 
@@ -137,6 +138,10 @@ export default function Router() {
     {
       path: '/manage/invent',
       element: <TestInvent />,
+    },
+    {
+      path: '/mange/invent/update-stock',
+      element: <InventUpdateStock />,
     },
     {
       path: '/tp',
