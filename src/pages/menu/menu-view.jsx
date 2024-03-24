@@ -285,7 +285,7 @@ function MenuTable() {
                   {currentRecipe?.name}
                 </Typography>
                 <Typography id="recipe-modal-description" sx={{ mt: 2 }}>
-                  Ingredients:
+                  สูตร:
                   <ul>
                     {currentRecipe?.ingredients.map((ingredient) => {
                       const inventoryItem = inventoryItems.find(
