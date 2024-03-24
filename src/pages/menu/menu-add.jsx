@@ -37,9 +37,7 @@ function AddMenuItem() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get(
-          'https://cafe-project-server11.onrender.com/api/recipes/all'
-        );
+        const response = await axios.get('http://localhost:3333/api/recipes/all');
         setRecipes(response.data);
       } catch (error) {
         console.error('Error fetching recipes:', error);
@@ -80,9 +78,7 @@ function AddMenuItem() {
 
     try {
       const checkDuplicate = await axios.get(
-        `https://cafe-project-server11.onrender.com/api/menus/checkName?name=${encodeURIComponent(
-          menuItem.name
-        )}`
+        `http://localhost:3333/api/menus/checkName?name=${encodeURIComponent(menuItem.name)}`
       );
       if (checkDuplicate.data.exists) {
         toast.error('ชื่อเมนูนี้ถูกใช้แล้ว');
@@ -102,15 +98,11 @@ function AddMenuItem() {
     formData.append('image', menuItem.image);
 
     try {
-      const response = await axios.post(
-        'https://cafe-project-server11.onrender.com/api/menus/addMenu',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const response = await axios.post('http://localhost:3333/api/menus/addMenu', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       console.log(response.data);
       toast.success('เพิ่มเมนูสำเร็จ');
     } catch (error) {
