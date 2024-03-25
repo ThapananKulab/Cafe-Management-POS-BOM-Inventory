@@ -132,7 +132,7 @@ const UpdateUserPage = () => {
             width: 1,
           }}
         >
-          <Box mt={10}>{}</Box>
+
           <Typography variant="h4" component="h1" gutterBottom>
             แก้ไขโปรไฟล์
           </Typography>
