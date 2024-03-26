@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
+import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useRef, useState, useEffect } from 'react';
 
@@ -267,7 +268,11 @@ const UpdateUserPage = () => {
           </Grid>
         </Card>
       </Container>
+      <Helmet>
+        <title>แก้ไขโปรไฟล์</title>
+      </Helmet>
     </Box>
+    
   );
 };
 
