@@ -91,7 +91,7 @@ const UpdateUserPage = () => {
       }
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://cafe-project-server11.onrender.com/api/employees/update-profile',
+        'http://localhost:3333/api/employees/update-profile',
         formData,
         {
           headers: {

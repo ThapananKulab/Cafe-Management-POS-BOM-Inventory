@@ -9,6 +9,7 @@ import {
   List,
   Grid,
   Card,
+  Paper,
   Badge,
   Modal,
   Button,
@@ -62,7 +63,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://cafe-project-server11.onrender.com/api/menus/allMenus')
+      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
       .then((response) => {
         console.log(response.data);
         setProducts(response.data);
@@ -130,25 +131,30 @@ const CartTemplate = () => {
       <Helmet>
         <title>POS</title>
       </Helmet>
-      <AppBar position="static">
+       {/* AppBar component for header */}
+       <AppBar position="static">
         <Toolbar style={{ justifyContent: 'space-between' }}>
+          {/* Logo and title */}
           <Typography
             variant="h6"
             color="inherit"
             noWrap
-            style={{ cursor: 'pointer' }} // Make it look clickable
-            onClick={() => navigate('/dashboard')} // Use navigate to change the route
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate('/dashboard')}
           >
             <Icon icon="mdi:network-pos" style={{ marginRight: 8 }} />
             POS
           </Typography>
 
+          {/* Current time display */}
           <Box display="flex" justifyContent="right" flexGrow={1}>
             <Typography variant="h6" color="inherit" noWrap>
               <Icon icon="teenyicons:clock-outline" />
               &nbsp;{currentTime}
             </Typography>
           </Box>
+
+          {/* Shopping cart icon */}
           <IconButton
             color="inherit"
             onClick={() => setIsModalOpen(true)}
@@ -164,20 +170,20 @@ const CartTemplate = () => {
       <Container>
         <Button onClick={goToDashboard}>
           <Icon icon="material-symbols:arrow-back" style={{ fontSize: '2rem' }} />
-          {/* เพิ่มขนาดไอคอน */}
         </Button>
       </Container>
 
-      <Container maxWidth="lg" style={{ marginTop: '10px' }}>
+        <Container maxWidth="lg" style={{ marginTop: '10px' }}>
         <Box
           sx={{
             my: 1,
-            display: 'flex', // Use Flexbox
-            justifyContent: 'center', // Center horizontally
-            flexWrap: 'wrap', // Allow the buttons to wrap on small screens
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
           }}
         >
-          {categories.map((category) => (
+           {/* Category buttons */}
+           {categories.map((category) => (
             <Button
               key={category.name}
               variant={selectedCategory === category.name ? 'contained' : 'outlined'}
@@ -189,7 +195,7 @@ const CartTemplate = () => {
                 minWidth: '100px',
               }}
             >
-              <Icon icon={category.icon} style={{ marginRight: 8, marginBottom: -2 }} />{' '}
+              <Icon icon={category.icon} style={{ marginRight: 8, marginBottom: -2 }} />
               {category.name}
             </Button>
           ))}
@@ -199,47 +205,42 @@ const CartTemplate = () => {
       {/* Display the products dynamically */}
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
+          {/* Map through filteredProducts and display cards */}
           {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
-              <Card>
+              {/* Card component with Paper for styling */}
+              <Paper elevation={3} style={{ borderRadius: 16 }}>
+                <Card>
                 <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {product.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {product.type}
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    component="p"
-                    style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
-                  >
-                    ราคา {product.price} ฿
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    size="medium"
-                    color="primary"
-                    onClick={() => handleAddToCart(product)}
-                    style={{ minWidth: 'auto', padding: '6px 12px' }}
-                  >
-                    <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                  </Button>
-                </CardActions>
 
-                <CardActions>
-                  {/* <Button
-                    size="medium" // หรือไม่ต้องใส่ size ไปเลยเพื่อให้ได้ขนาดมาตรฐาน
-                    color="primary"
-                    onClick={() => handleAddToCart(product)}
-                    style={{ minWidth: 'auto', padding: '6px 12px' }} // ปรับขนาดและระยะห่างของ padding ตามต้องการ
-                  >
-                    <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                  </Button> */}
-                </CardActions>
-              </Card>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {product.name}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {product.type}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      component="p"
+                      style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
+                    >
+                      ราคา {product.price} ฿
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* Button to add item to cart */}
+                    <Button
+                      size="medium"
+                      color="primary"
+                      onClick={() => handleAddToCart(product)}
+                      style={{ minWidth: 'auto', padding: '6px 12px' }}
+                    >
+                      <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Paper>
             </Grid>
           ))}
         </Grid>
