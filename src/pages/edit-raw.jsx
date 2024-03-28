@@ -91,47 +91,24 @@ const RawForm = () => {
       return;
     }
 
-    try {
-      if (!rawId || (rawId && name !== initialName)) {
-        const response = await axios.get(
-          `https://test-api-01.azurewebsites.net/api/inventoryitems/check-name-exists`,
-          {
-            params: {
-              name,
-              excludeId: rawId,
-            },
-          }
-        );
+    const inventoryData = {
+      name,
+      unit,
+      realquantity: Number(realquantity),
+      quantityInStock: Number(quantityInStock),
+      unitPrice: Number(unitPrice),
+    };
 
-        if (response.data.exists) {
-          toast.error('ชื่อนี้มีอยู่แล้วในฐานข้อมูล และไม่สามารถใช้ชื่อนี้ได้');
-          return;
-        }
+    await axios.patch(
+      `https://test-api-01.azurewebsites.net/api/inventoryitems/update/${rawId}`,
+      inventoryData,
+      {
+        headers: { 'Content-Type': 'application/json' },
       }
-
-      // อัปเดตรายการในฐานข้อมูล
-      const inventoryData = {
-        name,
-        unit,
-        realquantity: Number(realquantity),
-        quantityInStock: Number(quantityInStock),
-        unitPrice: Number(unitPrice),
-      };
-
-      await axios.patch(
-        `https://test-api-01.azurewebsites.net/api/inventoryitems/update/${rawId}`,
-        inventoryData,
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-      toast.success('แก้ไขวัตถุดิบสำเร็จ', {
-        autoClose: 1000,
-      });
-    } catch (error) {
-      console.error('Error updating inventory item:', error);
-      toast.error('มีชื่อวัตถุดิบนี้อยู่แล้ว');
-    }
+    );
+    toast.success('แก้ไขวัตถุดิบสำเร็จ', {
+      autoClose: 1000,
+    });
   };
 
   return (
@@ -161,7 +138,6 @@ const RawForm = () => {
                 label="ปริมาณ"
                 variant="outlined"
                 fullWidth
-                required
                 sx={{ mb: 2 }}
               />
               <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
