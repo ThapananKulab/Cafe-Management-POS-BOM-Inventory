@@ -31,6 +31,10 @@ const RawForm = () => {
   const [initialName, setInitialName] = useState('');
   const [editableStock, setEditableStock] = useState(false);
   const [previousQuantityInStock, setPreviousQuantityInStock] = useState('');
+  const [initialRealquantity, setInitialRealquantity] = useState('');
+  const [initialQuantityInStock, setInitialQuantityInStock] = useState('');
+  const [initialUnit, setInitialUnit] = useState('');
+  const [initialUnitPrice, setInitialUnitPrice] = useState('');
 
   const navigate = useNavigate();
   const { rawId } = useParams();
@@ -47,14 +51,18 @@ const RawForm = () => {
   useEffect(() => {
     if (rawId) {
       axios
-        .get(`http://localhost:3333/api/inventoryitems/${rawId}`)
+        .get(`https://test-api-01.azurewebsites.net/api/inventoryitems/${rawId}`)
         .then((response) => {
           setName(response.data.name);
-          setInitialName(response.data.name); // ตั้งค่าชื่อเริ่มต้น
+          setInitialName(response.data.name);
           setRealquantity(response.data.realquantity);
+          setInitialRealquantity(response.data.realquantity);
           setQuantityInStock(response.data.quantityInStock.toString());
+          setInitialQuantityInStock(response.data.quantityInStock.toString());
           setUnit(response.data.unit);
+          setInitialUnit(response.data.unit);
           setUnitPrice(response.data.unitPrice.toString());
+          setInitialUnitPrice(response.data.unitPrice.toString());
         })
         .catch((error) => console.error('Error fetching inventory item:', error));
     }
@@ -70,11 +78,23 @@ const RawForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      name === initialName &&
+      realquantity.toString() === initialRealquantity.toString() &&
+      quantityInStock.toString() === initialQuantityInStock.toString() &&
+      unit === initialUnit &&
+      unitPrice.toString() === initialUnitPrice.toString()
+    ) {
+      toast.warn('ไม่มีการเปลี่ยนแปลง', {
+        autoClose: 3000,
+      });
+      return;
+    }
+
     try {
-      // เฉพาะเมื่อเป็นการเพิ่มรายการใหม่หรือมีการเปลี่ยนชื่อวัตถุดิบ เราจึงตรวจสอบชื่อที่ซ้ำ
       if (!rawId || (rawId && name !== initialName)) {
         const response = await axios.get(
-          `http://localhost:3333/api/inventoryitems/check-name-exists`,
+          `https://test-api-01.azurewebsites.net/api/inventoryitems/check-name-exists`,
           {
             params: {
               name,
@@ -98,9 +118,13 @@ const RawForm = () => {
         unitPrice: Number(unitPrice),
       };
 
-      await axios.patch(`http://localhost:3333/api/inventoryitems/update/${rawId}`, inventoryData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      await axios.patch(
+        `https://test-api-01.azurewebsites.net/api/inventoryitems/update/${rawId}`,
+        inventoryData,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
       toast.success('แก้ไขวัตถุดิบสำเร็จ', {
         autoClose: 1000,
       });
@@ -196,24 +220,36 @@ const RawForm = () => {
               />
             </Grid>
           </Grid>
-          <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 3 }}>
+          <Box display="flex" justifyContent="space-between" gap={2} sx={{ mt: 3 }}>
+            {/* ปุ่มที่ 1 */}
             <Button
               onClick={() => navigate('/invent')}
               variant="contained"
               color="error"
               size="large"
-              sx={{ width: '180px', fontSize: 28 }}
+              sx={{
+                minWidth: '200px', // ปรับความกว้างขั้นต่ำให้มากขึ้นหากต้องการ
+                height: '56px',
+                fontSize: '1.75rem',
+                padding: '6px 8px', // ลด padding ข้างในปุ่มลงเล็กน้อย
+              }}
             >
-              <Icon icon="material-symbols:cancel-outline" sx={{ fontSize: 28 }} />
+              <Icon icon="material-symbols:cancel-outline" sx={{ fontSize: '1.75rem' }} />
             </Button>
+            {/* ปุ่มที่ 2 */}
             <Button
               type="submit"
               variant="outlined"
               color="primary"
               size="large"
-              sx={{ width: '180px', fontSize: 28 }}
+              sx={{
+                minWidth: '200px', // ปรับความกว้างขั้นต่ำให้มากขึ้นหากต้องการ
+                height: '56px',
+                fontSize: '1.75rem',
+                padding: '6px 8px', // ลด padding ข้างในปุ่มลงเล็กน้อย
+              }}
             >
-              <Icon icon="formkit:submit" sx={{ fontSize: 28 }} />
+              <Icon icon="formkit:submit" sx={{ fontSize: '1.75rem' }} />
             </Button>
           </Box>
         </form>
