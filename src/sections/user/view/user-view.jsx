@@ -36,7 +36,7 @@ export default function UserPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://cafe-project-server11.onrender.com/api/users');
+        const response = await axios.get('https://test-api-01.azurewebsites.net/api/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);

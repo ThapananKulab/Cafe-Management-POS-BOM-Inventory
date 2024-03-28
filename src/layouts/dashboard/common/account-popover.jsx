@@ -23,7 +23,7 @@ export default function AccountPopover() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://cafe-project-server11.onrender.com/api/authen', {
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

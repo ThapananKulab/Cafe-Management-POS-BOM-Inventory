@@ -48,7 +48,9 @@ function MenuTable() {
   useEffect(() => {
     // Fetch inventory items from your API
     const fetchInventoryItems = async () => {
-      const { data } = await axios.get('https://test-api-01.azurewebsites.net/api/inventoryitems/all');
+      const { data } = await axios.get(
+        'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+      );
       setInventoryItems(data);
     };
     fetchInventoryItems();
@@ -66,7 +68,9 @@ function MenuTable() {
   useEffect(() => {
     const fetchMenus = async () => {
       try {
-        const response = await axios.get('https://test-api-01.azurewebsites.net/api/menus/allMenus');
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/menus/allMenus'
+        );
         setMenus(response.data);
         setFilteredMenus(response.data);
       } catch (error) {

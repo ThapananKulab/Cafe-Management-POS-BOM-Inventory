@@ -37,16 +37,16 @@ const navConfig = [
         path: '/menu',
         icon: icon('ic-drink-a'),
       },
-      {
-        title: 'จัดการสินค้า',
-        path: '/product',
-        icon: icon('ic_productsM'),
-      },
-      {
-        title: 'นำเข้าสินค้า',
-        path: '/product/add-quantity',
-        icon: icon('ic-improduct'),
-      },
+      // {
+      //   title: 'จัดการสินค้า',
+      //   path: '/product',
+      //   icon: icon('ic_productsM'),
+      // },
+      // {
+      //   title: 'นำเข้าสินค้า',
+      //   path: '/product/add-quantity',
+      //   icon: icon('ic-improduct'),
+      // },
     ],
   },
   {

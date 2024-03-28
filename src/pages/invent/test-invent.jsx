@@ -47,11 +47,16 @@ function InventoryManager() {
   const [newItem, setNewItem] = useState({
     name: '',
     unit: '',
+    realquantity: '',
     quantityInStock: '',
     unitPrice: '',
     piecesPerUnit: '', // จำนวนชิ้นต่อหน่วย
     numberOfUnits: '', // จำนวนหน่วย
   });
+
+  const handleCancel = () => {
+    navigate('/invent'); // แทนที่ '/path-to-navigate' ด้วยเส้นทางที่คุณต้องการไป
+  };
 
   useEffect(() => {
     fetchInventoryItems();
@@ -68,7 +73,32 @@ function InventoryManager() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewItem((prev) => ({ ...prev, [name]: value }));
+
+    console.log(`Name: ${name}, Value: ${value}`);
+
+    if (name === 'realquantity') {
+      const realQuantityValue = parseInt(value, 10) || 0;
+      let totalQuantity = realQuantityValue;
+
+      if (
+        ['ถุง', 'ซอง'].includes(newItem.unit) &&
+        newItem.numberOfUnits > 0 &&
+        newItem.piecesPerUnit > 0
+      ) {
+        totalQuantity = newItem.numberOfUnits * newItem.piecesPerUnit;
+      }
+
+      setNewItem((prev) => ({
+        ...prev,
+        realquantity: value,
+        quantityInStock: totalQuantity.toString(),
+      }));
+    } else {
+      setNewItem((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -108,6 +138,7 @@ function InventoryManager() {
       setNewItem({
         name: '',
         unit: '',
+        realquantity: '',
         quantityInStock: '',
         unitPrice: '',
         piecesPerUnit: '',
@@ -164,6 +195,14 @@ function InventoryManager() {
                   fullWidth
                   margin="normal"
                 />
+                <TextField
+                  label="ปริมาณตามฉลาก เช่น 325 กรัม"
+                  name="realquantity"
+                  value={newItem.realquantity}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                />
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="unit-label">หน่วยนับ</InputLabel>
                   <Select
@@ -191,6 +230,7 @@ function InventoryManager() {
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
+                    disabled
                   />
                 )}
 
@@ -232,6 +272,14 @@ function InventoryManager() {
                 </MyButton> */}
                 <Button variant="contained" type="submit" sx={{ mt: 3 }}>
                   <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{ mt: 3, ml: 1, bgcolor: 'error.main', color: 'error.contrastText' }}
+                  onClick={handleCancel}
+                >
+                  <StyledDiv>ยกเลิก</StyledDiv>
                 </Button>
               </Box>
             </CardContent>

@@ -27,8 +27,9 @@ export default function InventPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
+
   const editRaw = (rawId) => {
-    navigate(`/edit-raw/${rawId}`);
+    navigate(`/edit-raw/${rawId}`); // Navigate to edit page with the id in the URL
   };
 
   // const categories = [
@@ -87,6 +88,7 @@ export default function InventPage() {
       raw.unit.toLowerCase().includes(search.toLowerCase()) || // No change needed here
       raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()) // Adjusted to 'unitPrice'
   );
+
   return (
     <div>
       <Container>
@@ -134,7 +136,8 @@ export default function InventPage() {
                     <TableCell>ลำดับ</TableCell>
                     {/* <TableCell align="center">ID</TableCell> */}
                     <TableCell>ชื่อวัตถุดิบ</TableCell>
-                    <TableCell align="center">จำนวน</TableCell>
+                    <TableCell>ปริมาณ</TableCell>
+                    <TableCell align="center">ปริมาณใน Stock</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
                     <TableCell align="left">จัดการ</TableCell>
@@ -157,6 +160,7 @@ export default function InventPage() {
                         <TableCell>{index + 1}</TableCell>
                         {/* <TableCell>{raw._id}</TableCell> */}
                         <TableCell>{raw.name}</TableCell>
+                        <TableCell align="center">{raw.realquantity}</TableCell>
                         <TableCell align="center">{raw.quantityInStock}</TableCell>
                         <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.unitPrice}</TableCell>

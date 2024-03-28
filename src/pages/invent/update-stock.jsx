@@ -1,6 +1,10 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Card,
@@ -17,6 +21,7 @@ import {
 } from '@mui/material';
 
 function UpdateStock() {
+  const navigate = useNavigate();
   const [inventoryItems, setInventoryItems] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState('');
   const [unit, setUnit] = useState(); // Add this state variable to hold the unit
@@ -53,17 +58,36 @@ function UpdateStock() {
   };
 
   const handleUpdate = async () => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:3333/api/inventoryitems/update-stock/${selectedItemId}`,
-        { adjustment: multipliedResult }
-      );
-      alert(`Stock updated: ${response.data.message}`);
-      const newStock = response.data.message.match(/New stock is (\d+)/)[1];
-      setCurrentStock(parseInt(newStock, 10));
-    } catch (error) {
-      alert(`Failed to update stock: ${error.response?.data?.message || error.message}`);
-    }
+    Swal.fire({
+      title: 'คุณแน่ใจไหม?',
+      text: 'คุณต้องการอัปเดตสต็อกสินค้าหรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่, อัปเดตเลย!',
+      cancelButtonText: 'ไม่, ยกเลิก',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        (async () => {
+          try {
+            const response = await axios.patch(
+              `http://localhost:3333/api/inventoryitems/update-stock/${selectedItemId}`,
+              { adjustment: multipliedResult }
+            );
+            toast.success(`${response.data.message}`, {
+              autoClose: 1500, // ตั้งค่าให้ Toast แสดงเป็นเวลา 1 วินาที
+            });
+            const newStock = response.data.message.match(/จำนวนคงเหลือ (\d+)/)[1];
+            setCurrentStock(parseInt(newStock, 10));
+          } catch (error) {
+            toast.error(`อัปเดตไม่สำเร็จ`, {
+              autoClose: 500, // ตั้งค่าให้ Toast แสดงเป็นเวลา 1 วินาที
+            });
+          }
+        })();
+      }
+    });
   };
 
   // เมื่อมีการเลือก item, อัพเดทยอด stock คงเหลือให้แสดง
@@ -151,15 +175,29 @@ function UpdateStock() {
             คงเหลือ: {currentStock} {unit}
           </Typography>
         </CardContent>
-        <Grid container spacing={2} justifyContent="center" sx={({ mt: 5 }, { mb: 2 })}>
-          <Button
-            variant="contained"
-            onClick={handleUpdate}
-            size="large"
-            style={{ backgroundColor: 'black', color: 'white' }}
-          >
-            <Icon icon="ic:round-system-update-alt" />
-          </Button>
+        <Grid container spacing={2} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
+          <Grid item>
+            <Button
+              variant="contained"
+              onClick={handleUpdate}
+              size="large"
+              style={{ backgroundColor: 'black', color: 'white', padding: '10px 20px' }} // เพิ่ม padding เพื่อขยายขนาด
+            >
+              <Icon icon="ic:round-system-update-alt" width="32" height="32" />{' '}
+              {/* ปรับขนาดไอคอน */}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              onClick={() => navigate('/invent')}
+              size="large"
+              style={{ backgroundColor: 'red', color: 'white', padding: '10px 20px' }}
+            >
+              <Icon icon="ic:twotone-cancel" width="32" height="32" />
+            </Button>
+            <ToastContainer />
+          </Grid>
         </Grid>
       </Card>
     </Container>

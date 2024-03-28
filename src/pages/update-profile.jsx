@@ -25,7 +25,7 @@ const UpdateUserPage = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://cafe-project-server11.onrender.com/api/authen', {
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const UpdateUserPage = () => {
       }
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:3333/api/employees/update-profile',
+        'https://test-api-01.azurewebsites.net/api/employees/update-profile',
         formData,
         {
           headers: {
@@ -133,7 +133,6 @@ const UpdateUserPage = () => {
             width: 1,
           }}
         >
-
           <Typography variant="h4" component="h1" gutterBottom>
             แก้ไขโปรไฟล์
           </Typography>
@@ -272,7 +271,6 @@ const UpdateUserPage = () => {
         <title>แก้ไขโปรไฟล์</title>
       </Helmet>
     </Box>
-    
   );
 };
 
