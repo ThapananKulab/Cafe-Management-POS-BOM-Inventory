@@ -29,7 +29,7 @@ export default function InventPage() {
   `;
 
   const editRaw = (rawId) => {
-    navigate(`/edit-raw/${rawId}`); // Navigate to edit page with the id in the URL
+    navigate(`/edit-invent/${rawId}`); // Navigate to edit page with the id in the URL
   };
 
   // const categories = [
@@ -46,7 +46,7 @@ export default function InventPage() {
     const fetchRaws = async () => {
       try {
         const response = await axios.get(
-          'https://cafe-project-server11.onrender.com/api/inventoryitems/all'
+          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
         );
         setRaws(response.data);
       } catch (error) {
@@ -69,13 +69,13 @@ export default function InventPage() {
       if (result.isConfirmed) {
         try {
           await axios.delete(
-            `https://cafe-project-server11.onrender.com/api/inventoryitems/delete/${rawId}`
+            `https://test-api-01.azurewebsites.net/api/inventoryitems/inventory/delete/${rawId}`
           );
           Swal.fire('ลบสำเร็จ!', 'สินค้าถูกลบเรียบร้อยแล้ว', 'success');
           setRaws(raws.filter((raw) => raw._id !== rawId));
         } catch (error) {
-          console.error('There was an error deleting the product:', error);
-          Swal.fire('Error!', 'There was an error deleting your product.', 'error');
+          console.error('ลบไม่ได้เนื่องจากมีข้อมูลวัตถุดิบอยู่กับสูตร', error);
+          Swal.fire('ยังลบไม่ได้!', 'เนื่องจากมีข้อมูลวัตถุดิบอยู่กับสูตร', 'error');
         }
       }
     });

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
@@ -78,6 +79,7 @@ const RawForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ตรวจสอบว่ามีการเปลี่ยนแปลงข้อมูลหรือไม่
     if (
       name === initialName &&
       realquantity.toString() === initialRealquantity.toString() &&
@@ -91,6 +93,25 @@ const RawForm = () => {
       return;
     }
 
+    // แสดง SweetAlert2 ยืนยันการเปลี่ยนแปลง
+    Swal.fire({
+      title: 'คุณแน่ใจไหม?',
+      text: 'ต้องการแก้ไขข้อมูลนี้หรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่',
+      cancelButtonText: 'ยกเลิก',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // ถ้าผู้ใช้คลิก "Yes", ดำเนินการแก้ไข
+        updateInventoryItem();
+      }
+    });
+  };
+
+  const updateInventoryItem = async () => {
     const inventoryData = {
       name,
       unit,
@@ -135,7 +156,7 @@ const RawForm = () => {
                 type="number"
                 value={realquantity}
                 onChange={(e) => setRealquantity(e.target.value)}
-                label="ปริมาณ"
+                label="ปริมาณตามฉลาก"
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
