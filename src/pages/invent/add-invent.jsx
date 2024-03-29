@@ -133,10 +133,9 @@ function InventoryManager() {
     };
 
     try {
-      await axios.post('https://test-api-01.azurewebsites.net/api/inventoryitems/add', itemToAdd);
+      await axios.post('http://localhost:3333/api/inventoryitems/add', itemToAdd);
       toast.success(`เพิ่ม "${newItem.name}" สำเร็จ`);
-      fetchInventoryItems(); // Reload data
-      // Reset form fields
+      fetchInventoryItems();
       setNewItem({
         name: '',
         unit: '',
@@ -196,6 +195,7 @@ function InventoryManager() {
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
+                  required
                 />
                 <TextField
                   label="ปริมาณตามฉลาก เช่น 325 กรัม"
@@ -204,6 +204,7 @@ function InventoryManager() {
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
+                  required
                 />
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="unit-label">หน่วยนับ</InputLabel>
@@ -214,6 +215,7 @@ function InventoryManager() {
                     value={newItem.unit}
                     label="หน่วยนับ"
                     onChange={handleChange}
+                    required
                   >
                     <MenuItem value="มิลลิลิตร">มิลลิลิตร</MenuItem>
                     <MenuItem value="กรัม">กรัม</MenuItem>
@@ -224,16 +226,40 @@ function InventoryManager() {
                 </FormControl>
 
                 {['กรัม', 'ชิ้น', 'มิลลิลิตร'].includes(newItem.unit) && (
-                  <TextField
-                    type="number"
-                    label="ปริมาณตามฉลาก"
-                    name="quantityInStock"
-                    value={newItem.quantityInStock}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    disabled
-                  />
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs>
+                      <TextField
+                        type="number"
+                        label="ปริมาณตามฉลาก"
+                        name="quantityInStock"
+                        value={newItem.quantityInStock}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        required
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        variant="outlined" // ปรับเป็น outlined หรือ text สำหรับปุ่มโปร่งใส
+                        onClick={() => setNewItem((prev) => ({ ...prev, quantityInStock: '0' }))}
+                        sx={{
+                          height: '56px',
+                          minWidth: '56px',
+                          padding: 0,
+                          border: 'none', // หรือใช้ `variant="text"` สำหรับลบเส้นขอบ
+                          backgroundColor: 'transparent', // ทำให้ปุ่มโปร่งใส
+                          '&:hover': {
+                            backgroundColor: 'transparent', // ทำให้สีไม่เปลี่ยนเมื่อ hover
+                            boxShadow: 'none', // ลบเงาเมื่อ hover
+                          },
+                        }}
+                      >
+                        <Icon icon="icon-park:zero-key" width="32" height="32" />
+                      </Button>
+                    </Grid>
+                  </Grid>
                 )}
 
                 {['ถุง', 'ซอง'].includes(newItem.unit) && (
@@ -246,6 +272,7 @@ function InventoryManager() {
                       onChange={handleChange}
                       fullWidth
                       margin="normal"
+                      required
                     />
 
                     <TextField
@@ -256,10 +283,10 @@ function InventoryManager() {
                       onChange={handleChange}
                       fullWidth
                       margin="normal"
+                      required
                     />
                   </>
                 )}
-
                 <TextField
                   type="number"
                   label="ราคาต่อหน่วย"
@@ -268,6 +295,7 @@ function InventoryManager() {
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
+                  required
                 />
                 {/* <MyButton type="submit" sx={{ mt: 3 }}>
                   <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>

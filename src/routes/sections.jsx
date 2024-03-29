@@ -26,13 +26,14 @@ export const ProductAddQuantity = lazy(() => import('src/pages/product-addquanti
 export const TestOL = lazy(() => import('src/pages/test-ol'));
 export const TestMenu = lazy(() => import('src/pages/menu/menu-add'));
 export const TestReceip = lazy(() => import('src/pages/receip/test-receip'));
-export const TestInvent = lazy(() => import('src/pages/invent/test-invent'));
+export const AddInvent = lazy(() => import('src/pages/invent/add-invent'));
 export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/pos/post'));
 export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
 export const TestR = lazy(() => import('src/pages/test-r'));
 export const TestM = lazy(() => import('src/pages/test-m'));
+export const OrderPage = lazy(() => import('src/pages/order/order-view'));
 
 // ----------------------------------------------------------------------
 
@@ -72,6 +73,10 @@ export default function Router() {
         {
           path: '/recipe',
           element: <RecipePage />,
+        },
+        {
+          path: '/order',
+          element: <OrderPage />,
         },
         {
           path: '/menu',
@@ -139,7 +144,7 @@ export default function Router() {
     },
     {
       path: '/manage/invent',
-      element: <TestInvent />,
+      element: <AddInvent />,
     },
     {
       path: '/manage/invent/update-stock',

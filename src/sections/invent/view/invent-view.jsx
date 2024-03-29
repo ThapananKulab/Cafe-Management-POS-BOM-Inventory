@@ -138,6 +138,8 @@ export default function InventPage() {
                     <TableCell>ชื่อวัตถุดิบ</TableCell>
                     <TableCell>ปริมาณ</TableCell>
                     <TableCell align="center">ปริมาณใน Stock</TableCell>
+                    <TableCell align="center">ปริมาณที่ใช้ไป</TableCell>
+                    <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
                     <TableCell align="left">จัดการ</TableCell>
@@ -162,41 +164,33 @@ export default function InventPage() {
                         <TableCell>{raw.name}</TableCell>
                         <TableCell align="center">{raw.realquantity}</TableCell>
                         <TableCell align="center">{raw.quantityInStock}</TableCell>
+                        <TableCell align="center">{raw.useInStock}</TableCell>
+                        <TableCell align="center">เย็น</TableCell>
                         <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.unitPrice}</TableCell>
 
                         <TableCell>
-                          <a
-                            href="#"
-                            style={{ marginRight: '8px', display: 'inline-block' }}
-                            onClick={(e) => {
-                              e.preventDefault();
-                            }}
+                          <Grid
+                            container
+                            alignItems="center"
+                            justifyContent="flex-start"
+                            spacing={1}
                           >
-                            {}
-                          </a>
-                          {}
-                          <Icon
-                            icon="mingcute:edit-line"
-                            width="2em"
-                            height="2em"
-                            onClick={() => editRaw(raw._id)}
-                          />
-                          <a
-                            href="#"
-                            style={{ marginRight: '8px', display: 'inline-block' }}
-                            onClick={(e) => {
-                              e.preventDefault();
-                            }}
-                          >
-                            {/* Use an appropriate icon component or element for editing */}
-                          </a>
-                          <Icon
-                            icon="mingcute:delete-fill"
-                            width="2em"
-                            height="2em"
-                            onClick={() => confirmDelete(raw._id)}
-                          />
+                            <Grid item>
+                              <Icon
+                                icon="mingcute:edit-line"
+                                style={{ fontSize: '24px', cursor: 'pointer' }}
+                                onClick={() => editRaw(raw._id)}
+                              />
+                            </Grid>
+                            <Grid item>
+                              <Icon
+                                icon="mingcute:delete-fill"
+                                style={{ fontSize: '24px', cursor: 'pointer' }}
+                                onClick={() => confirmDelete(raw._id)}
+                              />
+                            </Grid>
+                          </Grid>
                         </TableCell>
                       </TableRow>
                     ))

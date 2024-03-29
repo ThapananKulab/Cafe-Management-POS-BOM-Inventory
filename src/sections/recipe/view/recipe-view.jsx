@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -120,20 +121,19 @@ function RecipeTable() {
 
   const updateRecipe = async () => {
     try {
-      // Assuming editableRecipe contains the updated recipe information
       const response = await axios.put(
         `http://localhost:3333/api/recipes/update/${editableRecipe._id}`,
         editableRecipe
       );
       console.log('Recipe updated:', response.data);
-      fetchRecipes(); // Refresh the list of recipes
-      setOpenModal(false); // Close the modal
-      toast.success('Recipe updated successfully!', {
+      fetchRecipes();
+      setOpenModal(false);
+      toast.success('แก้ไขสูตรสำเร็จ', {
         position: 'top-right',
         autoClose: 1000,
       });
     } catch (error) {
-      console.error('Failed to update recipe:', error);
+      console.error('แก้ไขสูตรไม่สำเร็จ', error);
       toast.error('Failed to update recipe.', {
         position: 'top-right',
         autoClose: 1000,
@@ -152,22 +152,37 @@ function RecipeTable() {
 
   const deleteRecipe = async (recipeId) => {
     try {
-      console.log('Attempting to delete recipe with ID:', recipeId); // Add this line
+      console.log('Attempting to delete recipe with ID:', recipeId);
 
-      const response = await axios.delete(`http://localhost:3333/api/recipes/delete/${recipeId}`);
-      console.log('Recipe deleted:', response.data);
-      fetchRecipes();
-      toast.success('Recipe deleted successfully!', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      const willDelete = await Swal.fire({
+        title: 'คุณแน่ใจใช่ไหม',
+        text: 'คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่',
       });
+
+      if (willDelete.isConfirmed) {
+        const response = await axios.delete(`http://localhost:3333/api/recipes/delete/${recipeId}`);
+        console.log('Recipe deleted:', response.data);
+        fetchRecipes();
+
+        toast.success('Recipe deleted successfully!', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     } catch (error) {
       console.error('Failed to delete recipe:', error);
+
       toast.error('Failed to delete recipe.', {
         position: 'top-right',
         autoClose: 1000,

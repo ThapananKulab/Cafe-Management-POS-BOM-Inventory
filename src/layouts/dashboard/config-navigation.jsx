@@ -92,7 +92,7 @@ const navConfig = [
   },
   {
     title: 'ออเดอร์',
-    // path: '/raw',
+    path: '/order',
     icon: icon('ic-order'),
   },
   {

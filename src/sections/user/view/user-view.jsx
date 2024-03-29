@@ -60,7 +60,7 @@ export default function UserPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`https://cafe-project-server11.onrender.com/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
+          await axios.delete(`https://test-api-01.azurewebsites.net/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
           Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {

@@ -14,6 +14,8 @@ import {
   Stack,
   Avatar,
   Button,
+  Select,
+  MenuItem,
   Checkbox,
   TableRow,
   TextField,
@@ -22,6 +24,8 @@ import {
   TableHead,
   Container,
   Typography,
+  InputLabel,
+  FormControl,
   InputAdornment,
   TableContainer,
   TablePagination,
@@ -42,8 +46,34 @@ function MenuTable() {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [currentRecipe, setCurrentRecipe] = useState(null);
-
   const [inventoryItems, setInventoryItems] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [updateData, setUpdateData] = useState({ name: '', description: '', price: 0 });
+  const [recipes, setRecipes] = useState([]); // This line defines 'recipes'
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    // Function to fetch recipes
+    const fetchRecipes = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/recipes/all');
+        setRecipes(response.data); // Assuming your API returns an array of recipes
+      } catch (error) {
+        console.error('Failed to fetch recipes', error);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
+
+  const handleUpdateSelected = async () => {
+    // Assuming `selected` is an array of selected item IDs, and for update, you only allow one item to be selected.
+    if (selected.length === 1) {
+      const menuItemId = selected[0];
+      await fetchMenuItemDetails(menuItemId);
+      setUpdateModalOpen(true); // Presuming you open a modal for editing, ensure it opens after data is fetched.
+    }
+  };
 
   useEffect(() => {
     // Fetch inventory items from your API
@@ -63,6 +93,16 @@ function MenuTable() {
 
   const handleCloseModal = () => {
     setOpenModal(false);
+  };
+
+  const handleFileChange = (event) => {
+    if (event.target.files.length > 0) {
+      // Use setSelectedFile to update the state with the selected file
+      setSelectedFile(event.target.files[0]);
+    } else {
+      // If no file is selected, set selectedFile back to null
+      setSelectedFile(null);
+    }
   };
 
   useEffect(() => {
@@ -158,6 +198,49 @@ function MenuTable() {
     });
   };
 
+  const fetchMenuItemDetails = async (menuItemId) => {
+    try {
+      const response = await axios.get(`http://localhost:3333/api/menus/menu/${menuItemId}`);
+      const menuItemDetails = response.data;
+
+      setUpdateData({
+        ...menuItemDetails, // Spread other properties
+        recipe: menuItemDetails.recipe._id, // Ensure this is just the ID, not the whole object
+      });
+    } catch (error) {
+      console.error('Failed to fetch menu item details', error);
+    }
+  };
+
+  const handleUpdateMenu = async () => {
+    const formData = new FormData();
+    // Append all `updateData` fields to `formData`
+    Object.keys(updateData).forEach((key) => {
+      if (key !== 'image') {
+        // Assuming `image` is the key for the image in `updateData`
+        formData.append(key, updateData[key]);
+      }
+    });
+
+    // If there's a selected file, append it under the 'image' key or whatever your backend expects
+    if (selectedFile) {
+      formData.append('image', selectedFile);
+    }
+
+    try {
+      await axios.put(`http://localhost:3333/api/menus/${updateData._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      toast.success('Menu item updated successfully');
+      setUpdateModalOpen(false);
+    } catch (error) {
+      console.error('Failed to update menu item:', error);
+      toast.error('Failed to update menu item');
+    }
+  };
+
   return (
     <Container>
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
@@ -175,6 +258,15 @@ function MenuTable() {
               disabled={selected.length === 0}
             >
               ลบ
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<Iconify icon="eva:edit-fill" />}
+              onClick={handleUpdateSelected}
+              disabled={selected.length !== 1} // Ensure only one item is selected
+            >
+              แก้ไข Menu
             </Button>
             <Button
               variant="contained"
@@ -268,6 +360,83 @@ function MenuTable() {
                 })}
             </TableBody>
             <Modal
+              open={updateModalOpen}
+              onClose={() => setUpdateModalOpen(false)}
+              aria-labelledby="update-modal-title"
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 400,
+                  bgcolor: 'background.paper',
+                  boxShadow: 24,
+                  p: 4,
+                  borderRadius: 2,
+                }}
+              >
+                <Typography id="update-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+                  Update Menu Item
+                </Typography>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="recipe-select-label">Recipe</InputLabel>
+                  <Select
+                    labelId="recipe-select-label"
+                    value={updateData.recipe}
+                    label="Recipe"
+                    onChange={(e) => setUpdateData({ ...updateData, recipe: e.target.value })}
+                  >
+                    {recipes.map((recipe) => (
+                      <MenuItem key={recipe._id} value={recipe._id}>
+                        {recipe.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField
+                  label="Name"
+                  value={updateData.name}
+                  onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
+                  fullWidth
+                  margin="normal"
+                />
+                <TextField
+                  label="Description"
+                  value={updateData.description}
+                  onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
+                  fullWidth
+                  margin="normal"
+                />
+                <TextField
+                  label="Price"
+                  type="number"
+                  value={updateData.price}
+                  onChange={(e) => setUpdateData({ ...updateData, price: e.target.value })}
+                  fullWidth
+                  margin="normal"
+                />
+
+                <Button variant="contained" component="label" sx={{ mt: 2 }}>
+                  Upload Image
+                  <input type="file" hidden onChange={handleFileChange} />
+                </Button>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    mt: 3,
+                  }}
+                >
+                  <Button onClick={handleUpdateMenu} variant="contained">
+                    Update
+                  </Button>
+                </Box>
+              </Box>
+            </Modal>
+
+            <Modal
               open={openModal}
               onClose={handleCloseModal}
               aria-labelledby="recipe-modal-title"
@@ -295,11 +464,7 @@ function MenuTable() {
                       const inventoryItem = inventoryItems.find(
                         (item) => item._id === ingredient.inventoryItemId.toString()
                       );
-
-                      // Default unit is 'กรัม'.
                       let unit = 'กรัม';
-
-                      // Check if the inventory item name suggests it's a liquid, but not a type of sugar.
                       if (
                         inventoryItem?.name.includes('น้ำ') ||
                         inventoryItem?.name.includes('นม')

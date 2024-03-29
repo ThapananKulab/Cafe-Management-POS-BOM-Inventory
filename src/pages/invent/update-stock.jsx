@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
+import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -21,6 +22,10 @@ import {
 } from '@mui/material';
 
 function UpdateStock() {
+  const StyledDiv = styled.div`
+    font-family: 'Prompt', sans-serif;
+  `;
+
   const navigate = useNavigate();
   const [inventoryItems, setInventoryItems] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState('');
@@ -111,7 +116,7 @@ function UpdateStock() {
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" sx={{ mt: 2, mb: 3, textAlign: 'center' }}>
-        Update วัตถุดิบ
+        <StyledDiv>Update วัตถุดิบ</StyledDiv>
       </Typography>
       <Card sx={{ mb: 2 }}>
         <CardContent>
@@ -169,10 +174,15 @@ function UpdateStock() {
             </Grid>
           </Grid>
           <Typography variant="h6" sx={{ mt: 2 }}>
-            จำนวนปริมาณที่เพิ่ม (หน่วย): {multipliedResult} {unit}
+            <StyledDiv>
+              จำนวนปริมาณที่เพิ่ม (หน่วย): {multipliedResult} {unit}
+            </StyledDiv>
           </Typography>
           <Typography variant="h6" sx={{ mt: 2 }}>
-            คงเหลือ: {currentStock} {unit}
+            <StyledDiv>
+              {' '}
+              คงเหลือ: {currentStock} {unit}
+            </StyledDiv>
           </Typography>
         </CardContent>
         <Grid container spacing={2} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
