@@ -6,9 +6,9 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'dashboard',
+    title: 'รายงาน',
     path: '/dashboard',
-    icon: icon('ic_analytics'),
+    icon: icon('ic-ana'),
   },
   {
     title: 'พนักงาน',

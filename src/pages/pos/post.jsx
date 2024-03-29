@@ -65,7 +65,7 @@ const CartTemplate = () => {
     axios
       .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
       .then((response) => {
-        console.log(response.data);
+        console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);
       })
       .catch((err) => {
@@ -78,12 +78,12 @@ const CartTemplate = () => {
     setTotalPrice(calculateTotalPrice(cartItems));
   }, [cartItems]);
 
-  const handleAddToCart = (productToAdd) => {
+  const handleAddToCart = (productToAdd, sweetLevel) => {
     let productExists = false;
     let newCartItems = [];
 
     const updatedCartItems = cartItems.map((cartItem) => {
-      if (cartItem._id === productToAdd._id) {
+      if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
         productExists = true;
         return { ...cartItem, quantity: cartItem.quantity + 1 };
       }
@@ -91,7 +91,7 @@ const CartTemplate = () => {
     });
 
     if (!productExists) {
-      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1 }]; // เพิ่มท้าย array
+      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1, sweetLevel }]; // Add sweetLevel here
     } else {
       newCartItems = [...updatedCartItems];
     }
@@ -131,8 +131,8 @@ const CartTemplate = () => {
       <Helmet>
         <title>POS</title>
       </Helmet>
-       {/* AppBar component for header */}
-       <AppBar position="static">
+      {/* AppBar component for header */}
+      <AppBar position="static">
         <Toolbar style={{ justifyContent: 'space-between' }}>
           {/* Logo and title */}
           <Typography
@@ -173,7 +173,7 @@ const CartTemplate = () => {
         </Button>
       </Container>
 
-        <Container maxWidth="lg" style={{ marginTop: '10px' }}>
+      <Container maxWidth="lg" style={{ marginTop: '10px' }}>
         <Box
           sx={{
             my: 1,
@@ -182,8 +182,8 @@ const CartTemplate = () => {
             flexWrap: 'wrap',
           }}
         >
-           {/* Category buttons */}
-           {categories.map((category) => (
+          {/* Category buttons */}
+          {categories.map((category) => (
             <Button
               key={category.name}
               variant={selectedCategory === category.name ? 'contained' : 'outlined'}
@@ -211,7 +211,7 @@ const CartTemplate = () => {
               {/* Card component with Paper for styling */}
               <Paper elevation={3} style={{ borderRadius: 16 }}>
                 <Card>
-                <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
+                  <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
 
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
@@ -220,6 +220,13 @@ const CartTemplate = () => {
                     <Typography variant="body2" color="textSecondary" component="p">
                       {product.type}
                     </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      ประเภท: {product.type}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      รสชาติ: {product.sweetLevel}
+                    </Typography>
+
                     <Typography
                       variant="h6"
                       component="p"
@@ -233,7 +240,7 @@ const CartTemplate = () => {
                     <Button
                       size="medium"
                       color="primary"
-                      onClick={() => handleAddToCart(product)}
+                      onClick={() => handleAddToCart(product, product.sweetLevel)} // Assuming sweetLevel is part of your product object
                       style={{ minWidth: 'auto', padding: '6px 12px' }}
                     >
                       <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
@@ -272,8 +279,8 @@ const CartTemplate = () => {
                 }
               >
                 <ListItemText
-                  primary={`${item.name} x ${item.quantity}`}
-                  secondary={`฿ ${item.price}`}
+                  primary={`${item.name} x ${item.quantity} - ${item.sweetLevel}`}
+                  secondary={`Type: ${item.type}, Price: ฿ ${item.price}`}
                 />
               </ListItem>
             ))}

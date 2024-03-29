@@ -29,9 +29,12 @@ function AddMenuItem() {
     name: '',
     description: '',
     price: '',
+    sweetLevel: 'ปกติ', // Default to 'Regular' or any preferred default
+    type: 'ร้อน', // Default to 'Hot' or any preferred default
     recipe: '',
     image: '',
   });
+
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
@@ -76,19 +79,19 @@ function AddMenuItem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const checkDuplicate = await axios.get(
-        `http://localhost:3333/api/menus/checkName?name=${encodeURIComponent(menuItem.name)}`
-      );
-      if (checkDuplicate.data.exists) {
-        toast.error('ชื่อเมนูนี้ถูกใช้แล้ว');
-        return;
-      }
-    } catch (error) {
-      console.error('Error checking for duplicate names:', error);
-      toast.error('ชื่อเมนูซ้ำ');
-      return;
-    }
+    // try {
+    //   const checkDuplicate = await axios.get(
+    //     `http://localhost:3333/api/menus/checkName?name=${encodeURIComponent(menuItem.name)}`
+    //   );
+    //   if (checkDuplicate.data.exists) {
+    //     toast.error('ชื่อเมนูนี้ถูกใช้แล้ว');
+    //     return;
+    //   }
+    // } catch (error) {
+    //   console.error('Error checking for duplicate names:', error);
+    //   toast.error('ชื่อเมนูซ้ำ');
+    //   return;
+    // }
 
     const formData = new FormData();
     formData.append('name', menuItem.name);
@@ -96,6 +99,8 @@ function AddMenuItem() {
     formData.append('price', menuItem.price);
     formData.append('recipe', menuItem.recipe);
     formData.append('image', menuItem.image);
+    formData.append('sweetLevel', menuItem.sweetLevel);
+    formData.append('type', menuItem.type);
 
     try {
       const response = await axios.post('http://localhost:3333/api/menus/addMenu', formData, {
@@ -171,6 +176,39 @@ function AddMenuItem() {
           margin="normal"
           required
           fullWidth
+          id="price"
+          label="ราคา"
+          name="price"
+          type="number"
+          value={menuItem.price}
+          onChange={handleChange}
+        />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>ระดับความหวาน</InputLabel>
+          <Select
+            name="sweetLevel"
+            value={menuItem.sweetLevel}
+            label="ระดับความหวาน"
+            onChange={handleChange}
+          >
+            <MenuItem value="ปกติ">ปกติ</MenuItem>
+            <MenuItem value="หวานน้อย">หวานน้อย</MenuItem>
+            <MenuItem value="หวานมาก">หวานมาก</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel>ประเภท</InputLabel>
+          <Select name="type" value={menuItem.type} label="ประเภท" onChange={handleChange}>
+            <MenuItem value="ร้อน">ร้อน</MenuItem>
+            <MenuItem value="เย็น">เย็น</MenuItem>
+            <MenuItem value="ปั่น">ปั่น</MenuItem>
+          </Select>
+        </FormControl>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
           id="description"
           label="รายละเอียด"
           name="description"
@@ -180,17 +218,6 @@ function AddMenuItem() {
           rows={4} // ตั้งค่านี้ตามความต้องการของคุณ
         />
 
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="price"
-          label="ราคา"
-          name="price"
-          type="number"
-          value={menuItem.price}
-          onChange={handleChange}
-        />
         <input
           accept="image/*"
           required

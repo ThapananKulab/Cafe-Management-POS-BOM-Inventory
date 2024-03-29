@@ -25,7 +25,7 @@ export const AddRaw = lazy(() => import('src/pages/add-raw'));
 export const ProductAddQuantity = lazy(() => import('src/pages/product-addquantity'));
 export const TestOL = lazy(() => import('src/pages/test-ol'));
 export const TestMenu = lazy(() => import('src/pages/menu/menu-add'));
-export const TestReceip = lazy(() => import('src/pages/receip/test-receip'));
+export const TestReceip = lazy(() => import('src/pages/receip/add-receip'));
 export const AddInvent = lazy(() => import('src/pages/invent/add-invent'));
 export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));

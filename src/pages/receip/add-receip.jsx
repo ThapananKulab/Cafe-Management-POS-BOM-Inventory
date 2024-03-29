@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -26,6 +27,7 @@ function AddRecipe() {
   const StyledDiv = styled1.div`
   font-family: 'Prompt', sans-serif;
 `;
+  const navigate = useNavigate();
   const [inventoryItems, setInventoryItems] = useState([]);
   const [recipe, setRecipe] = useState({
     title: '',
@@ -40,6 +42,18 @@ function AddRecipe() {
     };
     fetchInventoryItems();
   }, []);
+
+  useEffect(() => {
+    // Load saved recipe from localStorage, if any
+    const savedRecipe = localStorage.getItem('savedRecipe');
+    if (savedRecipe) {
+      setRecipe(JSON.parse(savedRecipe));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('savedRecipe', JSON.stringify(recipe));
+  }, [recipe]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -137,6 +151,9 @@ function AddRecipe() {
         {' '}
         {/* เพิ่ม Paper เพื่อให้มีพื้นหลังและเงา */}
         <Typography variant="h4" gutterBottom component="div">
+          <Button variant="outlined" onClick={() => navigate('/recipe')}>
+            <Icon icon="lets-icons:back" />
+          </Button>{' '}
           <StyledDiv>เพิ่มสูตรเมนู</StyledDiv>
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>

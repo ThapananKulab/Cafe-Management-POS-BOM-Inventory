@@ -52,12 +52,14 @@ function MenuTable() {
   const [recipes, setRecipes] = useState([]); // This line defines 'recipes'
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก'];
+  const types = ['ร้อน', 'เย็น', 'ปั่น'];
+
   useEffect(() => {
-    // Function to fetch recipes
     const fetchRecipes = async () => {
       try {
         const response = await axios.get('http://localhost:3333/api/recipes/all');
-        setRecipes(response.data); // Assuming your API returns an array of recipes
+        setRecipes(response.data);
       } catch (error) {
         console.error('Failed to fetch recipes', error);
       }
@@ -67,16 +69,14 @@ function MenuTable() {
   }, []);
 
   const handleUpdateSelected = async () => {
-    // Assuming `selected` is an array of selected item IDs, and for update, you only allow one item to be selected.
     if (selected.length === 1) {
       const menuItemId = selected[0];
       await fetchMenuItemDetails(menuItemId);
-      setUpdateModalOpen(true); // Presuming you open a modal for editing, ensure it opens after data is fetched.
+      setUpdateModalOpen(true);
     }
   };
 
   useEffect(() => {
-    // Fetch inventory items from your API
     const fetchInventoryItems = async () => {
       const { data } = await axios.get(
         'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
@@ -97,28 +97,42 @@ function MenuTable() {
 
   const handleFileChange = (event) => {
     if (event.target.files.length > 0) {
-      // Use setSelectedFile to update the state with the selected file
       setSelectedFile(event.target.files[0]);
     } else {
-      // If no file is selected, set selectedFile back to null
       setSelectedFile(null);
     }
   };
 
+  // useEffect(() => {
+  //   const fetchMenus = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         'https://test-api-01.azurewebsites.net/api/menus/allMenus'
+  //       );
+  //       setMenus(response.data);
+  //       setFilteredMenus(response.data);
+  //     } catch (error) {
+  //       console.error('Could not fetch menus:', error);
+  //     }
+  //   };
+  //   fetchMenus();
+  // }, []);
+  const fetchMenus = async () => {
+    try {
+      const response = await axios.get('https://test-api-01.azurewebsites.net/api/menus/allMenus');
+      setMenus(response.data);
+    } catch (error) {
+      console.error('Could not fetch menus:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/menus/allMenus'
-        );
-        setMenus(response.data);
-        setFilteredMenus(response.data);
-      } catch (error) {
-        console.error('Could not fetch menus:', error);
-      }
-    };
     fetchMenus();
-  }, []);
+
+    const intervalId = setInterval(fetchMenus, 500);
+
+    return () => clearInterval(intervalId);
+  }, []); //
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -176,8 +190,8 @@ function MenuTable() {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ไม่, ยกเลิก!',
+      confirmButtonText: 'ใช่',
+      cancelButtonText: 'ยกเลิก!',
       reverseButtons: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -214,15 +228,12 @@ function MenuTable() {
 
   const handleUpdateMenu = async () => {
     const formData = new FormData();
-    // Append all `updateData` fields to `formData`
     Object.keys(updateData).forEach((key) => {
       if (key !== 'image') {
-        // Assuming `image` is the key for the image in `updateData`
         formData.append(key, updateData[key]);
       }
     });
 
-    // If there's a selected file, append it under the 'image' key or whatever your backend expects
     if (selectedFile) {
       formData.append('image', selectedFile);
     }
@@ -233,7 +244,7 @@ function MenuTable() {
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success('Menu item updated successfully');
+      toast.success('แก้ไขเมนูสำเร็จ');
       setUpdateModalOpen(false);
     } catch (error) {
       console.error('Failed to update menu item:', error);
@@ -266,7 +277,7 @@ function MenuTable() {
               onClick={handleUpdateSelected}
               disabled={selected.length !== 1} // Ensure only one item is selected
             >
-              แก้ไข Menu
+              แก้ไข
             </Button>
             <Button
               variant="contained"
@@ -319,6 +330,8 @@ function MenuTable() {
                 </TableCell>
                 <TableCell>ชื่อเมนู</TableCell>
                 <TableCell>รูปภาพ</TableCell>
+                <TableCell>ประเภท</TableCell>
+                <TableCell>รสชาติ</TableCell>
                 <TableCell>รายละเอียด</TableCell>
                 <TableCell>ราคา</TableCell>
                 <TableCell>ใบสูตร</TableCell>
@@ -347,6 +360,8 @@ function MenuTable() {
                       <TableCell>
                         <Avatar src={menu.image} alt={menu.name} variant="rounded" />
                       </TableCell>
+                      <TableCell>{menu.type}</TableCell>
+                      <TableCell>{menu.sweetLevel}</TableCell>
                       <TableCell>{menu.description}</TableCell>
                       <TableCell>{`${menu.price.toFixed(2)} บาท`}</TableCell>
                       <TableCell
@@ -363,6 +378,11 @@ function MenuTable() {
               open={updateModalOpen}
               onClose={() => setUpdateModalOpen(false)}
               aria-labelledby="update-modal-title"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
               <Box
                 sx={{
@@ -370,7 +390,10 @@ function MenuTable() {
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: 400,
+                  width: 400, // คุณสามารถปรับค่านี้ตามที่ต้องการ
+                  maxWidth: '90%', // กำหนดค่าสูงสุดของความกว้างไม่ให้เกิน 90% ของ viewport
+                  maxHeight: '90vh', // กำหนดค่าสูงสุดของความสูงไม่ให้เกิน 90vh
+                  overflowY: 'auto', // เพิ่ม scrollbar ในกรณีที่เนื้อหาภายในมีความสูงเกินกว่ากำหนด
                   bgcolor: 'background.paper',
                   boxShadow: 24,
                   p: 4,
@@ -378,7 +401,7 @@ function MenuTable() {
                 }}
               >
                 <Typography id="update-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
-                  Update Menu Item
+                  แก้ไขเมนู
                 </Typography>
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="recipe-select-label">Recipe</InputLabel>
@@ -417,9 +440,40 @@ function MenuTable() {
                   fullWidth
                   margin="normal"
                 />
-
-                <Button variant="contained" component="label" sx={{ mt: 2 }}>
-                  Upload Image
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="sweetLevel-select-label">Sweet Level</InputLabel>
+                  <Select
+                    labelId="sweetLevel-select-label"
+                    id="sweetLevel-select"
+                    value={updateData.sweetLevel}
+                    label="Sweet Level"
+                    onChange={(e) => setUpdateData({ ...updateData, sweetLevel: e.target.value })}
+                  >
+                    {sweetLevels.map((level) => (
+                      <MenuItem key={level} value={level}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="type-select-label">Type</InputLabel>
+                  <Select
+                    labelId="type-select-label"
+                    id="type-select"
+                    value={updateData.type}
+                    label="Type"
+                    onChange={(e) => setUpdateData({ ...updateData, type: e.target.value })}
+                  >
+                    {types.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Button variant="outlined" component="label" sx={{ mt: 2 }}>
+                  อัปโหลดรูป
                   <input type="file" hidden onChange={handleFileChange} />
                 </Button>
                 <Box
@@ -427,11 +481,23 @@ function MenuTable() {
                     display: 'flex',
                     justifyContent: 'flex-end',
                     mt: 3,
+                    width: '100%', // ทำให้ Box นี้ขยายเต็มความกว้างของ container ของมัน
                   }}
                 >
-                  <Button onClick={handleUpdateMenu} variant="contained">
-                    Update
-                  </Button>
+                  <Box
+                    sx={{
+                      width: '100%', // ทำให้ Box นี้ขยายเต็มความกว้าง
+                    }}
+                  >
+                    <Button
+                      onClick={handleUpdateMenu}
+                      variant="contained"
+                      color="warning"
+                      fullWidth // ทำให้ปุ่มขยายเต็มความกว้างของ Box ที่อยู่
+                    >
+                      แก้ไข
+                    </Button>
+                  </Box>
                 </Box>
               </Box>
             </Modal>

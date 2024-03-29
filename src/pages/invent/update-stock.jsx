@@ -48,6 +48,16 @@ function UpdateStock() {
     fetchInventoryItems();
   }, []);
 
+  useEffect(() => {
+    // This effect is used to update the details of the selected item
+    const selectedItem = inventoryItems.find((item) => item._id === selectedItemId);
+    if (selectedItem) {
+      setCurrentStock(selectedItem.quantityInStock); // Assuming this is the current stock level from your inventory
+      setUnit(selectedItem.unit); // Ensure this reflects the unit of measurement
+      setAdjustment(selectedItem.realquantity); // Assuming this reflects some base quantity for calculations
+    }
+  }, [selectedItemId, inventoryItems]);
+
   const incrementUnitPerContainer = () => {
     setUnitPerContainer((prevValue) => prevValue + 1);
     const newResult = adjustment * (unitPerContainer + 1);
@@ -104,6 +114,13 @@ function UpdateStock() {
     }
   }, [selectedItemId, inventoryItems]);
 
+  useEffect(() => {
+    const newResult = adjustment * unitPerContainer;
+    setMultipliedResult(newResult);
+    // Assuming you want to dynamically update the current stock based on this operation
+    // Note: You might need to adjust logic based on how you calculate current stock from these values
+  }, [adjustment, unitPerContainer]);
+
   // คำนวณผลลัพธ์การคูณและการแสดงผล
   const handleAdjustmentChange = (e) => {
     const newAdjustment = e.target.value;
@@ -145,7 +162,7 @@ function UpdateStock() {
             type="number"
             label="ปริมาณตามฉลาก"
             value={adjustment}
-            onChange={handleAdjustmentChange}
+            onChange={handleAdjustmentChange} // ใช้งาน handleAdjustmentChange ที่นี่
             margin="normal"
             inputProps={{ style: { textAlign: 'center' } }} // This centers the text
           />
