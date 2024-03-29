@@ -67,7 +67,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
+      .get('http://localhost:3333/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);
@@ -128,6 +128,32 @@ const CartTemplate = () => {
   };
   const goToDashboard = () => {
     navigate('/dashboard');
+  };
+
+  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders'; // Correct as per your backend setup
+
+  const handleSubmitOrder = async () => {
+    try {
+      const orderData = {
+        user: '6561b321f67031c2e591ec2a',
+        paymentMethod: 'PromptPay', // Confirm this is a valid enum value in your backend
+        total: totalPrice,
+        orderNumber: '1',
+        items: cartItems.map((item) => ({
+          menuItem: item._id, // Change this from menu to menuItem to align with your backend's schema
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      };
+
+      const response = await axios.post(endpoint, orderData);
+      console.log('Order response:', response.data);
+      alert('Order placed successfully');
+      // Here you could clear the cart or navigate the user to a success page
+    } catch (error) {
+      console.error('Order submission failed:', error);
+      // Here you could inform the user about the failure to place the order
+    }
   };
 
   return (
@@ -311,15 +337,15 @@ const CartTemplate = () => {
           <Button
             variant="contained"
             style={{
-              backgroundColor: '#4CAF50', // Green color
+              backgroundColor: '#4CAF50',
               marginTop: '10px',
-              width: '150px', // Increase the width as needed
-              height: '40px', // Adjust the height as needed
-              borderRadius: '0', // Makes it square-shaped
-              margin: '0 auto', // Centers the button when it's within a flex container or similar
-              display: 'block', // Necessary for centering without a flex container
+              width: '150px',
+              height: '40px',
+              borderRadius: '0',
+              margin: '0 auto',
+              display: 'block',
             }}
-            onClick={() => setIsModalOpen(false)}
+            onClick={handleSubmitOrder}
           >
             <Icon icon="heroicons:arrow-right-16-solid" style={{ fontSize: '24px' }} />
           </Button>
