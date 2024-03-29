@@ -22,7 +22,11 @@ function RealTimeOrderPage() {
         if (!response.ok) {
           throw new Error('Failed to fetch');
         }
-        const data = await response.json();
+        let data = await response.json();
+
+        // Sort orders from most recent to oldest
+        data = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -31,6 +35,11 @@ function RealTimeOrderPage() {
 
     fetchOrders();
   }, []);
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  };
 
   return (
     <Container>
@@ -44,7 +53,7 @@ function RealTimeOrderPage() {
               <TableRow>
                 <TableCell>Order Number</TableCell>
                 <TableCell align="right">User</TableCell>
-                <TableCell align="right">Date</TableCell>
+                <TableCell align="right">Date and Time</TableCell>
                 <TableCell align="right">Total</TableCell>
                 <TableCell align="right">Status</TableCell>
                 <TableCell align="right">Payment Method</TableCell>
@@ -60,7 +69,7 @@ function RealTimeOrderPage() {
                     {order.orderNumber}
                   </TableCell>
                   <TableCell align="right">{order.user}</TableCell>
-                  <TableCell align="right">{new Date(order.date).toLocaleDateString()}</TableCell>
+                  <TableCell align="right">{formatDateTime(order.date)}</TableCell>
                   <TableCell align="right">${order.total}</TableCell>
                   <TableCell align="right">{order.status}</TableCell>
                   <TableCell align="right">{order.paymentMethod}</TableCell>
