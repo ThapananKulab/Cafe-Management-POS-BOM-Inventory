@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -28,6 +29,9 @@ import {
 } from '@mui/material';
 
 const CartTemplate = () => {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
@@ -215,16 +219,16 @@ const CartTemplate = () => {
 
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
-                      {product.name}
+                      <StyledDiv> {product.name}</StyledDiv>
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p">
                       {product.type}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p">
-                      ประเภท: {product.type}
+                      <StyledDiv>ประเภท: {product.type}</StyledDiv>
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p">
-                      รสชาติ: {product.sweetLevel}
+                      <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
                     </Typography>
 
                     <Typography
@@ -232,7 +236,7 @@ const CartTemplate = () => {
                       component="p"
                       style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
                     >
-                      ราคา {product.price} ฿
+                      <StyledDiv>ราคา {product.price} ฿</StyledDiv>
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -262,7 +266,7 @@ const CartTemplate = () => {
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            รายการเมนู
+            <StyledDiv>รายการเมนู</StyledDiv>
           </Typography>
           <List>
             {cartItems.map((item) => (
@@ -278,26 +282,30 @@ const CartTemplate = () => {
                   </IconButton>
                 }
               >
-                <ListItemText
-                  primary={`${item.name} x ${item.quantity} - ${item.sweetLevel}`}
-                  secondary={`Type: ${item.type}, Price: ฿ ${item.price}`}
-                />
+                <StyledDiv>
+                  <ListItemText
+                    primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
+                    secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
+                  />
+                </StyledDiv>
               </ListItem>
             ))}
             <Divider />
             <ListItem>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                    Total
-                  </Typography>
-                }
-                secondary={
-                  <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
-                    ฿ {totalPrice}
-                  </Typography>
-                }
-              />
+              <StyledDiv>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                      Total
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
+                      ฿ {totalPrice}
+                    </Typography>
+                  }
+                />
+              </StyledDiv>
             </ListItem>
           </List>
           <Button
