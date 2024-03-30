@@ -1,10 +1,13 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import QRCode from 'react-qr-code';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Box,
@@ -14,6 +17,7 @@ import {
   Paper,
   Badge,
   Modal,
+  Radio,
   Button,
   AppBar,
   Divider,
@@ -22,11 +26,15 @@ import {
   ListItem,
   CardMedia,
   Container,
+  TextField,
+  Pagination,
+  RadioGroup,
   IconButton,
   Typography,
   CardContent,
   CardActions,
   ListItemText,
+  FormControlLabel,
 } from '@mui/material';
 
 const CartTemplate = () => {
@@ -41,12 +49,49 @@ const CartTemplate = () => {
     return savedCartItems ? JSON.parse(savedCartItems) : [];
   });
   const [totalPrice, setTotalPrice] = useState(0);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openAddSnackbar, setOpenAddSnackbar] = useState(false);
-  const [addMessage, setAddMessage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
   const [user, setUser] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('เงินสด');
+  const [receivedAmount, setReceivedAmount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    // ตั้งเวลาให้แสดง Toast หลังจากที่คอมโพเนนต์ถูกแสดงเรียบร้อยแล้ว
+    const timer = setTimeout(() => {
+      toast.success('ข้อความที่ต้องการแสดง', {
+        position: toast.POSITION.TOP_LEFT,
+        autoClose: 500,
+      });
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+  const handleReceivedAmountChange = (event) => {
+    setReceivedAmount(parseFloat(event.target.value));
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+  // const handleBackToPage1 = () => {
+  //   setCurrentPage(1);
+  // };
+
+  const handleNextPage = () => {
+    setCurrentPage(2);
+  };
+
+  const calculateChange = () => {
+    if (Number.isNaN(receivedAmount)) {
+      return 0;
+    }
+    return receivedAmount - totalPrice;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,8 +182,7 @@ const CartTemplate = () => {
 
     setCartItems(newCartItems);
 
-    setOpenAddSnackbar(true);
-    setAddMessage(`${productToAdd.name} added to cart`);
+    toast.success(`${productToAdd.name} added to cart`);
   };
 
   const calculateTotalPrice = (items) =>
@@ -148,7 +192,7 @@ const CartTemplate = () => {
     const updatedCart = cartItems.filter((item) => item._id !== itemId);
     setCartItems(updatedCart);
     setTotalPrice(calculateTotalPrice(updatedCart));
-    setOpenSnackbar(true);
+    toast.error('ลบออกจากตะกร้าเรียบร้อย');
   };
 
   const modalStyle = {
@@ -169,11 +213,22 @@ const CartTemplate = () => {
 
   const handleSubmitOrder = async () => {
     try {
+      if (cartItems.length === 0) {
+        toast.error('ไม่มีสินค้าในตะกร้า');
+        return;
+      }
+
+      // ตรวจสอบว่าราคารวมเป็นค่าบวกหรือไม่
+      if (totalPrice <= 0) {
+        toast.error('กรุณาเพิ่มสินค้าลงในตะกร้าก่อน');
+        return;
+      }
+
       const userfullname = `${user.firstname} ${user.lastname}`;
 
       const orderData = {
         user: userfullname,
-        paymentMethod: 'PromptPay',
+        paymentMethod,
         total: totalPrice,
         orderNumber: '1',
         items: cartItems.map((item) => ({
@@ -182,14 +237,29 @@ const CartTemplate = () => {
           quantity: item.quantity,
         })),
       };
+      setIsModalOpen(false);
 
       const response = await axios.post(endpoint, orderData);
       console.log('Order response:', response.data);
-      alert('Order placed successfully');
-      // Here you could clear the cart or navigate the user to a success page
+      Swal.fire({
+        title: 'ยืนยัน Order',
+        text: 'กำลังเตรียมเมนู',
+        imageUrl:
+          'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHV0MjZ4Y3ZmcTBnZmJ4Mmx6ZTQ3eGMyaHY0Z2F0djc1cW51YWp1aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/G1Aq7ZrE90JEEht6oe/giphy.gif',
+        imageWidth: 250,
+        imageHeight: 250,
+        imageAlt: 'Custom image',
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
+      localStorage.removeItem('cartItems');
     } catch (error) {
       console.error('Order submission failed:', error);
-      // Here you could inform the user about the failure to place the order
+      // แสดงข้อความเมื่อมีข้อผิดพลาดในการส่งคำสั่งของ
+      toast.error('การส่งคำสั่งของล้มเหลว กรุณาลองใหม่อีกครั้ง');
     }
   };
 
@@ -233,13 +303,11 @@ const CartTemplate = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
-
       <Container>
         <Button onClick={goToDashboard}>
           <Icon icon="material-symbols:arrow-back" style={{ fontSize: '2rem' }} />
         </Button>
       </Container>
-
       <Container maxWidth="lg" style={{ marginTop: '10px' }}>
         <Box
           sx={{
@@ -268,7 +336,6 @@ const CartTemplate = () => {
           ))}
         </Box>
       </Container>
-
       {/* Display the products dynamically */}
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
@@ -323,73 +390,205 @@ const CartTemplate = () => {
           ))}
         </Grid>
       </Container>
-
       {/* Cart Modal */}
+
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflowY: 'scroll', // เพิ่ม overflowY เป็น scroll เพื่อให้มีการเลื่อนเนื้อหาเมื่อมีเนื้อหามากเกินไป
+        }}
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             <StyledDiv>รายการเมนู</StyledDiv>
           </Typography>
-          <List>
-            {cartItems.map((item) => (
-              <ListItem
-                key={item._id}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleRemoveItem(item._id)}
+          {currentPage === 1 && (
+            <>
+              <List>
+                {cartItems.map((item) => (
+                  <ListItem
+                    key={item._id}
+                    secondaryAction={
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => handleRemoveItem(item._id)}
+                      >
+                        <Icon icon="clarity:remove-solid" />
+                      </IconButton>
+                    }
                   >
-                    <Icon icon="clarity:remove-solid" />
-                  </IconButton>
-                }
+                    <StyledDiv>
+                      <ListItemText
+                        primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
+                        secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
+                      />
+                    </StyledDiv>
+                  </ListItem>
+                ))}
+                <Divider />
+                <ListItem>
+                  <StyledDiv>
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                          Total
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
+                          ฿ {totalPrice}
+                        </Typography>
+                      }
+                    />
+                  </StyledDiv>
+                </ListItem>
+              </List>
+              <Pagination
+                count={2}
+                page={currentPage}
+                onChange={handlePageChange}
+                style={{ marginBottom: '10px' }}
+              />
+            </>
+          )}
+          {currentPage === 2 && (
+            <>
+              {/* Radio group for payment method */}
+              <RadioGroup
+                aria-label="payment-method"
+                name="payment-method"
+                value={paymentMethod}
+                onChange={handlePaymentMethodChange}
+                row
               >
-                <StyledDiv>
-                  <ListItemText
-                    primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
-                    secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
-                  />
-                </StyledDiv>
-              </ListItem>
-            ))}
-            <Divider />
-            <ListItem>
-              <StyledDiv>
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                      Total
+                <FormControlLabel value="เงินสด" control={<Radio />} label="เงินสด" />
+                <FormControlLabel value="PromptPay" control={<Radio />} label="PromptPay" />
+              </RadioGroup>
+
+              {/* Show received amount field only when payment method is 'เงินสด' */}
+              {paymentMethod === 'เงินสด' && (
+                <>
+                  <Typography
+                    variant="h4"
+                    component="span"
+                    style={{
+                      color: 'green',
+                      fontWeight: 'bold',
+                      display: 'block',
+                      textAlign: 'center',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    ฿ {totalPrice}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <TextField
+                      id="received-amount"
+                      label="จำนวนเงินที่รับ (บาท)"
+                      type="number"
+                      value={paymentMethod === 'PromptPay' ? totalPrice : receivedAmount}
+                      onChange={handleReceivedAmountChange}
+                    />
+                  </Box>
+
+                  {/* Display change amount */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: '10px', // เพิ่มระยะห่างด้านล่างเพื่อความเป็นระเบียบ
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      style={{
+                        fontWeight: 'bold',
+                        color: calculateChange() < 0 ? 'red' : 'inherit',
+                      }}
+                    >
+                      เงินทอน: {calculateChange()} บาท
                     </Typography>
-                  }
-                  secondary={
-                    <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
-                      ฿ {totalPrice}
-                    </Typography>
-                  }
-                />
-              </StyledDiv>
-            </ListItem>
-          </List>
-          <Button
-            variant="contained"
-            style={{
-              backgroundColor: '#4CAF50',
-              marginTop: '10px',
-              width: '150px',
-              height: '40px',
-              borderRadius: '0',
-              margin: '0 auto',
-              display: 'block',
-            }}
-            onClick={handleSubmitOrder}
-          >
-            <Icon icon="heroicons:arrow-right-16-solid" style={{ fontSize: '24px' }} />
-          </Button>
+                  </Box>
+                </>
+              )}
+
+              {/* Show PromptPay details only when payment method is 'PromptPay' */}
+              {paymentMethod === 'PromptPay' && (
+                <>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="h6">เลขบัญชี PromptPay: </Typography>
+                    <QRCode value={totalPrice.toString()} />
+                  </Box>
+
+                  {/* Enable the Submit button when PromptPay is selected */}
+                </>
+              )}
+
+              {/* Pagination for going back to previous page */}
+              <Pagination
+                count={2}
+                page={currentPage}
+                onChange={handlePageChange}
+                style={{ marginBottom: '10px' }}
+              />
+            </>
+          )}
+
+          {currentPage === 1 && (
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: '#4CAF50',
+                marginTop: '10px',
+                width: '150px',
+                height: '40px',
+                borderRadius: '0',
+                margin: '0 auto',
+                display: 'block',
+              }}
+              onClick={handleNextPage}
+            >
+              Next
+            </Button>
+          )}
+          {currentPage === 2 && (
+            <Button
+              variant="contained"
+              disabled={calculateChange() < 0}
+              style={{
+                backgroundColor: '#4CAF50',
+                marginTop: '10px',
+                width: '150px',
+                height: '40px',
+                borderRadius: '0',
+                margin: '0 auto',
+                display: 'block',
+              }}
+              onClick={handleSubmitOrder}
+            >
+              Submit
+            </Button>
+          )}
         </Box>
       </Modal>
 
@@ -403,8 +602,22 @@ const CartTemplate = () => {
           }
           setOpenAddSnackbar(false);
         }}
-        message={addMessage}
       />
+      <ToastContainer position="top-left" className="toast-container" />
+      {/* <Snackbar
+        open={openAddSnackbar}
+        autoHideDuration={1000}
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return; // Keeps the Snackbar open if the reason is a clickaway
+          }
+          setOpenAddSnackbar(false);
+        }}
+      >
+        <Alert severity="success" onClose={() => setOpenAddSnackbar(false)}>
+          {addMessage}
+        </Alert>
+      </Snackbar>
 
       <Snackbar
         open={openSnackbar}
@@ -415,8 +628,11 @@ const CartTemplate = () => {
           }
           setOpenSnackbar(false);
         }}
-        message="ลบออกจากตะกร้าเรียบร้อย"
-      />
+      >
+        <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
+          ลบออกจากตะกร้าเรียบร้อย
+        </Alert>
+      </Snackbar> */}
     </>
   );
 };

@@ -1,4 +1,6 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import QRCode from 'react-qr-code';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
@@ -13,6 +15,7 @@ import {
   Paper,
   Badge,
   Modal,
+  Radio,
   Button,
   AppBar,
   Divider,
@@ -21,11 +24,14 @@ import {
   ListItem,
   CardMedia,
   Container,
+  TextField,
+  RadioGroup,
   IconButton,
   Typography,
   CardContent,
   CardActions,
   ListItemText,
+  FormControlLabel,
 } from '@mui/material';
 
 const CartTemplate = () => {
@@ -45,6 +51,56 @@ const CartTemplate = () => {
   const [openAddSnackbar, setOpenAddSnackbar] = useState(false);
   const [addMessage, setAddMessage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
+  const [user, setUser] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('เงินสด');
+  const [receivedAmount, setReceivedAmount] = useState(0);
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+  const handleReceivedAmountChange = (event) => {
+    setReceivedAmount(parseFloat(event.target.value));
+  };
+
+  const calculateChange = () => {
+    if (Number.isNaN(receivedAmount)) {
+      return 0;
+    }
+    return receivedAmount - totalPrice;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   const categories = [
     { name: 'ทั้งหมด', icon: 'eva:layers-fill' },
@@ -125,7 +181,9 @@ const CartTemplate = () => {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    overflowY: 'auto', // เพิ่ม overflowY เป็น auto เพื่อให้เป็น scrollable เมื่อมีเนื้อหามากเกินไป
   };
+
   const goToDashboard = () => {
     navigate('/dashboard');
   };
@@ -134,13 +192,15 @@ const CartTemplate = () => {
 
   const handleSubmitOrder = async () => {
     try {
+      const userfullname = `${user.firstname} ${user.lastname}`;
+
       const orderData = {
-        user: '6561b321f67031c2e591ec2a',
-        paymentMethod: 'PromptPay', // Confirm this is a valid enum value in your backend
+        user: userfullname,
+        paymentMethod, // ใช้ค่าจาก state ที่กำหนดโดยผู้ใช้ ลดรูปจาก paymentMethod: paymentMethod
         total: totalPrice,
         orderNumber: '1',
         items: cartItems.map((item) => ({
-          menuItem: item._id, // Change this from menu to menuItem to align with your backend's schema
+          menuItem: item._id,
           price: item.price,
           quantity: item.quantity,
         })),
@@ -149,7 +209,7 @@ const CartTemplate = () => {
       const response = await axios.post(endpoint, orderData);
       console.log('Order response:', response.data);
       alert('Order placed successfully');
-      // Here you could clear the cart or navigate the user to a success page
+      localStorage.removeItem('cartItems');
     } catch (error) {
       console.error('Order submission failed:', error);
       // Here you could inform the user about the failure to place the order
@@ -250,11 +310,15 @@ const CartTemplate = () => {
                     <Typography variant="body2" color="textSecondary" component="p">
                       {product.type}
                     </Typography>
+                    {product.type !== 'ทั่วไป' && (
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        <StyledDiv>ประเภท: {product.type}</StyledDiv>
+                      </Typography>
+                    )}
                     <Typography variant="body2" color="textSecondary" component="p">
-                      <StyledDiv>ประเภท: {product.type}</StyledDiv>
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
+                      {product.sweetLevel !== 'ทั่วไป' && (
+                        <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
+                      )}
                     </Typography>
 
                     <Typography
@@ -283,12 +347,17 @@ const CartTemplate = () => {
         </Grid>
       </Container>
 
-      {/* Cart Modal */}
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflowY: 'scroll', // เพิ่ม overflowY เป็น scroll เพื่อให้มีการเลื่อนเนื้อหาเมื่อมีเนื้อหามากเกินไป
+        }}
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -334,6 +403,62 @@ const CartTemplate = () => {
               </StyledDiv>
             </ListItem>
           </List>
+          <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+            {paymentMethod === 'PromptPay' && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography variant="h6">เลขบัญชี PromptPay: </Typography>
+                <QRCode value={totalPrice.toString()} />
+              </Box>
+            )}
+            <RadioGroup
+              aria-label="payment-method"
+              name="payment-method"
+              value={paymentMethod}
+              onChange={handlePaymentMethodChange}
+              row
+            >
+              <FormControlLabel value="เงินสด" control={<Radio />} label="เงินสด" />
+              <FormControlLabel value="PromptPay" control={<Radio />} label="PromptPay" />
+            </RadioGroup>
+          </Container>
+          <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+            {paymentMethod === 'เงินสด' && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <TextField
+                  id="received-amount"
+                  label="จำนวนเงินที่รับ (บาท)"
+                  type="number"
+                  value={receivedAmount}
+                  onChange={handleReceivedAmountChange}
+                />
+              </Box>
+            )}
+          </Container>
+
+          {/* Change calculation */}
+          <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="h6">เงินทอน: {calculateChange()} บาท</Typography>
+            </Box>
+          </Container>
           <Button
             variant="contained"
             style={{
