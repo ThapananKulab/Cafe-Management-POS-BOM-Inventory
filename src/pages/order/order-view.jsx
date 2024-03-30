@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
+import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -8,6 +9,7 @@ import {
   Box,
   Paper,
   Table,
+  Stack,
   Button,
   TableRow,
   TableBody,
@@ -65,6 +67,9 @@ StatusBadge.propTypes = {
 };
 
 function RealTimeOrderPage() {
+  const StyledDiv = styled1.div`
+    font-family: 'Prompt', sans-serif;
+  `;
   const navigate = useNavigate();
   const [isSaleRound, setIsSaleRound] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -187,8 +192,8 @@ function RealTimeOrderPage() {
   // เพิ่มฟังก์ชันตรวจสอบเวลาเปิด-ปิดร้าน
   const checkSaleRoundTime = () => {
     const now = moment().tz('Asia/Bangkok');
-    const openTime = moment().tz('Asia/Bangkok').set({ hour: 7, minute: 0, second: 0 }); // เวลาเปิดร้าน 09:00
-    const closeTime = moment().tz('Asia/Bangkok').set({ hour: 24, minute: 14, second: 0 }); // เวลาปิดร้าน 17:00
+    const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 }); // เวลาเปิดร้าน 09:00
+    const closeTime = moment().tz('Asia/Bangkok').set({ hour: 17, minute: 14, second: 0 }); // เวลาปิดร้าน 17:00
 
     // ตรวจสอบว่าตอนนี้อยู่ในช่วงเวลาเปิดร้านหรือไม่
     setIsSaleRoundOpen(now.isBetween(openTime, closeTime));
@@ -215,80 +220,87 @@ function RealTimeOrderPage() {
 
   return (
     <Container>
-      <Typography variant="h4" sx={{ mb: 5 }}>
-        {isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}
-      </Typography>
-      <Box sx={{ '& button': { m: 1 } }}>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleOpenSaleRound}
-          disabled={isSaleRound || !isSaleRoundOpen} // ปุ่มจะถูก disable ถ้าเปิดร้านอยู่แล้ว หรือไม่ได้อยู่ในช่วงเวลาเปิดร้าน
-        >
-          เปิดรอบขาย
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleCloseSaleRound}
-          disabled={!isSaleRound}
-        >
-          ปิดรอบขาย
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
-          disabled={!isSaleRoundOpen}
-          onClick={() => navigate('/open-order')}
-        >
-          ระยะเวลาการเปิด-ร้าน
-        </Button>
-      </Box>
-      {isSaleRound && (
-        <Paper sx={{ mt: 3 }}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Order Number</TableCell>
-                  <TableCell align="right">Date and Time</TableCell>
-                  <TableCell align="right">Total</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredOrders.map((order) => (
-                  <TableRow key={order._id}>
-                    <TableCell>{order.orderNumber}</TableCell>
-                    <TableCell align="right">
-                      {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
-                    </TableCell>
-                    <TableCell align="right">{formatCurrency(order.total)}</TableCell>{' '}
-                    {/* ใช้งาน formatCurrency ที่นี่ */}
-                    <TableCell align="right">
-                      <StatusBadge status={order.status} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <Box
-              sx={{
-                p: 2,
-                backgroundColor: 'success.main',
-                color: 'white',
-                borderRadius: '4px',
-              }}
+      <Box sx={{ width: '100%', overflow: 'hidden' }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            <StyledDiv>{isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}</StyledDiv>
+          </Typography>
+          <Box sx={{ '& button': { m: 1 } }}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleOpenSaleRound}
+              disabled={isSaleRound || !isSaleRoundOpen} // ปุ่มจะถูก disable ถ้าเปิดร้านอยู่แล้ว หรือไม่ได้อยู่ในช่วงเวลาเปิดร้าน
             >
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
-                ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}
-              </Typography>
-            </Box>
+              <StyledDiv>เปิดรอบขาย</StyledDiv>
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleCloseSaleRound}
+              disabled={!isSaleRound}
+            >
+              <StyledDiv>ปิดรอบขาย</StyledDiv>
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
+              // disabled={!isSaleRoundOpen}
+              onClick={() => navigate('/open-order')}
+            >
+              <StyledDiv>ระยะเวลาการเปิด-ร้าน</StyledDiv>
+            </Button>
           </Box>
-        </Paper>
-      )}
+        </Stack>
+        {isSaleRound && (
+          <Paper sx={{ mt: 3 }}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    {/* <TableCell>เลขออเดอร์</TableCell> */}
+                    <TableCell>ชื่อผู้ทำรายการ</TableCell>
+                    <TableCell align="right">สถานะ</TableCell>
+                    <TableCell align="right">วันที่และเวลา</TableCell>
+                    <TableCell align="right">การชำระเงิน</TableCell>
+                    <TableCell align="right">ราคารวม</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredOrders.map((order) => (
+                    <TableRow key={order._id}>
+                      {/* <TableCell>{order.orderNumber}</TableCell> */}
+                      <TableCell>{order.user}</TableCell>
+                      <TableCell align="right">
+                        <StatusBadge status={order.status} />
+                      </TableCell>
+                      <TableCell align="right">
+                        {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
+                      </TableCell>
+                      <TableCell align="right">{order.paymentMethod}</TableCell>
+                      <TableCell align="right">{formatCurrency(order.total)}</TableCell>{' '}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  backgroundColor: 'success.main',
+                  color: 'white',
+                  borderRadius: '4px',
+                }}
+              >
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
+                  <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+        )}
+      </Box>
     </Container>
   );
 }

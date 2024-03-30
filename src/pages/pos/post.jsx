@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
@@ -45,6 +46,40 @@ const CartTemplate = () => {
   const [openAddSnackbar, setOpenAddSnackbar] = useState(false);
   const [addMessage, setAddMessage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   const categories = [
     { name: 'ทั้งหมด', icon: 'eva:layers-fill' },
@@ -134,13 +169,15 @@ const CartTemplate = () => {
 
   const handleSubmitOrder = async () => {
     try {
+      const userfullname = `${user.firstname} ${user.lastname}`;
+
       const orderData = {
-        user: '6561b321f67031c2e591ec2a',
-        paymentMethod: 'PromptPay', // Confirm this is a valid enum value in your backend
+        user: userfullname,
+        paymentMethod: 'PromptPay',
         total: totalPrice,
         orderNumber: '1',
         items: cartItems.map((item) => ({
-          menuItem: item._id, // Change this from menu to menuItem to align with your backend's schema
+          menuItem: item._id,
           price: item.price,
           quantity: item.quantity,
         })),

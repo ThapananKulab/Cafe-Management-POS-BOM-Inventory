@@ -84,6 +84,10 @@ export default function Router() {
           path: '/menu',
           element: <MenuShow />,
         },
+        {
+          path: '/open-order',
+          element: <OpenOrderPage />,
+        },
       ],
     },
     { index: true, element: <LoginPage /> },
@@ -171,10 +175,6 @@ export default function Router() {
     {
       path: '/test',
       element: <Test />,
-    },
-    {
-      path: '/open-order',
-      element: <OpenOrderPage />,
     },
   ]);
 
