@@ -89,6 +89,10 @@ export default function Router() {
           path: '/open-order',
           element: <OpenOrderPage />,
         },
+        {
+          path: '/manage/invent/update-stock',
+          element: <InventUpdateStock />,
+        },
       ],
     },
     { index: true, element: <LoginPage /> },
@@ -152,10 +156,6 @@ export default function Router() {
     {
       path: '/manage/invent',
       element: <AddInvent />,
-    },
-    {
-      path: '/manage/invent/update-stock',
-      element: <InventUpdateStock />,
     },
     {
       path: '/tp',
