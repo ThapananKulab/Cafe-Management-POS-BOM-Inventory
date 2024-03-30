@@ -67,7 +67,7 @@ export default function LoginView() {
         if (decodedToken.user.role === 'เจ้าของร้าน') {
           router.push('/dashboard');
         } else {
-          router.push('/dashboard');
+          router.push('/sale/pos');
         }
       } else {
         Swal.fire({
