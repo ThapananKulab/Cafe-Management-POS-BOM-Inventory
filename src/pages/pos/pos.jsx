@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -9,6 +10,7 @@ import {
   List,
   Grid,
   Card,
+  Paper,
   Badge,
   Modal,
   Button,
@@ -27,6 +29,9 @@ import {
 } from '@mui/material';
 
 const CartTemplate = () => {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
@@ -62,9 +67,9 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://cafe-project-server11.onrender.com/api/products')
+      .get('http://localhost:3333/api/menus/allMenus')
       .then((response) => {
-        console.log(response.data);
+        console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);
       })
       .catch((err) => {
@@ -77,12 +82,12 @@ const CartTemplate = () => {
     setTotalPrice(calculateTotalPrice(cartItems));
   }, [cartItems]);
 
-  const handleAddToCart = (productToAdd) => {
+  const handleAddToCart = (productToAdd, sweetLevel) => {
     let productExists = false;
     let newCartItems = [];
 
     const updatedCartItems = cartItems.map((cartItem) => {
-      if (cartItem._id === productToAdd._id) {
+      if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
         productExists = true;
         return { ...cartItem, quantity: cartItem.quantity + 1 };
       }
@@ -90,7 +95,7 @@ const CartTemplate = () => {
     });
 
     if (!productExists) {
-      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1 }]; // เพิ่มท้าย array
+      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1, sweetLevel }]; // Add sweetLevel here
     } else {
       newCartItems = [...updatedCartItems];
     }
@@ -98,7 +103,7 @@ const CartTemplate = () => {
     setCartItems(newCartItems);
 
     setOpenAddSnackbar(true);
-    setAddMessage(`${productToAdd.productname} added to cart`);
+    setAddMessage(`${productToAdd.name} added to cart`);
   };
 
   const calculateTotalPrice = (items) =>
@@ -125,30 +130,61 @@ const CartTemplate = () => {
     navigate('/dashboard');
   };
 
+  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders'; // Correct as per your backend setup
+
+  const handleSubmitOrder = async () => {
+    try {
+      const orderData = {
+        user: '6561b321f67031c2e591ec2a',
+        paymentMethod: 'PromptPay', // Confirm this is a valid enum value in your backend
+        total: totalPrice,
+        orderNumber: '1',
+        items: cartItems.map((item) => ({
+          menuItem: item._id, // Change this from menu to menuItem to align with your backend's schema
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      };
+
+      const response = await axios.post(endpoint, orderData);
+      console.log('Order response:', response.data);
+      alert('Order placed successfully');
+      // Here you could clear the cart or navigate the user to a success page
+    } catch (error) {
+      console.error('Order submission failed:', error);
+      // Here you could inform the user about the failure to place the order
+    }
+  };
+
   return (
     <>
       <Helmet>
         <title>POS</title>
       </Helmet>
+      {/* AppBar component for header */}
       <AppBar position="static">
         <Toolbar style={{ justifyContent: 'space-between' }}>
+          {/* Logo and title */}
           <Typography
             variant="h6"
             color="inherit"
             noWrap
-            style={{ cursor: 'pointer' }} // Make it look clickable
-            onClick={() => navigate('/dashboard')} // Use navigate to change the route
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate('/dashboard')}
           >
             <Icon icon="mdi:network-pos" style={{ marginRight: 8 }} />
             POS
           </Typography>
 
+          {/* Current time display */}
           <Box display="flex" justifyContent="right" flexGrow={1}>
             <Typography variant="h6" color="inherit" noWrap>
               <Icon icon="teenyicons:clock-outline" />
               &nbsp;{currentTime}
             </Typography>
           </Box>
+
+          {/* Shopping cart icon */}
           <IconButton
             color="inherit"
             onClick={() => setIsModalOpen(true)}
@@ -164,7 +200,6 @@ const CartTemplate = () => {
       <Container>
         <Button onClick={goToDashboard}>
           <Icon icon="material-symbols:arrow-back" style={{ fontSize: '2rem' }} />
-          {/* เพิ่มขนาดไอคอน */}
         </Button>
       </Container>
 
@@ -172,11 +207,12 @@ const CartTemplate = () => {
         <Box
           sx={{
             my: 1,
-            display: 'flex', // Use Flexbox
-            justifyContent: 'center', // Center horizontally
-            flexWrap: 'wrap', // Allow the buttons to wrap on small screens
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
           }}
         >
+          {/* Category buttons */}
           {categories.map((category) => (
             <Button
               key={category.name}
@@ -189,7 +225,7 @@ const CartTemplate = () => {
                 minWidth: '100px',
               }}
             >
-              <Icon icon={category.icon} style={{ marginRight: 8, marginBottom: -2 }} />{' '}
+              <Icon icon={category.icon} style={{ marginRight: 8, marginBottom: -2 }} />
               {category.name}
             </Button>
           ))}
@@ -199,53 +235,49 @@ const CartTemplate = () => {
       {/* Display the products dynamically */}
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
+          {/* Map through filteredProducts and display cards */}
           {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
-              <Card>
-                <CardMedia style={{ height: 140 }} image={product.image.url} title={product.name} />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {product.productname}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {product.type}
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    component="p"
-                    style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
-                  >
-                    ราคา {product.price} ฿
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  {product.quantity > 0 ? (
+              {/* Card component with Paper for styling */}
+              <Paper elevation={3} style={{ borderRadius: 16 }}>
+                <Card>
+                  <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
+
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      <StyledDiv> {product.name}</StyledDiv>
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {product.type}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      <StyledDiv>ประเภท: {product.type}</StyledDiv>
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
+                    </Typography>
+
+                    <Typography
+                      variant="h6"
+                      component="p"
+                      style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
+                    >
+                      <StyledDiv>ราคา {product.price} ฿</StyledDiv>
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* Button to add item to cart */}
                     <Button
                       size="medium"
                       color="primary"
-                      onClick={() => handleAddToCart(product)}
+                      onClick={() => handleAddToCart(product, product.sweetLevel)} // Assuming sweetLevel is part of your product object
                       style={{ minWidth: 'auto', padding: '6px 12px' }}
                     >
                       <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
                     </Button>
-                  ) : (
-                    <Typography variant="body2" style={{ color: 'red' }}>
-                      สินค้าหมด
-                    </Typography>
-                  )}
-                </CardActions>
-
-                <CardActions>
-                  {/* <Button
-                    size="medium" // หรือไม่ต้องใส่ size ไปเลยเพื่อให้ได้ขนาดมาตรฐาน
-                    color="primary"
-                    onClick={() => handleAddToCart(product)}
-                    style={{ minWidth: 'auto', padding: '6px 12px' }} // ปรับขนาดและระยะห่างของ padding ตามต้องการ
-                  >
-                    <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                  </Button> */}
-                </CardActions>
-              </Card>
+                  </CardActions>
+                </Card>
+              </Paper>
             </Grid>
           ))}
         </Grid>
@@ -260,7 +292,7 @@ const CartTemplate = () => {
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            รายการเมนู
+            <StyledDiv>รายการเมนู</StyledDiv>
           </Typography>
           <List>
             {cartItems.map((item) => (
@@ -276,40 +308,44 @@ const CartTemplate = () => {
                   </IconButton>
                 }
               >
-                <ListItemText
-                  primary={`${item.productname} x ${item.quantity}`}
-                  secondary={`฿ ${item.price}`}
-                />
+                <StyledDiv>
+                  <ListItemText
+                    primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
+                    secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
+                  />
+                </StyledDiv>
               </ListItem>
             ))}
             <Divider />
             <ListItem>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                    Total
-                  </Typography>
-                }
-                secondary={
-                  <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
-                    ฿ {totalPrice}
-                  </Typography>
-                }
-              />
+              <StyledDiv>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                      Total
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
+                      ฿ {totalPrice}
+                    </Typography>
+                  }
+                />
+              </StyledDiv>
             </ListItem>
           </List>
           <Button
             variant="contained"
             style={{
-              backgroundColor: '#4CAF50', // Green color
+              backgroundColor: '#4CAF50',
               marginTop: '10px',
-              width: '150px', // Increase the width as needed
-              height: '40px', // Adjust the height as needed
-              borderRadius: '0', // Makes it square-shaped
-              margin: '0 auto', // Centers the button when it's within a flex container or similar
-              display: 'block', // Necessary for centering without a flex container
+              width: '150px',
+              height: '40px',
+              borderRadius: '0',
+              margin: '0 auto',
+              display: 'block',
             }}
-            onClick={() => setIsModalOpen(false)}
+            onClick={handleSubmitOrder}
           >
             <Icon icon="heroicons:arrow-right-16-solid" style={{ fontSize: '24px' }} />
           </Button>

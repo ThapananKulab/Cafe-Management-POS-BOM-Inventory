@@ -53,7 +53,6 @@ const CartTemplate = () => {
     { name: 'ปั่น', icon: 'mdi:blender' },
     { name: 'ทั่วไป', icon: 'ic:baseline-category' },
   ];
-
   useEffect(() => {
     const timer = setInterval(() => {
       const options = { hour12: false };
@@ -251,11 +250,15 @@ const CartTemplate = () => {
                     <Typography variant="body2" color="textSecondary" component="p">
                       {product.type}
                     </Typography>
+                    {product.type !== 'ทั่วไป' && (
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        <StyledDiv>ประเภท: {product.type}</StyledDiv>
+                      </Typography>
+                    )}
                     <Typography variant="body2" color="textSecondary" component="p">
-                      <StyledDiv>ประเภท: {product.type}</StyledDiv>
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
+                      {product.sweetLevel !== 'ทั่วไป' && (
+                        <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
+                      )}
                     </Typography>
 
                     <Typography
