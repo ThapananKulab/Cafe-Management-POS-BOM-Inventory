@@ -198,7 +198,7 @@ function InventoryManager() {
                   required
                 />
                 <TextField
-                  label="ปริมาณตามฉลาก เช่น 325 กรัม"
+                  label="ปริมาณตามฉลาก เช่น 325 กรัม หรือ 3 ถุง (ทั่วไป)"
                   name="realquantity"
                   value={newItem.realquantity}
                   onChange={handleChange}
@@ -222,10 +222,11 @@ function InventoryManager() {
                     <MenuItem value="ชิ้น">ชิ้น</MenuItem>
                     <MenuItem value="ซอง">ซอง</MenuItem>
                     <MenuItem value="ถุง">ถุง</MenuItem>
+                    <MenuItem value="ทั่วไป">ทั่วไป</MenuItem>
                   </Select>
                 </FormControl>
 
-                {['กรัม', 'ชิ้น', 'มิลลิลิตร'].includes(newItem.unit) && (
+                {['กรัม', 'ชิ้น', 'มิลลิลิตร', 'ทั่วไป'].includes(newItem.unit) && (
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs>
                       <TextField

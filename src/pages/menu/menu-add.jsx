@@ -194,6 +194,7 @@ function AddMenuItem() {
             <MenuItem value="ปกติ">ปกติ</MenuItem>
             <MenuItem value="หวานน้อย">หวานน้อย</MenuItem>
             <MenuItem value="หวานมาก">หวานมาก</MenuItem>
+            <MenuItem value="ทั่วไป">ทั่วไป</MenuItem>
           </Select>
         </FormControl>
 
@@ -203,6 +204,7 @@ function AddMenuItem() {
             <MenuItem value="ร้อน">ร้อน</MenuItem>
             <MenuItem value="เย็น">เย็น</MenuItem>
             <MenuItem value="ปั่น">ปั่น</MenuItem>
+            <MenuItem value="ทั่วไป">ทั่วไป</MenuItem>
           </Select>
         </FormControl>
         <TextField

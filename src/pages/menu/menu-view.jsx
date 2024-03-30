@@ -52,8 +52,8 @@ function MenuTable() {
   const [recipes, setRecipes] = useState([]); // This line defines 'recipes'
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก'];
-  const types = ['ร้อน', 'เย็น', 'ปั่น'];
+  const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก', 'ทั่วไป'];
+  const types = ['ร้อน', 'เย็น', 'ปั่น', 'ทั่วไป'];
 
   useEffect(() => {
     const fetchRecipes = async () => {

@@ -204,6 +204,12 @@ function RealTimeOrderPage() {
         >
           ปิดรอบขาย
         </Button>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }} // Adjust hover color as needed
+        >
+          ระยะเวลาการเปิด-ร้าน
+        </Button>
       </Box>
       {isSaleRound && (
         <Paper sx={{ mt: 3 }}>
