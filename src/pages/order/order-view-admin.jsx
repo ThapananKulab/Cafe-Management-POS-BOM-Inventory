@@ -1,7 +1,6 @@
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
-import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -65,7 +64,6 @@ StatusBadge.propTypes = {
 };
 
 function RealTimeOrderPage() {
-  const navigate = useNavigate();
   const [isSaleRound, setIsSaleRound] = useState(false);
   const [orders, setOrders] = useState([]);
   const [showTodayOnly, setShowTodayOnly] = useState(false);
@@ -237,9 +235,8 @@ function RealTimeOrderPage() {
         </Button>
         <Button
           variant="contained"
-          sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
-          disabled={!isSaleRoundOpen}
-          onClick={() => navigate('/open-order')}
+          sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }} // Adjust hover color as needed
+          disabled={!isSaleRoundOpen} // ปุ่มจะถูก disable ถ้าไม่ได้อยู่ในช่วงเวลาเปิดร้าน
         >
           ระยะเวลาการเปิด-ร้าน
         </Button>

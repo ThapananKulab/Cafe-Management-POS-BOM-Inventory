@@ -34,6 +34,8 @@ export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stoc
 export const TestR = lazy(() => import('src/pages/test-r'));
 export const TestM = lazy(() => import('src/pages/test-m'));
 export const OrderPage = lazy(() => import('src/pages/order/order-view'));
+export const Test = lazy(() => import('src/pages/test'));
+export const OpenOrderPage = lazy(() => import('src/pages/order/open-order'));
 
 // ----------------------------------------------------------------------
 
@@ -165,6 +167,14 @@ export default function Router() {
     {
       path: '/test-r',
       element: <TestR />,
+    },
+    {
+      path: '/test',
+      element: <Test />,
+    },
+    {
+      path: '/open-order',
+      element: <OpenOrderPage />,
     },
   ]);
 
