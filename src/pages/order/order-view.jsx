@@ -74,28 +74,61 @@ function RealTimeOrderPage() {
   const [isSaleRound, setIsSaleRound] = useState(false);
   const [orders, setOrders] = useState([]);
   const [showTodayOnly, setShowTodayOnly] = useState(false);
-  const [isSaleRoundOpen, setIsSaleRoundOpen] = useState(false); // เพิ่ม state เพื่อตรวจสอบว่าอยู่ในช่วงเวลาเปิดร้านหรือไม่
+  const [isSaleRoundOpen, setIsSaleRoundOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     checkSaleRoundStatus();
     fetchOrders();
-    checkSaleRoundTime(); // เรียกฟังก์ชันตรวจสอบเวลาเปิด-ปิดร้าน
+    checkSaleRoundTime();
   }, []);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       checkSaleRoundStatus();
       fetchOrders();
-      checkSaleRoundTime(); // เรียกฟังก์ชันตรวจสอบเวลาเปิด-ปิดร้าน
-    }, 1500); // 5000 มิลลิวินาที = 5 วินาที
+      checkSaleRoundTime();
+    }, 1500);
 
-    return () => clearInterval(intervalId); // ควรล้าง Interval เมื่อ Component ถูก Unmount เพื่อป้องกัน Memory Leak
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    // When sale round status changes, decide whether to show only today's orders
     setShowTodayOnly(!isSaleRound);
   }, [isSaleRound]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   const checkSaleRoundStatus = async () => {
     try {
@@ -242,14 +275,15 @@ function RealTimeOrderPage() {
             >
               <StyledDiv>ปิดรอบขาย</StyledDiv>
             </Button>
-            <Button
-              variant="contained"
-              sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
-              // disabled={!isSaleRoundOpen}
-              onClick={() => navigate('/open-order')}
-            >
-              <StyledDiv>ระยะเวลาการเปิด-ร้าน</StyledDiv>
-            </Button>
+            {user && user.role === 'เจ้าของร้าน' && (
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
+                onClick={() => navigate('/open-order')}
+              >
+                <StyledDiv>ระยะเวลาการเปิด-ร้าน</StyledDiv>
+              </Button>
+            )}
           </Box>
         </Stack>
         {isSaleRound && (

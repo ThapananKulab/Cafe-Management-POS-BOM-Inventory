@@ -54,8 +54,9 @@ const CartTemplate = () => {
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
   const [user, setUser] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('เงินสด');
-  const [receivedAmount, setReceivedAmount] = useState(0);
+  const [receivedAmount, setReceivedAmount] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  
 
   useEffect(() => {
     // ตั้งเวลาให้แสดง Toast หลังจากที่คอมโพเนนต์ถูกแสดงเรียบร้อยแล้ว
@@ -147,7 +148,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3333/api/menus/allMenus')
+      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);

@@ -5,15 +5,32 @@ const icon = (name) => (
 );
 
 const navConfigUser = [
-  {
-    title: 'dashboard',
-    path: '/dashboard',
-    icon: icon('ic_analytics'),
-  },
+  // {
+  //   title: 'dashboard',
+  //   path: '/dashboard',
+  //   icon: icon('ic_analytics'),
+  // },
   // {
   //   title: 'products',
   //   path: '/products',
   //   icon: icon('ic_cart'),
+  // },
+  // {
+  //   title: 'สินค้า',
+  //   // path: '/product',
+  //   icon: icon('ic_products'),
+  //   subItems: [
+  //     {
+  //       title: 'จัดการสินค้า',
+  //       path: '/product',
+  //       icon: icon('ic_productsM'),
+  //     },
+  //     {
+  //       title: 'นำเข้าสินค้า',
+  //       path: '/product/add-quantity',
+  //       icon: icon('ic-improduct'),
+  //     },
+  //   ],
   // },
   {
     title: 'สินค้า',
@@ -21,15 +38,20 @@ const navConfigUser = [
     icon: icon('ic_products'),
     subItems: [
       {
-        title: 'จัดการสินค้า',
-        path: '/product',
-        icon: icon('ic_productsM'),
+        title: 'จัดการเมนู',
+        path: '/menu',
+        icon: icon('ic-drink-a'),
       },
-      {
-        title: 'นำเข้าสินค้า',
-        path: '/product/add-quantity',
-        icon: icon('ic-improduct'),
-      },
+      // {
+      //   title: 'จัดการสินค้า',
+      //   path: '/product',
+      //   icon: icon('ic_productsM'),
+      // },
+      // {
+      //   title: 'นำเข้าสินค้า',
+      //   path: '/product/add-quantity',
+      //   icon: icon('ic-improduct'),
+      // },
     ],
   },
   // {
