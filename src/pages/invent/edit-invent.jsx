@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
@@ -24,6 +25,9 @@ import {
 import './style.css';
 
 const RawForm = () => {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [name, setName] = useState('');
   const [realquantity, setRealquantity] = useState('');
   const [quantityInStock, setQuantityInStock] = useState('');
@@ -136,7 +140,7 @@ const RawForm = () => {
     <Container maxWidth="md">
       <Paper elevation={3} sx={{ p: 4, margin: 'auto', maxWidth: 500, flexGrow: 1 }}>
         <Typography variant="h4" gutterBottom component="div" sx={{ mb: 4 }}>
-          แก้ไขวัตถุดิบ
+        <StyledDiv>แก้ไขวัตถุดิบ</StyledDiv>
         </Typography>
         <ToastContainer />
         <form onSubmit={handleSubmit}>

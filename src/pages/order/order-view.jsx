@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
+import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -17,6 +18,7 @@ import {
   Container,
   TableHead,
   Typography,
+  IconButton,
   TableContainer,
 } from '@mui/material';
 
@@ -130,6 +132,84 @@ function RealTimeOrderPage() {
     fetchData();
   }, [navigate]);
 
+  const handleAcceptOrder = async (orderId) => {
+    try {
+      const result = await Swal.fire({
+        title: 'คุณต้องการที่จะรับ Order นี้หรือไม่?',
+        text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่',
+      });
+
+      if (result.isConfirmed) {
+        const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/accept`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId }), // Updated to use property shorthand
+        });
+
+        if (response.ok) {
+          // Update the status of the order to 'Completed'
+          const updatedOrders = orders.map((order) => {
+            if (order._id === orderId) {
+              return { ...order, status: 'Completed' };
+            }
+            return order;
+          });
+          setOrders(updatedOrders);
+          // Refresh the list of orders after accepting the order
+          fetchOrders();
+        } else {
+          const data = await response.json();
+          console.error('Error accepting order:', data.error);
+        }
+      }
+    } catch (error) {
+      console.error('Error accepting order:', error);
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    try {
+      const result = await Swal.fire({
+        title: 'คุณต้องการที่จะยกเลิก Order นี้หรือไม่?',
+        text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่',
+      });
+
+      if (result.isConfirmed) {
+        const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/cancel`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId }), // Corrected to use property shorthand
+        });
+
+        if (response.ok) {
+          // Refresh the list of orders after canceling the order
+          fetchOrders();
+        } else {
+          const data = await response.json();
+          console.error('Error cancelling order:', data.error);
+        }
+      }
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+    }
+  };
+
   const checkSaleRoundStatus = async () => {
     try {
       const response = await fetch('http://localhost:3333/api/salerounds/status');
@@ -138,7 +218,6 @@ function RealTimeOrderPage() {
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
         setIsSaleRound(isSaleRoundOpenLocalStorage === 'true' || data.isOpen);
       } else {
-        // Handle the case where the sale round status is not available from the server
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
         setIsSaleRound(isSaleRoundOpenLocalStorage === 'true');
       }
@@ -158,8 +237,6 @@ function RealTimeOrderPage() {
         throw new Error('Failed to fetch orders');
       }
       let data = await response.json();
-
-      // Sort orders by date in descending order
       data = data.sort((a, b) =>
         moment(b.date).tz('Asia/Bangkok').diff(moment(a.date).tz('Asia/Bangkok'))
       );
@@ -226,7 +303,7 @@ function RealTimeOrderPage() {
   const checkSaleRoundTime = () => {
     const now = moment().tz('Asia/Bangkok');
     const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 }); // เวลาเปิดร้าน 09:00
-    const closeTime = moment().tz('Asia/Bangkok').set({ hour: 17, minute: 14, second: 0 }); // เวลาปิดร้าน 17:00
+    const closeTime = moment().tz('Asia/Bangkok').set({ hour: 24, minute: 0, second: 0 }); // เวลาปิดร้าน 17:00
 
     // ตรวจสอบว่าตอนนี้อยู่ในช่วงเวลาเปิดร้านหรือไม่
     setIsSaleRoundOpen(now.isBetween(openTime, closeTime));
@@ -294,17 +371,29 @@ function RealTimeOrderPage() {
                   <TableRow>
                     {/* <TableCell>เลขออเดอร์</TableCell> */}
                     <TableCell>ชื่อผู้ทำรายการ</TableCell>
+                    <TableCell align="right">รายการเมนู</TableCell>
                     <TableCell align="right">สถานะ</TableCell>
                     <TableCell align="right">วันที่และเวลา</TableCell>
                     <TableCell align="right">การชำระเงิน</TableCell>
                     <TableCell align="right">ราคารวม</TableCell>
+                    {filteredOrders.some((order) => order.status === 'Pending') && (
+                      <TableCell align="center">จัดการ</TableCell>
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filteredOrders.map((order) => (
                     <TableRow key={order._id}>
-                      {/* <TableCell>{order.orderNumber}</TableCell> */}
                       <TableCell>{order.user}</TableCell>
+                      <TableCell align="right">
+                        <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                          {order.items.map((item, index) => (
+                            <li key={index}>
+                              {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
+                            </li>
+                          ))}
+                        </ul>
+                      </TableCell>
                       <TableCell align="right">
                         <StatusBadge status={order.status} />
                       </TableCell>
@@ -312,7 +401,19 @@ function RealTimeOrderPage() {
                         {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
                       </TableCell>
                       <TableCell align="right">{order.paymentMethod}</TableCell>
-                      <TableCell align="right">{formatCurrency(order.total)}</TableCell>{' '}
+                      <TableCell align="right">{formatCurrency(order.total)}</TableCell>
+                      <TableCell align="right">
+                        {order.status === 'Pending' && (
+                          <Box>
+                            <IconButton onClick={() => handleAcceptOrder(order._id)}>
+                              <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
+                            </IconButton>
+                            <IconButton onClick={() => handleCancelOrder(order._id)}>
+                              <Icon icon="mdi:cancel-bold" color="#f44336" width={30} height={30} />
+                            </IconButton>
+                          </Box>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

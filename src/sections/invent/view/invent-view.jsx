@@ -29,7 +29,7 @@ export default function InventPage() {
   `;
 
   const editRaw = (rawId) => {
-    navigate(`/edit-invent/${rawId}`); // Navigate to edit page with the id in the URL
+    navigate(`/edit-invent/${rawId}`);
   };
 
   // const categories = [
@@ -41,6 +41,40 @@ export default function InventPage() {
   const [raws, setRaws] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchRaws = async () => {
@@ -97,15 +131,6 @@ export default function InventPage() {
             <StyledDiv>วัตถุดิบ</StyledDiv>
           </Typography>
           <StyledDiv>
-            {/* <Button
-              variant="outlined"
-              color="inherit"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/manage/invent/update-stock')}
-            >
-              <StyledDiv>นำเข้าวัตถุดิบ</StyledDiv>
-            </Button>
-            &nbsp; */}
             <Button
               variant="contained"
               color="inherit"
@@ -142,7 +167,9 @@ export default function InventPage() {
                     <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
-                    <TableCell align="left">จัดการ</TableCell>
+                    {user && user.role === 'เจ้าของร้าน' && (
+                      <TableCell align="left">จัดการ</TableCell>
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -176,20 +203,24 @@ export default function InventPage() {
                             justifyContent="flex-start"
                             spacing={1}
                           >
-                            <Grid item>
-                              <Icon
-                                icon="mingcute:edit-line"
-                                style={{ fontSize: '24px', cursor: 'pointer' }}
-                                onClick={() => editRaw(raw._id)}
-                              />
-                            </Grid>
-                            <Grid item>
-                              <Icon
-                                icon="mingcute:delete-fill"
-                                style={{ fontSize: '24px', cursor: 'pointer' }}
-                                onClick={() => confirmDelete(raw._id)}
-                              />
-                            </Grid>
+                            {user && user.role === 'เจ้าของร้าน' && (
+                              <>
+                                <Grid item>
+                                  <Icon
+                                    icon="mingcute:edit-line"
+                                    style={{ fontSize: '24px', cursor: 'pointer' }}
+                                    onClick={() => editRaw(raw._id)}
+                                  />
+                                </Grid>
+                                <Grid item>
+                                  <Icon
+                                    icon="mingcute:delete-fill"
+                                    style={{ fontSize: '24px', cursor: 'pointer' }}
+                                    onClick={() => confirmDelete(raw._id)}
+                                  />
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </TableCell>
                       </TableRow>

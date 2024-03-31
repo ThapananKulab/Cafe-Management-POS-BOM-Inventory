@@ -56,7 +56,6 @@ const CartTemplate = () => {
   const [paymentMethod, setPaymentMethod] = useState('เงินสด');
   const [receivedAmount, setReceivedAmount] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  
 
   useEffect(() => {
     // ตั้งเวลาให้แสดง Toast หลังจากที่คอมโพเนนต์ถูกแสดงเรียบร้อยแล้ว
@@ -91,7 +90,8 @@ const CartTemplate = () => {
     if (Number.isNaN(receivedAmount)) {
       return 0;
     }
-    return receivedAmount - totalPrice;
+    const change = receivedAmount - totalPrice;
+    return change >= 0 ? change : 0; // ถ้าเงินทอนน้อยกว่า 0 ให้แสดงเป็น 0
   };
 
   useEffect(() => {
@@ -210,10 +210,11 @@ const CartTemplate = () => {
     navigate('/dashboard');
   };
 
-  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders'; // Correct as per your backend setup
+  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders';
 
   const handleSubmitOrder = async () => {
     try {
+      // ตรวจสอบว่าตะกร้ามีสินค้าหรือไม่
       if (cartItems.length === 0) {
         toast.error('ไม่มีสินค้าในตะกร้า');
         return;
@@ -222,6 +223,12 @@ const CartTemplate = () => {
       // ตรวจสอบว่าราคารวมเป็นค่าบวกหรือไม่
       if (totalPrice <= 0) {
         toast.error('กรุณาเพิ่มสินค้าลงในตะกร้าก่อน');
+        return;
+      }
+
+      // ตรวจสอบว่าเงินทอนเป็นค่าว่างหรือไม่
+      if (paymentMethod === 'เงินสด' && receivedAmount === '') {
+        toast.error('กรุณากรอกจำนวนเงินที่รับ');
         return;
       }
 
@@ -234,6 +241,7 @@ const CartTemplate = () => {
         orderNumber: '1',
         items: cartItems.map((item) => ({
           menuItem: item._id,
+          name: item.name,
           price: item.price,
           quantity: item.quantity,
         })),
@@ -469,8 +477,28 @@ const CartTemplate = () => {
                 onChange={handlePaymentMethodChange}
                 row
               >
-                <FormControlLabel value="เงินสด" control={<Radio />} label="เงินสด" />
-                <FormControlLabel value="PromptPay" control={<Radio />} label="PromptPay" />
+                <FormControlLabel
+                  value="เงินสด"
+                  control={<Radio />}
+                  label={
+                    <>
+                      เงินสด
+                      <Icon icon="ri:cash-fill" width={24} height={24} />
+                    </>
+                  }
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="PromptPay"
+                  control={<Radio />}
+                  label={
+                    <>
+                      PromptPay
+                      <Icon icon="material-symbols:qr-code" width={24} height={24} />
+                    </>
+                  }
+                  labelPlacement="end"
+                />
               </RadioGroup>
 
               {/* Show received amount field only when payment method is 'เงินสด' */}

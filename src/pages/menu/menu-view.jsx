@@ -51,6 +51,40 @@ function MenuTable() {
   const [updateData, setUpdateData] = useState({ name: '', description: '', price: 0 });
   const [recipes, setRecipes] = useState([]); // This line defines 'recipes'
   const [selectedFile, setSelectedFile] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก', 'ทั่วไป'];
   const types = ['ร้อน', 'เย็น', 'ปั่น', 'ทั่วไป'];
@@ -261,32 +295,37 @@ function MenuTable() {
           </Typography>
 
           <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<Iconify icon="eva:trash-2-outline" />}
-              onClick={handleDeleteSelected}
-              disabled={selected.length === 0}
-            >
-              ลบ
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Iconify icon="eva:edit-fill" />}
-              onClick={handleUpdateSelected}
-              disabled={selected.length !== 1} // Ensure only one item is selected
-            >
-              แก้ไข
-            </Button>
-            <Button
-              variant="contained"
-              color="inherit"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/manage/menu')}
-            >
-              <StyledDiv>เพิ่มเมนู</StyledDiv>
-            </Button>
+            {user &&
+              user.role === 'เจ้าของร้าน' && ( // เช็คว่า userRole เป็น 'เจ้าของร้าน' หรือไม่
+                <>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    startIcon={<Iconify icon="eva:trash-2-outline" />}
+                    onClick={handleDeleteSelected}
+                    disabled={selected.length === 0}
+                  >
+                    ลบ
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<Iconify icon="eva:edit-fill" />}
+                    onClick={handleUpdateSelected}
+                    disabled={selected.length !== 1} // ให้ปุ่มสามารถใช้งานได้เมื่อมีเพียงรายการเดียวที่ถูกเลือก
+                  >
+                    แก้ไข
+                  </Button>
+                  </>
+              )}
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => navigate('/manage/menu')}
+                  >
+                    <StyledDiv>เพิ่มเมนู</StyledDiv>
+                  </Button>
           </Stack>
         </Stack>
         <TextField
@@ -481,19 +520,19 @@ function MenuTable() {
                     display: 'flex',
                     justifyContent: 'flex-end',
                     mt: 3,
-                    width: '100%', // ทำให้ Box นี้ขยายเต็มความกว้างของ container ของมัน
+                    width: '100%',
                   }}
                 >
                   <Box
                     sx={{
-                      width: '100%', // ทำให้ Box นี้ขยายเต็มความกว้าง
+                      width: '100%',
                     }}
                   >
                     <Button
                       onClick={handleUpdateMenu}
                       variant="contained"
                       color="warning"
-                      fullWidth // ทำให้ปุ่มขยายเต็มความกว้างของ Box ที่อยู่
+                      fullWidth
                     >
                       แก้ไข
                     </Button>
