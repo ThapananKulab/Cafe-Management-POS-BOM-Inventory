@@ -207,20 +207,30 @@ const CartTemplate = () => {
     p: 4,
   };
   const goToDashboard = () => {
-    navigate('/dashboard');
+    navigate('/order');
   };
 
   const endpoint = 'http://localhost:3333/api/saleorder/saleOrders';
 
   const handleSubmitOrder = async () => {
     try {
-      // ตรวจสอบว่าตะกร้ามีสินค้าหรือไม่
+      const change = calculateChange();
+      const receivedAmountNumber = parseFloat(receivedAmount); // แปลงค่ารับเงินให้อยู่ในรูปแบบตัวเลข
+
+      if (change < 0) {
+        toast.error('จำนวนเงินทอนไม่เพียงพอ');
+        return;
+      }
+
+      if (receivedAmountNumber < totalPrice) {
+        toast.error('จำนวนเงินที่รับน้อยกว่าจำนวนเงินที่ต้องจ่าย');
+        return;
+      }
       if (cartItems.length === 0) {
         toast.error('ไม่มีสินค้าในตะกร้า');
         return;
       }
 
-      // ตรวจสอบว่าราคารวมเป็นค่าบวกหรือไม่
       if (totalPrice <= 0) {
         toast.error('กรุณาเพิ่มสินค้าลงในตะกร้าก่อน');
         return;
@@ -245,7 +255,9 @@ const CartTemplate = () => {
           price: item.price,
           quantity: item.quantity,
         })),
+        change,
       };
+
       setIsModalOpen(false);
 
       const response = await axios.post(endpoint, orderData);
@@ -253,8 +265,7 @@ const CartTemplate = () => {
       Swal.fire({
         title: 'ยืนยัน Order',
         text: 'กำลังเตรียมเมนู',
-        imageUrl:
-          'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHV0MjZ4Y3ZmcTBnZmJ4Mmx6ZTQ3eGMyaHY0Z2F0djc1cW51YWp1aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/G1Aq7ZrE90JEEht6oe/giphy.gif',
+        imageUrl: 'https://media.tenor.com/r_Gf5d2leQQAAAAi/cooking.gif',
         imageWidth: 250,
         imageHeight: 250,
         imageAlt: 'Custom image',
@@ -267,7 +278,6 @@ const CartTemplate = () => {
       localStorage.removeItem('cartItems');
     } catch (error) {
       console.error('Order submission failed:', error);
-      // แสดงข้อความเมื่อมีข้อผิดพลาดในการส่งคำสั่งของ
       toast.error('การส่งคำสั่งของล้มเหลว กรุณาลองใหม่อีกครั้ง');
     }
   };
@@ -546,7 +556,7 @@ const CartTemplate = () => {
                       variant="h6"
                       style={{
                         fontWeight: 'bold',
-                        color: calculateChange() < 0 ? 'red' : 'inherit',
+                        color: calculateChange() <= 0 ? 'red' : 'inherit',
                       }}
                     >
                       เงินทอน: {calculateChange()} บาท

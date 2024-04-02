@@ -108,6 +108,9 @@ function AddRecipe() {
       toast.success('เพิ่มสำเร็จ', {
         autoClose: 1000,
       });
+
+      navigate('/recipe');
+      localStorage.removeItem('savedRecipe');
     } catch (error) {
       console.error('Error adding recipe:', error);
       toast.error('เพิ่มสูตรไม่สำเร็จ', {
@@ -116,7 +119,28 @@ function AddRecipe() {
     }
   };
 
+  // const addIngredient = () => {
+  //   setRecipe((prevRecipe) => ({
+  //     ...prevRecipe,
+  //     ingredients: [...prevRecipe.ingredients, { inventoryItemId: '', quantity: 1, name: '' }],
+  //   }));
+  // };
+
   const addIngredient = () => {
+    // ตรวจสอบว่ามีชื่อส่วนผสมที่เลือกอยู่แล้วหรือไม่
+    const selectedItems = recipe.ingredients.map((ingredient) => ingredient.inventoryItemId);
+    const availableItems = inventoryItems.map((item) => item._id);
+
+    if (
+      availableItems.length === selectedItems.length &&
+      availableItems.every((item) => selectedItems.includes(item))
+    ) {
+      toast.error('ไม่สามารถเพิ่มส่วนผสมเพิ่มเติมได้', {
+        autoClose: 1000,
+      });
+      return;
+    }
+
     setRecipe((prevRecipe) => ({
       ...prevRecipe,
       ingredients: [...prevRecipe.ingredients, { inventoryItemId: '', quantity: 1, name: '' }],

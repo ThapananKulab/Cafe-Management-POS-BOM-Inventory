@@ -189,14 +189,19 @@ const CartTemplate = () => {
   };
 
   const endpoint = 'http://localhost:3333/api/saleorder/saleOrders'; // Correct as per your backend setup
-
   const handleSubmitOrder = async () => {
     try {
+      if (receivedAmount < totalPrice) {
+        // Alert the user if the received amount is less than the total price
+        alert('จำนวนเงินที่รับมาน้อยกว่าเงินที่ต้องจ่าย');
+        return; // Exit the function early
+      }
+
       const userfullname = `${user.firstname} ${user.lastname}`;
 
       const orderData = {
         user: userfullname,
-        paymentMethod, // ใช้ค่าจาก state ที่กำหนดโดยผู้ใช้ ลดรูปจาก paymentMethod: paymentMethod
+        paymentMethod,
         total: totalPrice,
         orderNumber: '1',
         items: cartItems.map((item) => ({

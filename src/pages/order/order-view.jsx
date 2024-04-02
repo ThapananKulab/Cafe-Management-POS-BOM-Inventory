@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 
 import {
   Box,
+  Modal,
   Paper,
   Table,
   Stack,
@@ -78,6 +79,21 @@ function RealTimeOrderPage() {
   const [showTodayOnly, setShowTodayOnly] = useState(false);
   const [isSaleRoundOpen, setIsSaleRoundOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [receiptInfo, setReceiptInfo] = useState(null);
+
+  const handleViewReceipt = (orderId) => {
+    // ค้นหาข้อมูลใบเสร็จจาก orderId ที่ได้รับ
+    const foundOrder = orders.find((orderItem) => orderItem._id === orderId);
+    if (foundOrder) {
+      // กำหนดข้อมูลใบเสร็จให้กับ state
+      setReceiptInfo(foundOrder);
+    }
+  };
+
+  // เมื่อปิด Modal
+  const handleCloseReceiptModal = () => {
+    setReceiptInfo(null); // เคลียร์ข้อมูลใบเสร็จที่แสดง
+  };
 
   useEffect(() => {
     checkSaleRoundStatus();
@@ -136,7 +152,7 @@ function RealTimeOrderPage() {
     try {
       const result = await Swal.fire({
         title: 'คุณต้องการที่จะรับ Order นี้หรือไม่?',
-        text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+        // text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -179,7 +195,7 @@ function RealTimeOrderPage() {
     try {
       const result = await Swal.fire({
         title: 'คุณต้องการที่จะยกเลิก Order นี้หรือไม่?',
-        text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+        // text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -326,7 +342,9 @@ function RealTimeOrderPage() {
       minimumFractionDigits: 2,
     }).format(value);
 
-  const totalAmount = filteredOrders.reduce((acc, order) => acc + order.total, 0);
+  const totalAmount = filteredOrders
+    .filter((order) => order.status === 'Completed') // Filter only completed orders
+    .reduce((acc, order) => acc + order.total, 0);
 
   return (
     <Container>
@@ -376,6 +394,7 @@ function RealTimeOrderPage() {
                     <TableCell align="right">วันที่และเวลา</TableCell>
                     <TableCell align="right">การชำระเงิน</TableCell>
                     <TableCell align="right">ราคารวม</TableCell>
+                    <TableCell align="right">เงินที่รับมา</TableCell>
                     {filteredOrders.some((order) => order.status === 'Pending') && (
                       <TableCell align="center">จัดการ</TableCell>
                     )}
@@ -403,6 +422,19 @@ function RealTimeOrderPage() {
                       <TableCell align="right">{order.paymentMethod}</TableCell>
                       <TableCell align="right">{formatCurrency(order.total)}</TableCell>
                       <TableCell align="right">
+                        {(order.status === 'Completed' || order.status === 'Pending') && (
+                          <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
+                            ดูใบเสร็จ
+                          </Button>
+                        )}
+                      </TableCell>
+
+                      {/* <TableCell align="right">
+                        {order.total + (order.change || 0) === order.total
+                          ? 'รับมาพอดี'
+                          : formatCurrency(order.total + (order.change || 0))}
+                      </TableCell> */}
+                      <TableCell align="right">
                         {order.status === 'Pending' && (
                           <Box>
                             <IconButton onClick={() => handleAcceptOrder(order._id)}>
@@ -419,6 +451,88 @@ function RealTimeOrderPage() {
                 </TableBody>
               </Table>
             </TableContainer>
+            <Modal
+              open={
+                !!receiptInfo &&
+                (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending')
+              }
+              onClose={handleCloseReceiptModal}
+            >
+              <StyledDiv>
+                <Box
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  {receiptInfo &&
+                    (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending') && (
+                      <div style={{ width: '100%' }}>
+                        <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
+                        <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
+                        <p>
+                          วันที่:{' '}
+                          {moment(receiptInfo.date)
+                            .tz('Asia/Bangkok')
+                            .format('DD/MM/YYYY, H:mm:ss')}
+                        </p>
+                        <p>รายการสินค้า:</p>
+                        <ul>
+                          {receiptInfo.items.map((item, index) => (
+                            <li key={index}>
+                              {item.quantity} x {item.name} - {formatCurrency(item.price)}
+                            </li>
+                          ))}
+                        </ul>
+                        <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <p>
+                            เงินที่รับมา:
+                            {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
+                        </div>
+                        <hr style={{ marginLeft: '8px', flex: '1' }} />
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}>
+                            ยอดรวม:
+                          </p>
+                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                            {formatCurrency(receiptInfo.total)}
+                          </p>
+                        </div>
+                        <hr style={{ marginLeft: '8px', flex: '1' }} />
+
+                        <Button
+                          variant="contained"
+                          onClick={handleCloseReceiptModal}
+                          style={{ marginLeft: 'auto', marginTop: '1rem' }}
+                        >
+                          ปิด
+                        </Button>
+                      </div>
+                    )}
+                </Box>
+              </StyledDiv>
+            </Modal>
+
             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
               <Box
                 sx={{
