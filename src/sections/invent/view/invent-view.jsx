@@ -11,6 +11,7 @@ import {
   Table,
   Stack,
   Button,
+  MenuItem,
   TableRow,
   Container,
   TableBody,
@@ -42,6 +43,8 @@ export default function InventPage() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,10 +120,11 @@ export default function InventPage() {
 
   const filteredRaws = raws.filter(
     (raw) =>
-      raw.name.toLowerCase().includes(search.toLowerCase()) || // Adjusted to 'name'
-      raw.quantityInStock.toString().toLowerCase().includes(search.toLowerCase()) || // Adjusted to 'quantityInStock'
-      raw.unit.toLowerCase().includes(search.toLowerCase()) || // No change needed here
-      raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()) // Adjusted to 'unitPrice'
+      (selectedCategory === '' || raw.category === selectedCategory) &&
+      (selectedUnit === '' || raw.unit === selectedUnit) &&
+      (raw.name.toLowerCase().includes(search.toLowerCase()) ||
+        raw.quantityInStock.toString().toLowerCase().includes(search.toLowerCase()) ||
+        raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -151,6 +155,37 @@ export default function InventPage() {
           onChange={(e) => setSearch(e.target.value)}
           sx={{ maxWidth: '50%' }}
         />
+        <TextField
+          select
+          label="เลือกประเภทวัตถุดิบ"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          variant="outlined"
+          size="small"
+          margin="normal"
+          sx={{ maxWidth: '50%' }}
+        >
+          <MenuItem value="">ทั้งหมด</MenuItem>
+          <MenuItem value="เย็น">เย็น</MenuItem>
+          <MenuItem value="ร้อน">ร้อน</MenuItem>
+          <MenuItem value="ปั่น">ปั่น</MenuItem>
+        </TextField>
+
+        <TextField
+          select
+          label="เลือกหน่วยนับ"
+          value={selectedUnit}
+          onChange={(e) => setSelectedUnit(e.target.value)}
+          variant="outlined"
+          size="small"
+          margin="normal"
+          sx={{ maxWidth: '50%' }}
+        >
+          <MenuItem value="">ทั้งหมด</MenuItem>
+          <MenuItem value="ชิ้น">ชิ้น</MenuItem>
+          <MenuItem value="กรัม">กรัม</MenuItem>
+          <MenuItem value="ลิตร">ลิตร</MenuItem>
+        </TextField>
 
         <Grid container spacing={2}>
           <Grid item xs={12}>

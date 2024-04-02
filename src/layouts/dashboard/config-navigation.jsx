@@ -65,7 +65,7 @@ const navConfig = [
         icon: icon('ic-improduct'),
       },
       {
-        title: 'จัดการสูตรเครื่องดื่ม',
+        title: 'สูตรเครื่องดื่ม',
         path: '/recipe',
         icon: icon('ic-rec'),
       },

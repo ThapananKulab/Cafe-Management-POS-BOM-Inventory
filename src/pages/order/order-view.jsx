@@ -566,7 +566,7 @@ function RealTimeOrderPage() {
               </StyledDiv>
             </Modal>
 
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Box
                 sx={{
                   p: 2,

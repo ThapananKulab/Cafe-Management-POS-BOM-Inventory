@@ -316,16 +316,16 @@ function MenuTable() {
                   >
                     แก้ไข
                   </Button>
-                  </>
+                </>
               )}
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => navigate('/manage/menu')}
-                  >
-                    <StyledDiv>เพิ่มเมนู</StyledDiv>
-                  </Button>
+            <Button
+              variant="contained"
+              color="inherit"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => navigate('/manage/menu')}
+            >
+              <StyledDiv>เพิ่มเมนู</StyledDiv>
+            </Button>
           </Stack>
         </Stack>
         <TextField
@@ -407,12 +407,17 @@ function MenuTable() {
                         onClick={() => handleOpenModal(menu.recipe)}
                         style={{ cursor: 'pointer' }}
                       >
-                        <Iconify icon="mingcute:paper-fill" width={24} height={24} />
+                        {menu.recipe ? (
+                          <Iconify icon="mingcute:paper-fill" width={24} height={24} />
+                        ) : (
+                          'ไม่มีสูตร'
+                        )}
                       </TableCell>
                     </TableRow>
                   );
                 })}
             </TableBody>
+
             <Modal
               open={updateModalOpen}
               onClose={() => setUpdateModalOpen(false)}
