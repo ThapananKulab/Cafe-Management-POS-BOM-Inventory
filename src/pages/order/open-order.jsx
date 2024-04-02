@@ -27,7 +27,9 @@ const SaleRoundsTable = () => {
   useEffect(() => {
     const fetchSaleRounds = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/salerounds/statuses');
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/salerounds/statuses'
+        );
         if (response.data && response.data.saleRounds) {
           // Sort sale rounds by openedAt in descending order
           const sortedSaleRounds = response.data.saleRounds.sort(
