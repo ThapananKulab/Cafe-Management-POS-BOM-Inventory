@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
+import ReactToPrint from 'react-to-print';
 import { useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import {
   Box,
@@ -80,6 +81,7 @@ function RealTimeOrderPage() {
   const [isSaleRoundOpen, setIsSaleRoundOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [receiptInfo, setReceiptInfo] = useState(null);
+  const componentRef = useRef();
 
   const handleViewReceipt = (orderId) => {
     // ค้นหาข้อมูลใบเสร็จจาก orderId ที่ได้รับ
@@ -321,7 +323,6 @@ function RealTimeOrderPage() {
     const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 }); // เวลาเปิดร้าน 09:00
     const closeTime = moment().tz('Asia/Bangkok').set({ hour: 24, minute: 0, second: 0 }); // เวลาปิดร้าน 17:00
 
-    // ตรวจสอบว่าตอนนี้อยู่ในช่วงเวลาเปิดร้านหรือไม่
     setIsSaleRoundOpen(now.isBetween(openTime, closeTime));
   };
 
@@ -451,6 +452,7 @@ function RealTimeOrderPage() {
                 </TableBody>
               </Table>
             </TableContainer>
+
             <Modal
               open={
                 !!receiptInfo &&
@@ -476,57 +478,88 @@ function RealTimeOrderPage() {
                   {receiptInfo &&
                     (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending') && (
                       <div style={{ width: '100%' }}>
-                        <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
-                        <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
-                        <p>
-                          วันที่:{' '}
-                          {moment(receiptInfo.date)
-                            .tz('Asia/Bangkok')
-                            .format('DD/MM/YYYY, H:mm:ss')}
-                        </p>
-                        <p>รายการสินค้า:</p>
-                        <ul>
-                          {receiptInfo.items.map((item, index) => (
-                            <li key={index}>
-                              {item.quantity} x {item.name} - {formatCurrency(item.price)}
-                            </li>
-                          ))}
-                        </ul>
-                        <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
-
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div ref={componentRef}>
+                          <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
+                          <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
                           <p>
-                            เงินที่รับมา:
-                            {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
+                            วันที่:{' '}
+                            {moment(receiptInfo.date)
+                              .tz('Asia/Bangkok')
+                              .format('DD/MM/YYYY, H:mm:ss')}
                           </p>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                          <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
-                        </div>
-                        <hr style={{ marginLeft: '8px', flex: '1' }} />
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}>
-                            ยอดรวม:
-                          </p>
-                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-                            {formatCurrency(receiptInfo.total)}
-                          </p>
-                        </div>
-                        <hr style={{ marginLeft: '8px', flex: '1' }} />
+                          <p>รายการสินค้า:</p>
+                          <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                            {receiptInfo.items.map((item, index) => (
+                              <li key={index} style={{ textAlign: 'left' }}>
+                                {item.quantity} x {item.name}
+                                <span style={{ float: 'right' }}>
+                                  {formatCurrency(item.price * item.quantity)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
 
-                        <Button
+                          <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
+
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <p>
+                              เงินที่รับมา:
+                              {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
+                            </p>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
+                          </div>
+                          <hr style={{ marginLeft: '8px', flex: '1' }} />
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'flex-end',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <p
+                              style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}
+                            >
+                              ยอดรวม:
+                            </p>
+                            <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                              {formatCurrency(receiptInfo.total)}
+                            </p>
+                          </div>
+                          <hr style={{ marginLeft: '8px', flex: '1' }} />
+                        </div>
+
+                        <ReactToPrint
+                          trigger={() => (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              style={{ marginLeft: 'auto', marginTop: '1rem' }}
+                            >
+                              <StyledDiv>พิมพ์รายการ</StyledDiv>
+                            </Button>
+                          )}
+                          content={() => componentRef.current}
+                          pageStyle={`
+                            @page {
+                              size: A4;
+                              margin: 0;
+                            }
+                            @media print {
+                              body {
+                                margin: 1.6cm;
+                              }
+                            }
+                          `}
+                        />
+                        {/* <Button
                           variant="contained"
                           onClick={handleCloseReceiptModal}
                           style={{ marginLeft: 'auto', marginTop: '1rem' }}
                         >
                           ปิด
-                        </Button>
+                        </Button> */}
                       </div>
                     )}
                 </Box>

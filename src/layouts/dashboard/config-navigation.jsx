@@ -50,7 +50,7 @@ const navConfig = [
     ],
   },
   {
-    title: 'วัตถุดิบ',
+    title: 'BOM',
     // path: '/invent',
     icon: icon('ic_raw'),
     subItems: [
@@ -63,6 +63,11 @@ const navConfig = [
         title: 'นำเข้าวัตถุดิบ',
         path: '/manage/invent/update-stock',
         icon: icon('ic-improduct'),
+      },
+      {
+        title: 'จัดการสูตรเครื่องดื่ม',
+        path: '/recipe',
+        icon: icon('ic-rec'),
       },
     ],
   },
@@ -78,18 +83,18 @@ const navConfig = [
   //     },
   //   ],
   // },
-  {
-    title: 'สูตรเครื่องดื่ม',
-    // path: '/raw',
-    icon: icon('ic-raw2'),
-    subItems: [
-      {
-        title: 'จัดการสูตรเครื่องดื่ม',
-        path: '/recipe',
-        icon: icon('ic-rec'),
-      },
-    ],
-  },
+  // {
+  //   title: 'สูตรเครื่องดื่ม',
+  //   // path: '/raw',
+  //   icon: icon('ic-raw2'),
+  //   subItems: [
+  //     {
+  //       title: 'จัดการสูตรเครื่องดื่ม',
+  //       path: '/recipe',
+  //       icon: icon('ic-rec'),
+  //     },
+  //   ],
+  // },
   {
     title: 'ออเดอร์',
     path: '/order',
@@ -106,7 +111,7 @@ const navConfig = [
   //   icon: icon('ic_blog'),
   // },
   {
-    title: 'ขายสินค้า',
+    title: 'POS',
     path: '/sale/pos',
     icon: icon('ic_sell'),
   },

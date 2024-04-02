@@ -36,6 +36,7 @@ export const TestM = lazy(() => import('src/pages/test-m'));
 export const OrderPage = lazy(() => import('src/pages/order/order-view'));
 export const Test = lazy(() => import('src/pages/test'));
 export const OpenOrderPage = lazy(() => import('src/pages/order/open-order'));
+export const Notification = lazy(() => import('src/pages/notification'));
 
 // ----------------------------------------------------------------------
 
@@ -176,6 +177,10 @@ export default function Router() {
     {
       path: '/test',
       element: <Test />,
+    },
+    {
+      path: '/notification',
+      element: <Notification />,
     },
   ]);
 
