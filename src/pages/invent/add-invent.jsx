@@ -44,6 +44,8 @@ function InventoryManager() {
 
   const goBack = () => navigate(-1);
   const [inventoryItems, setInventoryItems] = useState([]);
+  const [previousQuantity, setPreviousQuantity] = useState(''); // เพิ่มสถานะสำหรับเก็บค่าเดิม
+
   const [newItem, setNewItem] = useState({
     name: '',
     unit: '',
@@ -138,6 +140,7 @@ function InventoryManager() {
       fetchInventoryItems();
       setNewItem({
         name: '',
+        type: '',
         unit: '',
         realquantity: '',
         quantityInStock: '',
@@ -148,6 +151,18 @@ function InventoryManager() {
     } catch (error) {
       console.error('Error adding inventory item:', error);
       toast.error('ยังกรอกข้อมูลไม่ครบ');
+    }
+  };
+
+  const handleClickZero = () => {
+    if (newItem.quantityInStock === '0' && previousQuantity) {
+      // ถ้าปัจจุบันเป็น 0 และมีค่าเดิม ให้กลับไปใช้ค่าเดิม
+      setNewItem((prev) => ({ ...prev, quantityInStock: previousQuantity }));
+      setPreviousQuantity(''); // ล้างค่าเดิม
+    } else {
+      // ถ้าไม่ใช่ 0, เก็บค่าปัจจุบันและตั้งค่าเป็น 0
+      setPreviousQuantity(newItem.quantityInStock);
+      setNewItem((prev) => ({ ...prev, quantityInStock: '0' }));
     }
   };
 
@@ -198,6 +213,23 @@ function InventoryManager() {
                   required
                 />
                 <TextField
+                  select
+                  label="ประเภท เช่น ถุง กระป๋อง"
+                  name="type"
+                  value={newItem.type}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  required
+                >
+                  {['ถุง', 'กระปุก', 'ทั่วไป', 'กระป๋อง', 'แก้ว', 'ขวด', 'ถัง'].map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+
+                <TextField
                   label="ปริมาณตามฉลาก เช่น 325 กรัม หรือ 3 ถุง (ทั่วไป)"
                   name="realquantity"
                   value={newItem.realquantity}
@@ -242,7 +274,7 @@ function InventoryManager() {
                       />
                     </Grid>
                     <Grid item>
-                      <Button
+                      {/* <Button
                         variant="outlined" // ปรับเป็น outlined หรือ text สำหรับปุ่มโปร่งใส
                         onClick={() => setNewItem((prev) => ({ ...prev, quantityInStock: '0' }))}
                         sx={{
@@ -254,6 +286,23 @@ function InventoryManager() {
                           '&:hover': {
                             backgroundColor: 'transparent', // ทำให้สีไม่เปลี่ยนเมื่อ hover
                             boxShadow: 'none', // ลบเงาเมื่อ hover
+                          },
+                        }}
+                      >
+                        <Icon icon="icon-park:zero-key" width="32" height="32" />
+                      </Button> */}
+                      <Button
+                        variant="outlined"
+                        onClick={handleClickZero}
+                        sx={{
+                          height: '56px',
+                          minWidth: '56px',
+                          padding: 0,
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          '&:hover': {
+                            backgroundColor: 'transparent',
+                            boxShadow: 'none',
                           },
                         }}
                       >

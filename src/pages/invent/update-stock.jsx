@@ -105,20 +105,17 @@ function UpdateStock() {
     });
   };
 
-  // เมื่อมีการเลือก item, อัพเดทยอด stock คงเหลือให้แสดง
   useEffect(() => {
     const selectedItem = inventoryItems.find((item) => item._id === selectedItemId);
     if (selectedItem) {
-      setCurrentStock(selectedItem.quantityInStock); // Assuming quantityInStock is the correct field
-      setUnit(selectedItem.unit); // Update this line to match your data structure
+      setCurrentStock(selectedItem.quantityInStock);
+      setUnit(selectedItem.unit);
     }
   }, [selectedItemId, inventoryItems]);
 
   useEffect(() => {
     const newResult = adjustment * unitPerContainer;
     setMultipliedResult(newResult);
-    // Assuming you want to dynamically update the current stock based on this operation
-    // Note: You might need to adjust logic based on how you calculate current stock from these values
   }, [adjustment, unitPerContainer]);
 
   // คำนวณผลลัพธ์การคูณและการแสดงผล
@@ -133,7 +130,7 @@ function UpdateStock() {
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" sx={{ mt: 2, mb: 3, textAlign: 'center' }}>
-        <StyledDiv>Update วัตถุดิบ</StyledDiv>
+        <StyledDiv>นำเข้าวัตถุดิบ</StyledDiv>
       </Typography>
       <Card sx={{ mb: 2 }}>
         <CardContent>
@@ -144,13 +141,13 @@ function UpdateStock() {
               value={selectedItemId}
               label="Inventory Item"
               onChange={(e) => setSelectedItemId(e.target.value)}
-              inputProps={{ style: { textAlign: 'center' } }} // This centers the text
+              inputProps={{ style: { textAlign: 'center' } }}
             >
               {inventoryItems.map((item) => (
                 <MenuItem
                   key={item._id}
                   value={item._id}
-                  inputProps={{ style: { textAlign: 'center' } }} // This centers the text
+                  inputProps={{ style: { textAlign: 'center' } }}
                 >
                   {item.name}
                 </MenuItem>
@@ -162,9 +159,9 @@ function UpdateStock() {
             type="number"
             label="ปริมาณตามฉลาก"
             value={adjustment}
-            onChange={handleAdjustmentChange} // ใช้งาน handleAdjustmentChange ที่นี่
+            onChange={handleAdjustmentChange}
             margin="normal"
-            inputProps={{ style: { textAlign: 'center' } }} // This centers the text
+            inputProps={{ style: { textAlign: 'center' } }}
           />
 
           <TextField
@@ -174,10 +171,9 @@ function UpdateStock() {
             value={unitPerContainer}
             onChange={(e) => setUnitPerContainer(Number(e.target.value))}
             margin="normal"
-            inputProps={{ style: { textAlign: 'center' } }} // This centers the text
+            inputProps={{ style: { textAlign: 'center' } }}
             disabled
           />
-
           <Grid container spacing={1} sx={{ mb: 2, mt: 1 }}>
             <Grid item xs={6}>
               <Button fullWidth variant="outlined" onClick={decrementUnitPerContainer}>

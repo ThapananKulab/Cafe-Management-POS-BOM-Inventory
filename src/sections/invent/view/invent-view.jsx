@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
+  Box,
   Grid,
   Paper,
   Table,
@@ -18,6 +19,7 @@ import {
   TableCell,
   TableHead,
   TextField,
+  IconButton,
   Typography,
   TableContainer,
 } from '@mui/material';
@@ -120,7 +122,7 @@ export default function InventPage() {
 
   const filteredRaws = raws.filter(
     (raw) =>
-      (selectedCategory === '' || raw.category === selectedCategory) &&
+      (selectedCategory === '' || raw.type === selectedCategory) &&
       (selectedUnit === '' || raw.unit === selectedUnit) &&
       (raw.name.toLowerCase().includes(search.toLowerCase()) ||
         raw.quantityInStock.toString().toLowerCase().includes(search.toLowerCase()) ||
@@ -145,47 +147,58 @@ export default function InventPage() {
             </Button>
           </StyledDiv>
         </Stack>
-
-        <TextField
-          label="ค้นหาวัตถุดิบ เช่น น้ำตาล"
-          variant="outlined"
-          size="small" // ทำให้ TextField มีขนาดเล็กลง
-          margin="normal"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ maxWidth: '50%' }}
-        />
-        <TextField
-          select
-          label="เลือกประเภทวัตถุดิบ"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          variant="outlined"
-          size="small"
-          margin="normal"
-          sx={{ maxWidth: '50%' }}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            '& > :not(style)': { m: 1, width: '25ch' },
+          }}
         >
-          <MenuItem value="">ทั้งหมด</MenuItem>
-          <MenuItem value="เย็น">เย็น</MenuItem>
-          <MenuItem value="ร้อน">ร้อน</MenuItem>
-          <MenuItem value="ปั่น">ปั่น</MenuItem>
-        </TextField>
+          <TextField
+            label="ค้นหาวัตถุดิบ เช่น น้ำตาล"
+            variant="outlined"
+            size="small" // ทำให้ TextField มีขนาดเล็กลง
+            margin="normal"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ maxWidth: '50%' }}
+          />
+          <TextField
+            select
+            label="เลือกประเภทวัตถุดิบ"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            variant="outlined"
+            size="small"
+            margin="normal"
+            sx={{ maxWidth: '50%' }}
+          >
+            <MenuItem value="">ทั้งหมด</MenuItem>
+            <MenuItem value="ถุง">ถุง</MenuItem>
+            <MenuItem value="กระปุก">กระปุก</MenuItem>
+            <MenuItem value="ทั่วไป">ทั่วไป</MenuItem>
+            <MenuItem value="กระป๋อง">กระป๋อง</MenuItem>
+            <MenuItem value="แก้ว">แก้ว</MenuItem>
+            <MenuItem value="ขวด">ขวด</MenuItem>
+          </TextField>
 
-        <TextField
-          select
-          label="เลือกหน่วยนับ"
-          value={selectedUnit}
-          onChange={(e) => setSelectedUnit(e.target.value)}
-          variant="outlined"
-          size="small"
-          margin="normal"
-          sx={{ maxWidth: '50%' }}
-        >
-          <MenuItem value="">ทั้งหมด</MenuItem>
-          <MenuItem value="ชิ้น">ชิ้น</MenuItem>
-          <MenuItem value="กรัม">กรัม</MenuItem>
-          <MenuItem value="ลิตร">ลิตร</MenuItem>
-        </TextField>
+          <TextField
+            select
+            label="เลือกหน่วยนับ"
+            value={selectedUnit}
+            onChange={(e) => setSelectedUnit(e.target.value)}
+            variant="outlined"
+            size="small"
+            margin="normal"
+            sx={{ maxWidth: '50%' }}
+          >
+            <MenuItem value="">ทั้งหมด</MenuItem>
+            <MenuItem value="ชิ้น">ชิ้น</MenuItem>
+            <MenuItem value="กรัม">กรัม</MenuItem>
+            <MenuItem value="ลิตร">ลิตร</MenuItem>
+          </TextField>
+        </Box>
 
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -225,11 +238,42 @@ export default function InventPage() {
                         {/* <TableCell>{raw._id}</TableCell> */}
                         <TableCell>{raw.name}</TableCell>
                         <TableCell align="center">{raw.realquantity}</TableCell>
-                        <TableCell align="center">{raw.quantityInStock}</TableCell>
+                        {/* <TableCell align="center">
+                          {raw.quantityInStock < 10 ? (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                backgroundColor: 'error.light',
+                                color: 'white',
+                                p: 0.5,
+                                borderRadius: '4px',
+                              }}
+                            >
+                              ไม่พร้อมใช้งาน
+                            </Typography>
+                          ) : (
+                            raw.quantityInStock
+                          )}
+                        </TableCell> */}
+                        {/* <TableCell
+                          align="center"
+                          sx={{ color: raw.quantityInStock < 10 ? 'error.main' : 'text.primary' }}
+                        >
+                          {raw.quantityInStock}
+                        </TableCell> */}
+                        <TableCell align="center">
+                          {raw.quantityInStock <= 5 ? (
+                            <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
+                              {raw.quantityInStock} <span style={{ color: '#ff1744' }}>ต่ำ!</span>
+                            </Typography>
+                          ) : (
+                            raw.quantityInStock
+                          )}
+                        </TableCell>
                         <TableCell align="center">{raw.useInStock}</TableCell>
-                        <TableCell align="center">เย็น</TableCell>
                         <TableCell align="center">{raw.unit}</TableCell>
-                        <TableCell align="center">{raw.unitPrice}</TableCell>
+                        <TableCell align="center">{raw.type}</TableCell>
+                        <TableCell align="center">{raw.unitPrice} ฿</TableCell>
 
                         <TableCell>
                           <Grid
@@ -241,18 +285,22 @@ export default function InventPage() {
                             {user && user.role === 'เจ้าของร้าน' && (
                               <>
                                 <Grid item>
-                                  <Icon
-                                    icon="mingcute:edit-line"
-                                    style={{ fontSize: '24px', cursor: 'pointer' }}
+                                  <IconButton
+                                    aria-label="edit"
                                     onClick={() => editRaw(raw._id)}
-                                  />
+                                    color="primary" // กำหนดสีปุ่มเป็นสีน้ำเงิน
+                                  >
+                                    <Icon icon="mingcute:edit-line" style={{ fontSize: '24px' }} />
+                                  </IconButton>
                                 </Grid>
                                 <Grid item>
-                                  <Icon
-                                    icon="mingcute:delete-fill"
-                                    style={{ fontSize: '24px', cursor: 'pointer' }}
+                                  <IconButton
+                                    aria-label="delete"
                                     onClick={() => confirmDelete(raw._id)}
-                                  />
+                                    style={{ color: '#ff1744' }} // กำหนดสีโดยตรง
+                                  >
+                                    <Icon icon="bi:trash-fill" style={{ fontSize: '24px' }} />
+                                  </IconButton>
                                 </Grid>
                               </>
                             )}

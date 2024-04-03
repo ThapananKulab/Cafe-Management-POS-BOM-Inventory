@@ -58,11 +58,10 @@ const CartTemplate = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    // ตั้งเวลาให้แสดง Toast หลังจากที่คอมโพเนนต์ถูกแสดงเรียบร้อยแล้ว
     const timer = setTimeout(() => {
       toast.success('ข้อความที่ต้องการแสดง', {
         position: toast.POSITION.TOP_LEFT,
-        autoClose: 500,
+        autoClose: 1000,
       });
     }, 1000);
     return () => clearTimeout(timer);

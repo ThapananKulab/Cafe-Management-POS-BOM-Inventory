@@ -154,7 +154,6 @@ function RealTimeOrderPage() {
     try {
       const result = await Swal.fire({
         title: 'คุณต้องการที่จะรับ Order นี้หรือไม่?',
-        // text: 'การดำเนินการนี้ไม่สามารถย้อนกลับได้',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -169,20 +168,15 @@ function RealTimeOrderPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ orderId }), // Updated to use property shorthand
+          body: JSON.stringify({ orderId }),
         });
 
         if (response.ok) {
-          // Update the status of the order to 'Completed'
-          const updatedOrders = orders.map((order) => {
-            if (order._id === orderId) {
-              return { ...order, status: 'Completed' };
-            }
-            return order;
-          });
-          setOrders(updatedOrders);
-          // Refresh the list of orders after accepting the order
-          fetchOrders();
+          // หลังจากยืนยันการรับ Order แล้ว ทำการหักล้างสต็อก
+          await deductStock(orderId);
+
+          // อัพเดทสถานะ Order เป็น 'Completed'
+          // และอาจจะ Refresh รายการ orders
         } else {
           const data = await response.json();
           console.error('Error accepting order:', data.error);
@@ -190,6 +184,25 @@ function RealTimeOrderPage() {
       }
     } catch (error) {
       console.error('Error accepting order:', error);
+    }
+  };
+
+  // ฟังก์ชันสำหรับหักล้างสต็อก
+  const deductStock = async (orderId) => {
+    try {
+      const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/deductStock`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Error deducting stock:', data.message);
+      }
+    } catch (error) {
+      console.error('Error deducting stock:', error);
     }
   };
 

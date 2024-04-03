@@ -31,6 +31,7 @@ const RawForm = () => {
   const [name, setName] = useState('');
   const [realquantity, setRealquantity] = useState('');
   const [quantityInStock, setQuantityInStock] = useState('');
+  const [type, setType] = useState('');
   const [unit, setUnit] = useState('');
   const [unitPrice, setUnitPrice] = useState('');
   const [initialName, setInitialName] = useState('');
@@ -40,6 +41,7 @@ const RawForm = () => {
   const [initialQuantityInStock, setInitialQuantityInStock] = useState('');
   const [initialUnit, setInitialUnit] = useState('');
   const [initialUnitPrice, setInitialUnitPrice] = useState('');
+  const [initialType, setInitialType] = useState('');
 
   const navigate = useNavigate();
   const { rawId } = useParams();
@@ -66,6 +68,8 @@ const RawForm = () => {
           setInitialQuantityInStock(response.data.quantityInStock.toString());
           setUnit(response.data.unit);
           setInitialUnit(response.data.unit);
+          setInitialType(response.data.type);
+          setType(response.data.type);
           setUnitPrice(response.data.unitPrice.toString());
           setInitialUnitPrice(response.data.unitPrice.toString());
         })
@@ -80,12 +84,22 @@ const RawForm = () => {
     { value: 'ซอง', label: 'ซอง' },
   ];
 
+  const types = [
+    { value: 'ถุง', label: 'ถุง' },
+    { value: 'กระปุก', label: 'กระปุก' },
+    { value: 'ทั่วไป', label: 'ทั่วไป' },
+    { value: 'กระป๋อง', label: 'กระป๋อง' },
+    { value: 'แก้ว', label: 'แก้ว' },
+    { value: 'ขวด', label: 'ขวด' },
+    { value: 'ถัง', label: 'ถัง' },
+    // Note: 'ทั่วไป' is repeated in your enum, consider if this is intentional or a mistake.
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // ตรวจสอบว่ามีการเปลี่ยนแปลงข้อมูลหรือไม่
     if (
       name === initialName &&
+      type === initialType && // Added this line to include the type in the comparison
       realquantity.toString() === initialRealquantity.toString() &&
       quantityInStock.toString() === initialQuantityInStock.toString() &&
       unit === initialUnit &&
@@ -118,19 +132,16 @@ const RawForm = () => {
   const updateInventoryItem = async () => {
     const inventoryData = {
       name,
+      type,
       unit,
       realquantity: Number(realquantity),
       quantityInStock: Number(quantityInStock),
       unitPrice: Number(unitPrice),
     };
 
-    await axios.patch(
-      `https://test-api-01.azurewebsites.net/api/inventoryitems/update/${rawId}`,
-      inventoryData,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    await axios.patch(`http://localhost:3333/api/inventoryitems/update/${rawId}`, inventoryData, {
+      headers: { 'Content-Type': 'application/json' },
+    });
     toast.success('แก้ไขวัตถุดิบสำเร็จ', {
       autoClose: 1000,
     });
@@ -140,7 +151,7 @@ const RawForm = () => {
     <Container maxWidth="md">
       <Paper elevation={3} sx={{ p: 4, margin: 'auto', maxWidth: 500, flexGrow: 1 }}>
         <Typography variant="h4" gutterBottom component="div" sx={{ mb: 4 }}>
-        <StyledDiv>แก้ไขวัตถุดิบ</StyledDiv>
+          <StyledDiv>แก้ไขวัตถุดิบ</StyledDiv>
         </Typography>
         <ToastContainer />
         <form onSubmit={handleSubmit}>
@@ -156,6 +167,15 @@ const RawForm = () => {
                 required
                 sx={{ mb: 2 }}
               />
+              <FormControl fullWidth variant="outlined" required sx={{ mb: 2 }}>
+                <Select value={type} onChange={(e) => setType(e.target.value)} label="Type">
+                  {types.map((typeOption) => (
+                    <MenuItem key={typeOption.value} value={typeOption.value}>
+                      {typeOption.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <TextField
                 type="number"
                 value={realquantity}
