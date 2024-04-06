@@ -52,6 +52,28 @@ const navConfig = [
   {
     title: 'BOM',
     // path: '/invent',
+    icon: icon('m_bom'),
+    subItems: [
+      // {
+      //   title: 'จัดการวัตถุดิบ',
+      //   path: '/invent',
+      //   icon: icon('ic-manage'),
+      // },
+      // {
+      //   title: 'สต็อกวัตถุดิบ',
+      //   path: '/manage/invent/update-stock',
+      //   icon: icon('ic-improduct'),
+      // },
+      {
+        title: 'สูตรเครื่องดื่ม',
+        path: '/recipe',
+        icon: icon('ic-rec'),
+      },
+    ],
+  },
+  {
+    title: 'วัตถุดิบ',
+    // path: '/raw',
     icon: icon('ic_raw'),
     subItems: [
       {
@@ -64,25 +86,8 @@ const navConfig = [
         path: '/manage/invent/update-stock',
         icon: icon('ic-improduct'),
       },
-      {
-        title: 'สูตรเครื่องดื่ม',
-        path: '/recipe',
-        icon: icon('ic-rec'),
-      },
     ],
   },
-  // {
-  //   title: 'วัตถุดิบ',
-  //   // path: '/raw',
-  //   icon: icon('ic_raw'),
-  //   subItems: [
-  //     {
-  //       title: 'จัดการวัตถุดิบ',
-  //       path: '/raw',
-  //       icon: icon('ic_milk'),
-  //     },
-  //   ],
-  // },
   // {
   //   title: 'สูตรเครื่องดื่ม',
   //   // path: '/raw',

@@ -1,25 +1,28 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Icon } from '@iconify/react';
+// import { Icon } from '@iconify/react'; // Removed unused Icon import
+import { th } from 'date-fns/locale';
 import styled from 'styled-components';
-import { differenceInDays } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { format, formatDistanceToNow } from 'date-fns';
 
 import {
   Grid,
-  Paper,
-  Table,
+  Card,
   Stack,
+  Dialog,
   Button,
-  TableRow,
   Container,
-  TableBody,
-  TableCell,
-  TableHead,
+  CardMedia,
   TextField,
   Typography,
-  TableContainer,
+  CardActions,
+  CardContent,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  CardActionArea,
 } from '@mui/material';
 
 import Iconify from 'src/components/iconify';
@@ -27,11 +30,13 @@ import Iconify from 'src/components/iconify';
 export default function UserPage() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
-  `;
+  `; // Commented out unused StyledDiv
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
+  const [userDetails, setUserDetails] = useState(null); // State to hold the selected user's details
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -45,6 +50,15 @@ export default function UserPage() {
 
     fetchUsers();
   }, []);
+
+  const handleCardClick = (user) => {
+    setUserDetails(user);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const confirmDelete = (userId) => {
     Swal.fire({
@@ -60,7 +74,7 @@ export default function UserPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`https://test-api-01.azurewebsites.net/api/users/${userId}`); // Ensure this URL matches your actual API endpoint
+          await axios.delete(`https://test-api-01.azurewebsites.net/api/users/${userId}`);
           Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {
@@ -71,10 +85,6 @@ export default function UserPage() {
     });
   };
 
-  const editUser = (userId) => {
-    navigate(`/edit-user/${userId}`);
-  };
-
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(search.toLowerCase()) ||
@@ -82,154 +92,150 @@ export default function UserPage() {
       user.lastname.toLowerCase().includes(search.toLowerCase())
   );
 
-  const formatDateAndCalculateDays = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const formattedDate = new Intl.DateTimeFormat('th-TH', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      timeZone: 'Asia/Bangkok',
-    }).format(date);
-
-    const daysDifference = differenceInDays(now, date);
-
-    return `${formattedDate} (${daysDifference} วันที่ผ่านมา)`;
-  };
-
   return (
-    <div>
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4">
-            <StyledDiv>สินค้า</StyledDiv>
-          </Typography>
-          <StyledDiv>
-            <Button
-              variant="contained"
-              color="inherit"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/add-user')}
-            >
-              <StyledDiv>เพิ่มพนักงาน </StyledDiv>
-            </Button>
-          </StyledDiv>
-        </Stack>
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">
+          <StyledDiv>พนักงาน</StyledDiv>
+        </Typography>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={() => navigate('/add-user')}
+        >
+          <StyledDiv>เพิ่มพนักงาน</StyledDiv>
+        </Button>
+      </Stack>
 
-        <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-          <TextField
-            label="ค้นหาผู้ใช้งาน เช่น สมประสงค์"
-            variant="outlined"
-            size="small" // ทำให้ TextField มีขนาดเล็กลง
-            margin="normal"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            sx={{ maxWidth: '50%' }}
-          />
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              window.location.reload(); // รีเฟรชหน้าเว็บ
-            }}
-            sx={{
-              borderColor: 'primary.main', // ปรับสีขอบของปุ่มให้ตรงกับสีหลัก
-              color: 'primary.main', // ปรับสีข้อความ/ไอคอนให้ตรงกับสีหลัก
-              '&:hover': {
-                backgroundColor: 'transparent', // ให้พื้นหลังยังคงใสเมื่อ hover
-                borderColor: 'primary.dark', // ตัวอย่างการปรับสีขอบปุ่มเมื่อ hover
-              },
-            }}
-          >
-            <Icon icon="ic:baseline-refresh" />
-          </Button>
-        </Stack>
+      <TextField
+        label="ค้นหาผู้ใช้งาน เช่น สมประสงค์"
+        variant="outlined"
+        margin="normal"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        sx={{
+          marginBottom: '50px', // Adds a bottom margin to create spacing after the TextField
+        }}
+      />
 
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 1000 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ลำดับ</TableCell>
-                    {/* <TableCell>ID</TableCell> */}
-                    <TableCell>รูปภาพ</TableCell>
-                    <TableCell>บัญชีผู้ใช้</TableCell>
-                    <TableCell>ชือ-นามสกุล</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>สถานะ</TableCell>
-                    <TableCell>เบอร์โทรศัพท์</TableCell>
-                    <TableCell>อยู่ในระบบนาน</TableCell>
-                    <TableCell>จัดการ</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredUsers.length > 0 ? (
-                    filteredUsers.map((user, index) => (
-                      <TableRow
-                        key={user._id}
-                        sx={{
-                          '&:nth-of-type(odd)': {
-                            backgroundColor: 'rgba(0, 0, 0, 0.02)',
-                          },
-                          '&:nth-of-type(even)': {
-                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                          },
-                        }}
-                      >
-                        <TableCell>{index + 1}</TableCell>
-                        {/* <TableCell>{user._id}</TableCell> */}
-                        <TableCell>
-                          <img src={user.image} alt={user.username} />
-                        </TableCell>
-                        <TableCell>{user.username}</TableCell>
-                        <TableCell>
-                          {user.firstname} {user.lastname}
-                        </TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.role}</TableCell>
-                        <TableCell>{user.phone}</TableCell>
-                        <TableCell>{formatDateAndCalculateDays(user.created)}</TableCell>
-                        <TableCell>
-                          {/* ตรวจสอบว่า user.role ไม่ใช่ 'เจ้าของร้าน' ถ้าใช่ไม่แสดงไอคอน */}
-                          {user.role !== 'เจ้าของร้าน' && (
-                            <>
-                              <Icon
-                                icon="mingcute:edit-line"
-                                width="2em"
-                                height="2em"
-                                onClick={() => editUser(user._id)} // Updated this line
-                              />
-                              <Icon
-                                icon="mingcute:delete-fill"
-                                width="2em"
-                                height="2em"
-                                onClick={() => confirmDelete(user._id)}
-                              />
-                            </>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={10} align="center">
-                        <Typography variant="subtitle1" gutterBottom>
-                          <StyledDiv>ไม่พบผู้ใช้</StyledDiv>
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+      <Grid container spacing={3}>
+        {filteredUsers.map((user, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card onClick={() => handleCardClick(user)} style={{ cursor: 'pointer' }}>
+              <CardActionArea>
+                <CardMedia component="img" height="140" image={user.image} alt={user.username} />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {user.firstname} {user.lastname}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    บัญชีผู้ใช้: {user.username}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Email: {user.email}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    เบอร์โทรศัพท์: {user.phone}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      color: '#000000', // ตั้งค่าสีเป็นสีดำ
+                      fontWeight: 'bold', // คงความหนาของตัวอักษร
+                      fontSize: '1.2rem', // ปรับขนาดตัวอักษรให้ใหญ่ขึ้น
+                      textShadow: '1px 1px 4px rgba(0,0,0,0.5)', // คงเอฟเฟกต์เงาไว้
+                    }}
+                  >
+                    ตำแหน่ง: {user.role}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+              <CardActions>
+                {user.role !== 'เจ้าของร้าน' && (
+                  <>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(`/edit-user/${user._id}`);
+                      }}
+                    >
+                      <Iconify icon="eva:edit-fill" width={24} height={24} />
+                    </Button>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleCardClick(user);
+                      }}
+                      style={{ margin: '0 auto' }} // Centers the button within CardActions
+                    >
+                      <Iconify icon="ic:outline-visibility" width={24} height={24} />
+                    </Button>
+
+                    <Button
+                      size="small"
+                      style={{ color: 'red' }}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        confirmDelete(user._id);
+                      }}
+                    >
+                      <Iconify icon="eva:trash-2-outline" width={24} height={24} />
+                    </Button>
+                  </>
+                )}
+
+                {user.role === 'เจ้าของร้าน' && (
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleCardClick(user);
+                    }}
+                    style={{ margin: '0 auto' }} // Centers the button within CardActions
+                  >
+                    <Iconify icon="ic:outline-visibility" width={24} height={24} />
+                  </Button>
+                )}
+              </CardActions>
+            </Card>
           </Grid>
-        </Grid>
-      </Container>
-    </div>
+        ))}
+      </Grid>
+      {/* Modal for displaying user details */}
+      <Dialog open={isModalOpen} onClose={closeModal}>
+        <DialogTitle>รายละเอียดผู้ใช้</DialogTitle>
+        <DialogContent>
+          {userDetails && (
+            <>
+              <Typography gutterBottom>
+                ชื่อ: {userDetails.firstname} {userDetails.lastname}
+              </Typography>
+              <Typography gutterBottom>Email: {userDetails.email}</Typography>
+              <Typography gutterBottom>เบอร์โทรศัพท์: {userDetails.phone}</Typography>
+              <Typography gutterBottom>ที่อยู่: {userDetails.address}</Typography>
+              <Typography gutterBottom>ตำแหน่ง: {userDetails.role}</Typography>
+
+              <Typography gutterBottom>
+                วันที่เข้าร่วม:{' '}
+                {format(new Date(userDetails.created), 'dd MMMM yyyy', { locale: th })}
+              </Typography>
+
+              <Typography gutterBottom>
+                อยู่ในระบบมา: {formatDistanceToNow(new Date(userDetails.created))} แล้ว
+              </Typography>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal}>ปิด</Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
   );
 }

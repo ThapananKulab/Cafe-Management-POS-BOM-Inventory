@@ -29,7 +29,8 @@ export default function Header({ onOpenNav }) {
     <>
       {!lgUp && (
         <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
-          <Iconify icon="eva:menu-2-fill" />
+          {/* <Iconify icon="eva:menu-2-fill" /> */}
+          <Iconify icon="marketeq:menu" />{' '}
         </IconButton>
       )}
       <Box sx={{ flexGrow: 1 }} />
