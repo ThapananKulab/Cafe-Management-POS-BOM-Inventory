@@ -130,7 +130,7 @@ function UpdateStock() {
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" sx={{ mt: 2, mb: 3, textAlign: 'center' }}>
-        <StyledDiv>นำเข้าวัตถุดิบ</StyledDiv>
+        <StyledDiv>สต็อกวัตถุดิบ</StyledDiv>
       </Typography>
       <Card sx={{ mb: 2 }}>
         <CardContent>

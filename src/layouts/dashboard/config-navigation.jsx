@@ -60,7 +60,7 @@ const navConfig = [
         icon: icon('ic-manage'),
       },
       {
-        title: 'นำเข้าวัตถุดิบ',
+        title: 'สต็อกวัตถุดิบ',
         path: '/manage/invent/update-stock',
         icon: icon('ic-improduct'),
       },
