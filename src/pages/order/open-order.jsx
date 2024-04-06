@@ -2,6 +2,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -9,6 +10,7 @@ import {
   Paper,
   Table,
   Stack,
+  Button,
   TableRow,
   TableBody,
   TableCell,
@@ -23,6 +25,12 @@ const SaleRoundsTable = () => {
     font-family: 'Prompt', sans-serif;
   `;
   const [saleRounds, setSaleRounds] = useState([]);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate(); // สร้าง instance ของ useNavigate
+
+  const handleNavigateToOrders = () => {
+    navigate('/order'); // ใช้ navigate ไปยัง path '/orders'
+  };
 
   useEffect(() => {
     const fetchSaleRounds = async () => {
@@ -42,22 +50,61 @@ const SaleRoundsTable = () => {
       }
     };
 
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user); // ตั้งค่า state ด้วยข้อมูลผู้ใช้
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
     fetchSaleRounds();
+    fetchUserData(); // เรียกใช้ function ที่ดึงข้อมูลผู้ใช้
   }, []);
 
   return (
     <Container>
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
-          <Typography variant="h4" sx={{ mb: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4">
             <StyledDiv>รอบขายทั้งหมด</StyledDiv>
           </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#696969', // สีฟ้าพาสเทล
+              '&:hover': {
+                backgroundColor: '#696969', // ทำให้สีเข้มลงเล็กน้อยเมื่อ hover
+              },
+            }}
+            onClick={handleNavigateToOrders} // เรียกใช้ handleNavigateToOrders เมื่อปุ่มถูกคลิก
+          >
+            รายการ Order
+          </Button>
         </Stack>
         <TableContainer component={Paper}>
           <Table aria-label="sale rounds table">
             <TableHead>
               <TableRow>
-                <TableCell>สถานะ</TableCell>
+                <TableCell>ผู้เปิดร้าน</TableCell> {/* เพิ่ม column ใหม่ */}
+                <TableCell>ตำแหน่ง</TableCell> {/* เพิ่ม column ใหม่ */}
+                <TableCell>สถานะปิด/เปิดร้าน</TableCell>
                 <TableCell align="right">เวลาเปิดร้าน</TableCell> {/* แก้เป็นเวลาเปิดร้าน */}
                 <TableCell align="right">เวลาปิดร้าน</TableCell>
               </TableRow>
@@ -65,6 +112,10 @@ const SaleRoundsTable = () => {
             <TableBody>
               {saleRounds.map((round, index) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    {`${user.firstname || ''} ${user.lastname || ''}`.trim() || 'ไม่ทราบชื่อ'}
+                  </TableCell>
+                  <TableCell>{user.role || 'ไม่ทราบตำแหน่ง'}</TableCell> {/* แสดงชื่อผู้เปิดร้าน */}
                   <TableCell component="th" scope="row">
                     {round.isOpen ? (
                       <Icon icon="mdi:user-check" color="#008000" fontSize="large" />
@@ -72,7 +123,6 @@ const SaleRoundsTable = () => {
                       <Icon icon="ci:user-close" color="#ff0000" fontSize="large" />
                     )}
                   </TableCell>
-
                   <TableCell align="right">
                     {round.openedAt
                       ? moment(round.openedAt).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')

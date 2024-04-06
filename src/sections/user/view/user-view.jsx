@@ -68,7 +68,7 @@ export default function UserPage() {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'ใช่, ลบเลย!',
+      confirmButtonText: 'ใช่',
       cancelButtonText: 'ยกเลิก',
       reverseButtons: true,
     }).then(async (result) => {
@@ -138,16 +138,17 @@ export default function UserPage() {
                   <Typography variant="body2" color="text.secondary">
                     เบอร์โทรศัพท์: {user.phone}
                   </Typography>
+
                   <Typography
                     variant="body2"
                     style={{
                       color: '#000000', // ตั้งค่าสีเป็นสีดำ
                       fontWeight: 'bold', // คงความหนาของตัวอักษร
-                      fontSize: '1.2rem', // ปรับขนาดตัวอักษรให้ใหญ่ขึ้น
-                      textShadow: '1px 1px 4px rgba(0,0,0,0.5)', // คงเอฟเฟกต์เงาไว้
+                      fontSize: '0.8rem', // ปรับขนาดตัวอักษรให้ใหญ่ขึ้น
+                      // textShadow: '1px 1px 4px rgba(0,0,0,0.5)', // คงเอฟเฟกต์เงาไว้
                     }}
                   >
-                    ตำแหน่ง: {user.role}
+                    <StyledDiv>ตำแหน่ง: {user.role}</StyledDiv>
                   </Typography>
                 </CardContent>
               </CardActionArea>
@@ -173,7 +174,7 @@ export default function UserPage() {
                       }}
                       style={{ margin: '0 auto' }} // Centers the button within CardActions
                     >
-                      <Iconify icon="ic:outline-visibility" width={24} height={24} />
+                      <Iconify icon="ic:outline-description" width={24} height={24} />
                     </Button>
 
                     <Button
@@ -199,7 +200,7 @@ export default function UserPage() {
                     }}
                     style={{ margin: '0 auto' }} // Centers the button within CardActions
                   >
-                    <Iconify icon="ic:outline-visibility" width={24} height={24} />
+                    <Iconify icon="ic:outline-description" width={24} height={24} />
                   </Button>
                 )}
               </CardActions>
@@ -209,7 +210,7 @@ export default function UserPage() {
       </Grid>
       {/* Modal for displaying user details */}
       <Dialog open={isModalOpen} onClose={closeModal}>
-        <DialogTitle>รายละเอียดผู้ใช้</DialogTitle>
+        <DialogTitle>ข้อมูลผู้ใช้งาน</DialogTitle>
         <DialogContent>
           {userDetails && (
             <>

@@ -30,7 +30,7 @@ const navConfig = [
   {
     title: 'สินค้า',
     // path: '/product',
-    icon: icon('ic_products'),
+    icon: icon('cafe-8'),
     subItems: [
       {
         title: 'จัดการเมนู',

@@ -129,6 +129,32 @@ export default function InventPage() {
         raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()))
   );
 
+  // ใส่ฟังก์ชันนี้ภายใน component ที่มีการแสดงรายการวัตถุดิบ
+  const renderStatus = (quantity, status) => {
+    if (quantity < 0) {
+      return <Iconify icon="emojione:cross-mark" style={{ fontSize: '24px', color: '#ff1744' }} />;
+    }
+
+    switch (status) {
+      case 'available':
+        return (
+          <Iconify
+            icon="twemoji:check-mark-button"
+            style={{ fontSize: '24px', color: '#4caf50' }}
+          />
+        );
+      case 'pending':
+        return (
+          <Iconify
+            icon="ic:baseline-hourglass-empty"
+            style={{ fontSize: '24px', color: '#ff9800' }}
+          />
+        );
+      default:
+        return <Iconify icon="bi:question-square" style={{ fontSize: '24px', color: '#bdbdbd' }} />;
+    }
+  };
+
   return (
     <div>
       <Container>
@@ -215,6 +241,7 @@ export default function InventPage() {
                     <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
+                    <TableCell align="center">สถานะ</TableCell>
                     {user && user.role === 'เจ้าของร้าน' && (
                       <TableCell align="left">จัดการ</TableCell>
                     )}
@@ -264,7 +291,7 @@ export default function InventPage() {
                         <TableCell align="center">
                           {raw.quantityInStock <= 5 ? (
                             <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
-                              {raw.quantityInStock} <span style={{ color: '#ff1744' }}>ต่ำ!</span>
+                              {raw.quantityInStock} <span style={{ color: '#ff1744' }}>หมด!</span>
                             </Typography>
                           ) : (
                             raw.quantityInStock
@@ -274,6 +301,9 @@ export default function InventPage() {
                         <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.type}</TableCell>
                         <TableCell align="center">{raw.unitPrice} ฿</TableCell>
+                        <TableCell align="center">
+                          {renderStatus(raw.quantityInStock, raw.status)}
+                        </TableCell>
 
                         <TableCell>
                           <Grid
