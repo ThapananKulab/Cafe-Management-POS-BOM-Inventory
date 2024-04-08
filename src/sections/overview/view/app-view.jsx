@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 // import { faker } from '@faker-js/faker';
 import React, { useState, useEffect } from 'react';
 
@@ -22,16 +23,35 @@ import AppConversionRates from '../app-conversion-rates';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [currentTime, setCurrentTime] = useState(new Date());
   const [numberOfOrders, setNumberOfOrders] = useState(0);
   const [weeklySales, setWeeklySales] = useState(0);
   const [mostPurchasedMenuItems, setMostPurchasedMenuItems] = useState([]);
+  const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/inventoryitems/dashboard/all'
+        );
+        setItemCount(response.data.itemCount);
+      } catch (error) {
+        console.error('Error fetching item count:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     async function fetchMostPurchasedMenuItems() {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/mostPurchasedMenuItems'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/mostPurchasedMenuItems'
         );
         setMostPurchasedMenuItems(response.data);
       } catch (error) {
@@ -46,7 +66,7 @@ export default function AppView() {
     async function fetchWeeklySales() {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/dailySales'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/dailySales'
         );
         setWeeklySales(response.data.totalSales);
       } catch (error) {
@@ -61,7 +81,7 @@ export default function AppView() {
     async function fetchSaleOrders() {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/saleOrders'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/saleOrders'
         ); // เรียกข้อมูลออเดอร์จากเซิร์ฟเวอร์
         setNumberOfOrders(response.data.numberOfOrders);
       } catch (error) {
@@ -89,7 +109,9 @@ export default function AppView() {
       <Typography variant="h4" sx={{ mb: 5 }}>
         {/* สวัสดี 👋 */}
         {/* <br /> */}
-        เวลาปัจจุบันคือ {timeString} <Icon icon="twemoji:alarm-clock" />
+        <StyledDiv>
+          เวลาปัจจุบันคือ {timeString} <Icon icon="twemoji:alarm-clock" />
+        </StyledDiv>
       </Typography>
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
@@ -103,10 +125,10 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="New Users"
+            title="กำไร (บาท)"
             total={1352831}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/profits.png" />}
           />
         </Grid>
 
@@ -121,10 +143,10 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Bug Reports"
-            total={234}
+            title="จำนวนวัตถุดิบทั้งหมด"
+            total={itemCount}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/inventory.png" />}
           />
         </Grid>
 
