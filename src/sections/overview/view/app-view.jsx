@@ -97,7 +97,7 @@ export default function AppView() {
             title="ยอดขายวันนี้ (บาท)"
             total={weeklySales}
             color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/shopping-bag.png" />}
           />
         </Grid>
 
@@ -115,7 +115,7 @@ export default function AppView() {
             title="จำนวนออเดอร์"
             total={numberOfOrders} // ใช้จำนวนออเดอร์ที่ได้รับจากเซิร์ฟเวอร์
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/order.png" />}
           />
         </Grid>
 
@@ -184,6 +184,19 @@ export default function AppView() {
           />
         </Grid>
 
+        <Grid xs={12} md={6} lg={12}>
+          <AppConversionRates
+            title="เมนูขายดี"
+            // subheader="(+43%) than last year"
+            chart={{
+              series: mostPurchasedMenuItems.map((item) => ({
+                label: item.name,
+                value: item.quantity,
+              })),
+            }}
+          />
+        </Grid>
+
         <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="Conversion Rates"
@@ -215,18 +228,6 @@ export default function AppView() {
                 { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
                 { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
               ],
-            }}
-          />
-        </Grid>
-        <Grid xs={12} md={6} lg={8}>
-          <AppConversionRates
-            title="เมนูขายดี"
-            // subheader="(+43%) than last year"
-            chart={{
-              series: mostPurchasedMenuItems.map((item) => ({
-                label: item.name,
-                value: item.quantity, // แก้เป็น item.quantity แทน item.price
-              })),
             }}
           />
         </Grid>

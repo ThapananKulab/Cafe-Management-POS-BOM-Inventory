@@ -163,7 +163,7 @@ function MenuTable() {
   useEffect(() => {
     fetchMenus();
 
-    const intervalId = setInterval(fetchMenus, 500);
+    const intervalId = setInterval(fetchMenus, 5000);
 
     return () => clearInterval(intervalId);
   }, []); //

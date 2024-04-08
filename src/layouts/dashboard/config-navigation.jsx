@@ -40,18 +40,6 @@ const navConfig = [
     ],
   },
   {
-    title: 'สินค้า',
-    // path: '/product',
-    icon: icon('cafe-8'),
-    subItems: [
-      {
-        title: 'จัดการเมนู',
-        path: '/menu',
-        icon: icon('ic-drink-a'),
-      },
-    ],
-  },
-  {
     title: 'BOM',
     // path: '/invent',
     icon: icon('m_bom'),
@@ -60,6 +48,18 @@ const navConfig = [
         title: 'สูตรเครื่องดื่ม',
         path: '/recipe',
         icon: icon('ic-rec'),
+      },
+    ],
+  },
+  {
+    title: 'สินค้า',
+    // path: '/product',
+    icon: icon('cafe-8'),
+    subItems: [
+      {
+        title: 'จัดการเมนู',
+        path: '/menu',
+        icon: icon('ic-drink-a'),
       },
     ],
   },
