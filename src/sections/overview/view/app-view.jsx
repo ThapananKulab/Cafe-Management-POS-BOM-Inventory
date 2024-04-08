@@ -1,20 +1,21 @@
+import axios from 'axios';
 import { Icon } from '@iconify/react';
-import { faker } from '@faker-js/faker';
+// import { faker } from '@faker-js/faker';
 import React, { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import Iconify from 'src/components/iconify';
+// import Iconify from 'src/components/iconify';
 
-import AppTasks from '../app-tasks';
-import AppNewsUpdate from '../app-news-update';
-import AppOrderTimeline from '../app-order-timeline';
+// import AppTasks from '../app-tasks';
+// import AppNewsUpdate from '../app-news-update';
+// import AppOrderTimeline from '../app-order-timeline';
 import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
-import AppTrafficBySite from '../app-traffic-by-site';
+// import AppTrafficBySite from '../app-traffic-by-site';
 import AppCurrentSubject from '../app-current-subject';
 import AppConversionRates from '../app-conversion-rates';
 
@@ -22,6 +23,54 @@ import AppConversionRates from '../app-conversion-rates';
 
 export default function AppView() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [numberOfOrders, setNumberOfOrders] = useState(0);
+  const [weeklySales, setWeeklySales] = useState(0);
+  const [mostPurchasedMenuItems, setMostPurchasedMenuItems] = useState([]);
+
+  useEffect(() => {
+    async function fetchMostPurchasedMenuItems() {
+      try {
+        const response = await axios.get(
+          'http://localhost:3333/api/saleorder/dashboard/mostPurchasedMenuItems'
+        );
+        setMostPurchasedMenuItems(response.data);
+      } catch (error) {
+        console.error('Error fetching most purchased menu items:', error);
+      }
+    }
+
+    fetchMostPurchasedMenuItems();
+  }, []);
+
+  useEffect(() => {
+    async function fetchWeeklySales() {
+      try {
+        const response = await axios.get(
+          'http://localhost:3333/api/saleorder/dashboard/dailySales'
+        );
+        setWeeklySales(response.data.totalSales);
+      } catch (error) {
+        console.error('Error fetching weekly sales:', error);
+      }
+    }
+
+    fetchWeeklySales();
+  }, []);
+
+  useEffect(() => {
+    async function fetchSaleOrders() {
+      try {
+        const response = await axios.get(
+          'http://localhost:3333/api/saleorder/dashboard/saleOrders'
+        ); // เรียกข้อมูลออเดอร์จากเซิร์ฟเวอร์
+        setNumberOfOrders(response.data.numberOfOrders);
+      } catch (error) {
+        console.error('Error fetching sale orders:', error);
+      }
+    }
+
+    fetchSaleOrders();
+  }, []);
 
   useEffect(() => {
     const timerId = setInterval(() => {
@@ -45,8 +94,8 @@ export default function AppView() {
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Weekly Sales"
-            total={714000}
+            title="ยอดขายวันนี้ (บาท)"
+            total={weeklySales}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -63,8 +112,8 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Item Orders"
-            total={1723315}
+            title="จำนวนออเดอร์"
+            total={numberOfOrders} // ใช้จำนวนออเดอร์ที่ได้รับจากเซิร์ฟเวอร์
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
@@ -169,8 +218,20 @@ export default function AppView() {
             }}
           />
         </Grid>
-
         <Grid xs={12} md={6} lg={8}>
+          <AppConversionRates
+            title="เมนูขายดี"
+            // subheader="(+43%) than last year"
+            chart={{
+              series: mostPurchasedMenuItems.map((item) => ({
+                label: item.name,
+                value: item.quantity, // แก้เป็น item.quantity แทน item.price
+              })),
+            }}
+          />
+        </Grid>
+
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate
             title="News Update"
             list={[...Array(5)].map((_, index) => ({
@@ -240,7 +301,7 @@ export default function AppView() {
               { id: '5', name: 'Sprint Showcase' },
             ]}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

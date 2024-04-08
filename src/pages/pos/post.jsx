@@ -477,18 +477,11 @@ const CartTemplate = () => {
           ))}
         </Box>
       </Container>
-      {/* Display the products dynamically */}
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
-          {/* Map through filteredProducts and display cards */}
           {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
-              {/* Card component with Paper for styling */}
-              <Paper
-                elevation={3}
-                style={{ borderRadius: 16, cursor: 'pointer' }}
-                onClick={() => handleAddToCart(product, product.sweetLevel)}
-              >
+              <Paper elevation={3} style={{ borderRadius: 16 }}>
                 <Card>
                   <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
 
@@ -598,9 +591,6 @@ const CartTemplate = () => {
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <StyledDiv>ราคา: {selectedProduct.price} ฿</StyledDiv>
                 </Typography>
-                {/* <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Description: {selectedProduct.description}
-              </Typography> */}
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <StyledDiv>สูตร:</StyledDiv>
                 </Typography>

@@ -22,55 +22,6 @@ const navConfig = [
       },
     ],
   },
-  // {
-  //   title: 'products',
-  //   path: '/products',
-  //   icon: icon('ic_cart'),
-  // },
-  {
-    title: 'สินค้า',
-    // path: '/product',
-    icon: icon('cafe-8'),
-    subItems: [
-      {
-        title: 'จัดการเมนู',
-        path: '/menu',
-        icon: icon('ic-drink-a'),
-      },
-      // {
-      //   title: 'จัดการสินค้า',
-      //   path: '/product',
-      //   icon: icon('ic_productsM'),
-      // },
-      // {
-      //   title: 'นำเข้าสินค้า',
-      //   path: '/product/add-quantity',
-      //   icon: icon('ic-improduct'),
-      // },
-    ],
-  },
-  {
-    title: 'BOM',
-    // path: '/invent',
-    icon: icon('m_bom'),
-    subItems: [
-      // {
-      //   title: 'จัดการวัตถุดิบ',
-      //   path: '/invent',
-      //   icon: icon('ic-manage'),
-      // },
-      // {
-      //   title: 'สต็อกวัตถุดิบ',
-      //   path: '/manage/invent/update-stock',
-      //   icon: icon('ic-improduct'),
-      // },
-      {
-        title: 'สูตรเครื่องดื่ม',
-        path: '/recipe',
-        icon: icon('ic-rec'),
-      },
-    ],
-  },
   {
     title: 'วัตถุดิบ',
     // path: '/raw',
@@ -88,18 +39,30 @@ const navConfig = [
       },
     ],
   },
-  // {
-  //   title: 'สูตรเครื่องดื่ม',
-  //   // path: '/raw',
-  //   icon: icon('ic-raw2'),
-  //   subItems: [
-  //     {
-  //       title: 'จัดการสูตรเครื่องดื่ม',
-  //       path: '/recipe',
-  //       icon: icon('ic-rec'),
-  //     },
-  //   ],
-  // },
+  {
+    title: 'สินค้า',
+    // path: '/product',
+    icon: icon('cafe-8'),
+    subItems: [
+      {
+        title: 'จัดการเมนู',
+        path: '/menu',
+        icon: icon('ic-drink-a'),
+      },
+    ],
+  },
+  {
+    title: 'BOM',
+    // path: '/invent',
+    icon: icon('m_bom'),
+    subItems: [
+      {
+        title: 'สูตรเครื่องดื่ม',
+        path: '/recipe',
+        icon: icon('ic-rec'),
+      },
+    ],
+  },
   {
     title: 'ออเดอร์',
     path: '/order',
@@ -110,11 +73,6 @@ const navConfig = [
     // path: '/raw',
     icon: icon('ic-notic'),
   },
-  // {
-  //   title: 'blog',
-  //   path: '/blog',
-  //   icon: icon('ic_blog'),
-  // },
   {
     title: 'POS',
     path: '/sale/pos',
