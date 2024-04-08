@@ -56,6 +56,47 @@ const CartTemplate = () => {
   const [paymentMethod, setPaymentMethod] = useState('เงินสด');
   const [receivedAmount, setReceivedAmount] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [ingredientsAvailable, setIngredientsAvailable] = useState(true);
+  const [unavailableIngredients, setUnavailableIngredients] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [recipes, setRecipes] = useState([]);
+  const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
+
+  useEffect(() => {
+    // ดึงข้อมูล inventory items เมื่อคอมโพเนนต์โหลดเสร็จ
+    const fetchInventoryItems = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
+        setInventoryItems(response.data); // เซ็ตข้อมูล inventory items ใน state
+      } catch (error) {
+        console.error('Failed to fetch inventory items:', error);
+      }
+    };
+
+    fetchInventoryItems();
+  }, []);
+
+  useEffect(() => {
+    console.log('Recipes:', recipes);
+  }, [recipes]);
+
+  useEffect(() => {
+    if (isModalOpen1 && selectedProduct) {
+      fetchRecipes(selectedProduct._id); // Pass the menu item's ID
+    }
+  }, [isModalOpen1, selectedProduct]);
+
+  const fetchRecipes = async (menuId) => {
+    try {
+      if (menuId) {
+        const response = await axios.get(`http://localhost:3333/api/menus/menu/${menuId}`);
+        setRecipes(response.data.recipe);
+      }
+    } catch (error) {
+      console.error('Failed to fetch recipes:', error);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -147,7 +188,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
+      .get('http://localhost:3333/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);
@@ -166,25 +207,102 @@ const CartTemplate = () => {
     let productExists = false;
     let newCartItems = [];
 
-    const updatedCartItems = cartItems.map((cartItem) => {
-      if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
-        productExists = true;
-        return { ...cartItem, quantity: cartItem.quantity + 1 };
-      }
-      return cartItem;
-    });
+    // ตรวจสอบว่ามีวัตถุดิบเพียงพอสำหรับการเพิ่มสินค้าหรือไม่
+    const existingCartItem = cartItems.find(
+      (item) => item._id === productToAdd._id && item.sweetLevel === sweetLevel
+    );
+    const quantityToAdd = existingCartItem ? existingCartItem.quantity + 1 : 1;
 
-    if (!productExists) {
-      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1, sweetLevel }]; // Add sweetLevel here
-    } else {
-      newCartItems = [...updatedCartItems];
-    }
+    axios
+      .post('http://localhost:3333/api/menus/checkIngredients', {
+        id: productToAdd._id,
+        quantityToAdd,
+      })
+      .then((response) => {
+        console.log('API Response:', response.data);
+        if (response.data.success) {
+          // Ingredients are available, proceed with adding the item to the cart
+          const updatedCartItems = cartItems.map((cartItem) => {
+            if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
+              productExists = true;
+              return { ...cartItem, quantity: cartItem.quantity + 1 };
+            }
+            return cartItem;
+          });
 
-    setCartItems(newCartItems);
+          if (!productExists) {
+            newCartItems = [...cartItems, { ...productToAdd, quantity: 1, sweetLevel }];
+          } else {
+            newCartItems = [...updatedCartItems];
+          }
 
-    toast.success(`${productToAdd.name} added to cart`);
+          setCartItems(newCartItems);
+          setIngredientsAvailable(true); // Set ingredientsAvailable to true
+          setUnavailableIngredients([]); // Reset unavailableIngredients
+          toast.success(`${productToAdd.name} added to cart`);
+        } else {
+          const { unavailableIngredients: serverUnavailableIngredients } = response.data;
+          const errorMessage = serverUnavailableIngredients.reduce((message, ingredient) => {
+            const additionalRequired = Math.max(
+              0,
+              ingredient.quantityRequired - ingredient.quantityInStock
+            );
+            return `${message}\n- ${
+              ingredient.ingredientName || 'Unnamed Ingredient'
+            } (Required: ${additionalRequired}, In Stock: ${ingredient.quantityInStock})`;
+          }, 'วัตถุดิบไม่พร้อมใช้งาน:');
+
+          console.log('Error Message:', errorMessage);
+
+          Swal.mixin({
+            icon: 'error',
+            title: 'วัตถุดิบไม่พร้อมใช้งาน',
+            html: errorMessage,
+            confirmButtonText: 'ตกลง',
+          }).fire();
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setUnavailableIngredients([]);
+
+        let fullErrorMessage = 'เกิดข้อผิดพลาดในการตรวจสอบวัตถุดิบ';
+
+        console.log('Error object:', error);
+
+        if (error.response && error.response.data) {
+          console.log('Response data:', error.response.data);
+
+          const errorMessageFromResponse = error.response.data.message;
+          const unavailableIngredientsFromResponse =
+            error.response.data.unavailableIngredients || [];
+
+          console.log('errorMessageFromResponse:', errorMessageFromResponse);
+          console.log('unavailableIngredientsFromResponse:', unavailableIngredientsFromResponse);
+
+          if (unavailableIngredientsFromResponse.length > 0) {
+            fullErrorMessage = unavailableIngredientsFromResponse.reduce(
+              (message, ingredient) =>
+                `${message}<br>- ${ingredient.ingredientName} (Required: ${ingredient.quantityRequired}, In Stock: ${ingredient.quantityInStock})`,
+              ``
+            );
+          } else {
+            fullErrorMessage = errorMessageFromResponse || fullErrorMessage;
+          }
+        } else {
+          console.log('No response data available');
+          fullErrorMessage = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์';
+        }
+
+        console.log('Error Message:', fullErrorMessage);
+        Swal.mixin({
+          icon: 'error',
+          title: 'วัตถุดิบไม่พร้อมใช้งาน',
+          html: fullErrorMessage,
+          confirmButtonText: 'ตกลง',
+        }).fire();
+      });
   };
-
   const calculateTotalPrice = (items) =>
     items.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -280,6 +398,11 @@ const CartTemplate = () => {
       toast.error('การส่งคำสั่งของล้มเหลว กรุณาลองใหม่อีกครั้ง');
     }
   };
+  const handleOpenModal1 = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen1(true);
+    fetchRecipes(product._id); // Pass the menu item's ID
+  };
 
   return (
     <>
@@ -361,7 +484,11 @@ const CartTemplate = () => {
           {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
               {/* Card component with Paper for styling */}
-              <Paper elevation={3} style={{ borderRadius: 16 }}>
+              <Paper
+                elevation={3}
+                style={{ borderRadius: 16, cursor: 'pointer' }}
+                onClick={() => handleAddToCart(product, product.sweetLevel)}
+              >
                 <Card>
                   <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
 
@@ -392,15 +519,37 @@ const CartTemplate = () => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    {/* Button to add item to cart */}
-                    <Button
+                    <IconButton
                       size="medium"
-                      color="primary"
-                      onClick={() => handleAddToCart(product, product.sweetLevel)} // Assuming sweetLevel is part of your product object
+                      color="secondary"
+                      onClick={() => handleOpenModal1(product)}
                       style={{ minWidth: 'auto', padding: '6px 12px' }}
                     >
-                      <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                    </Button>
+                      <Icon icon="lets-icons:paper-duotone" />
+                    </IconButton>
+
+                    {ingredientsAvailable ? (
+                      <IconButton
+                        size="medium"
+                        color="primary"
+                        onClick={() => handleAddToCart(product, product.sweetLevel)}
+                        style={{ minWidth: 'auto', padding: '6px 12px' }}
+                      >
+                        <Icon icon="solar:cart-4-bold" style={{ fontSize: '1.5rem' }} />
+                      </IconButton>
+                    ) : (
+                      <Typography variant="body1" color="error">
+                        <StyledDiv>วัตถุดิบไม่เพียงพอ:</StyledDiv>
+                        <ul>
+                          {unavailableIngredients.map((ingredient) => (
+                            <li key={ingredient.name}>
+                              {ingredient.name} (ต้องการ {ingredient.quantityRequired}, มีอยู่{' '}
+                              {ingredient.quantityInStock})
+                            </li>
+                          ))}
+                        </ul>
+                      </Typography>
+                    )}
                   </CardActions>
                 </Card>
               </Paper>
@@ -409,6 +558,77 @@ const CartTemplate = () => {
         </Grid>
       </Container>
       {/* Cart Modal */}
+      <Modal
+        open={isModalOpen1}
+        onClose={() => setIsModalOpen1(false)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflowY: 'scroll',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: '20px' }}>
+            <StyledDiv>{selectedProduct && selectedProduct.name}</StyledDiv>
+          </Typography>
+          {selectedProduct && (
+            <StyledDiv>
+              <Box>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>ประเภท: {selectedProduct.type}</StyledDiv>
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>ระดับความหวาน: {selectedProduct.sweetLevel}</StyledDiv>
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>ราคา: {selectedProduct.price} ฿</StyledDiv>
+                </Typography>
+                {/* <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Description: {selectedProduct.description}
+              </Typography> */}
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>สูตร:</StyledDiv>
+                </Typography>
+                <ul>
+                  <li>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                      <StyledDiv>{selectedProduct.recipe.name}</StyledDiv>
+                    </Typography>
+                    <ul>
+                      {selectedProduct.recipe.ingredients.map((ingredient) => (
+                        <li key={ingredient._id}>
+                          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            {`${
+                              inventoryItems.find((item) => item._id === ingredient.inventoryItemId)
+                                ?.name || 'Unnamed Ingredient'
+                            }`}
+                          </Typography>
+                          {` ปริมาณ: ${ingredient.quantity} กรัม `}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                </ul>
+              </Box>
+            </StyledDiv>
+          )}
+        </Box>
+      </Modal>
 
       <Modal
         open={isModalOpen}

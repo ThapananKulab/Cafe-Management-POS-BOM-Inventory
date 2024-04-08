@@ -129,30 +129,36 @@ export default function InventPage() {
         raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()))
   );
 
-  // ใส่ฟังก์ชันนี้ภายใน component ที่มีการแสดงรายการวัตถุดิบ
-  const renderStatus = (quantity, status) => {
-    if (quantity < 0) {
+  const renderStatus = (quantity) => {
+    if (quantity === 0) {
       return <Iconify icon="emojione:cross-mark" style={{ fontSize: '24px', color: '#ff1744' }} />;
     }
 
-    switch (status) {
-      case 'available':
-        return (
-          <Iconify
-            icon="twemoji:check-mark-button"
-            style={{ fontSize: '24px', color: '#4caf50' }}
-          />
-        );
-      case 'pending':
-        return (
-          <Iconify
-            icon="ic:baseline-hourglass-empty"
-            style={{ fontSize: '24px', color: '#ff9800' }}
-          />
-        );
-      default:
-        return <Iconify icon="bi:question-square" style={{ fontSize: '24px', color: '#bdbdbd' }} />;
+    if (quantity <= 5) {
+      return <Iconify icon="emojione-v1:warning" sx={{ color: 'orange', fontWeight: 'bold' }} />;
     }
+
+    return (
+      <Iconify icon="twemoji:check-mark-button" style={{ fontSize: '24px', color: '#4caf50' }} />
+    );
+  };
+
+  const renderStockStatus = (quantityInStock) => {
+    if (quantityInStock === 0) {
+      return (
+        <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
+          0
+        </Typography>
+      );
+    }
+    if (quantityInStock < 10) {
+      return (
+        <Typography component="span" sx={{ color: '#ff9800', fontWeight: 'bold' }}>
+          {quantityInStock}
+        </Typography>
+      );
+    }
+    return quantityInStock;
   };
 
   return (
@@ -288,7 +294,7 @@ export default function InventPage() {
                         >
                           {raw.quantityInStock}
                         </TableCell> */}
-                        <TableCell align="center">
+                        {/* <TableCell align="center">
                           {raw.quantityInStock <= 5 ? (
                             <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
                               {raw.quantityInStock} <span style={{ color: '#ff1744' }}>หมด!</span>
@@ -296,15 +302,16 @@ export default function InventPage() {
                           ) : (
                             raw.quantityInStock
                           )}
+                        </TableCell> */}
+                        <TableCell align="center">
+                          {renderStockStatus(raw.quantityInStock)}
                         </TableCell>
+
                         <TableCell align="center">{raw.useInStock}</TableCell>
                         <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.type}</TableCell>
                         <TableCell align="center">{raw.unitPrice} ฿</TableCell>
-                        <TableCell align="center">
-                          {renderStatus(raw.quantityInStock, raw.status)}
-                        </TableCell>
-
+                        <TableCell align="center">{renderStatus(raw.quantityInStock)}</TableCell>
                         <TableCell>
                           <Grid
                             container

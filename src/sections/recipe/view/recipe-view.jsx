@@ -60,7 +60,6 @@ function RecipeTable() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
-
   const [inventoryItems, setInventoryItems] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null); // ตัวอย่าง state สำหรับการเลือกสูตรอาหาร
   const [editableRecipe, setEditableRecipe] = useState({ name: '', ingredients: [] });

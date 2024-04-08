@@ -4,8 +4,10 @@ import QRCode from 'react-qr-code';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Box,
@@ -25,6 +27,7 @@ import {
   CardMedia,
   Container,
   TextField,
+  Pagination,
   RadioGroup,
   IconButton,
   Typography,
@@ -46,14 +49,46 @@ const CartTemplate = () => {
     return savedCartItems ? JSON.parse(savedCartItems) : [];
   });
   const [totalPrice, setTotalPrice] = useState(0);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openAddSnackbar, setOpenAddSnackbar] = useState(false);
-  const [addMessage, setAddMessage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
   const [user, setUser] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('เงินสด');
-  const [receivedAmount, setReceivedAmount] = useState(0);
+  const [receivedAmount, setReceivedAmount] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [ingredientsAvailable, setIngredientsAvailable] = useState(true);
+  const [unavailableIngredients, setUnavailableIngredients] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    if (isModalOpen1 && selectedProduct) {
+      fetchRecipes(selectedProduct._id);
+    }
+  }, [isModalOpen1, selectedProduct]);
+
+  const fetchRecipes = async (menuId) => {
+    try {
+      if (menuId) {
+        const response = await axios.get(`http://localhost:3333/api/menus/menu/${menuId}`);
+        console.log('API Response:', response.data); // พิมพ์ผลลัพธ์ออกมาดู
+        setRecipes(response.data.recipe);
+      }
+    } catch (error) {
+      console.error('Failed to fetch recipes:', error);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      toast.success('ข้อความที่ต้องการแสดง', {
+        position: toast.POSITION.TOP_LEFT,
+        autoClose: 1000,
+      });
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
@@ -62,11 +97,23 @@ const CartTemplate = () => {
     setReceivedAmount(parseFloat(event.target.value));
   };
 
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+  // const handleBackToPage1 = () => {
+  //   setCurrentPage(1);
+  // };
+
+  const handleNextPage = () => {
+    setCurrentPage(2);
+  };
+
   const calculateChange = () => {
     if (Number.isNaN(receivedAmount)) {
       return 0;
     }
-    return receivedAmount - totalPrice;
+    const change = receivedAmount - totalPrice;
+    return change >= 0 ? change : 0; // ถ้าเงินทอนน้อยกว่า 0 ให้แสดงเป็น 0
   };
 
   useEffect(() => {
@@ -142,26 +189,102 @@ const CartTemplate = () => {
     let productExists = false;
     let newCartItems = [];
 
-    const updatedCartItems = cartItems.map((cartItem) => {
-      if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
-        productExists = true;
-        return { ...cartItem, quantity: cartItem.quantity + 1 };
-      }
-      return cartItem;
-    });
+    // ตรวจสอบว่ามีวัตถุดิบเพียงพอสำหรับการเพิ่มสินค้าหรือไม่
+    const existingCartItem = cartItems.find(
+      (item) => item._id === productToAdd._id && item.sweetLevel === sweetLevel
+    );
+    const quantityToAdd = existingCartItem ? existingCartItem.quantity + 1 : 1;
 
-    if (!productExists) {
-      newCartItems = [...updatedCartItems, { ...productToAdd, quantity: 1, sweetLevel }]; // Add sweetLevel here
-    } else {
-      newCartItems = [...updatedCartItems];
-    }
+    axios
+      .post('http://localhost:3333/api/menus/checkIngredients', {
+        id: productToAdd._id,
+        quantityToAdd,
+      })
+      .then((response) => {
+        console.log('API Response:', response.data);
+        if (response.data.success) {
+          // Ingredients are available, proceed with adding the item to the cart
+          const updatedCartItems = cartItems.map((cartItem) => {
+            if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
+              productExists = true;
+              return { ...cartItem, quantity: cartItem.quantity + 1 };
+            }
+            return cartItem;
+          });
 
-    setCartItems(newCartItems);
+          if (!productExists) {
+            newCartItems = [...cartItems, { ...productToAdd, quantity: 1, sweetLevel }];
+          } else {
+            newCartItems = [...updatedCartItems];
+          }
 
-    setOpenAddSnackbar(true);
-    setAddMessage(`${productToAdd.name} added to cart`);
+          setCartItems(newCartItems);
+          setIngredientsAvailable(true); // Set ingredientsAvailable to true
+          setUnavailableIngredients([]); // Reset unavailableIngredients
+          toast.success(`${productToAdd.name} added to cart`);
+        } else {
+          const { unavailableIngredients: serverUnavailableIngredients } = response.data;
+          const errorMessage = serverUnavailableIngredients.reduce((message, ingredient) => {
+            const additionalRequired = Math.max(
+              0,
+              ingredient.quantityRequired - ingredient.quantityInStock
+            );
+            return `${message}\n- ${
+              ingredient.ingredientName || 'Unnamed Ingredient'
+            } (Required: ${additionalRequired}, In Stock: ${ingredient.quantityInStock})`;
+          }, 'วัตถุดิบไม่พร้อมใช้งาน:');
+
+          console.log('Error Message:', errorMessage);
+
+          Swal.mixin({
+            icon: 'error',
+            title: 'วัตถุดิบไม่พร้อมใช้งาน',
+            html: errorMessage,
+            confirmButtonText: 'ตกลง',
+          }).fire();
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setUnavailableIngredients([]);
+
+        let fullErrorMessage = 'เกิดข้อผิดพลาดในการตรวจสอบวัตถุดิบ';
+
+        console.log('Error object:', error);
+
+        if (error.response && error.response.data) {
+          console.log('Response data:', error.response.data);
+
+          const errorMessageFromResponse = error.response.data.message;
+          const unavailableIngredientsFromResponse =
+            error.response.data.unavailableIngredients || [];
+
+          console.log('errorMessageFromResponse:', errorMessageFromResponse);
+          console.log('unavailableIngredientsFromResponse:', unavailableIngredientsFromResponse);
+
+          if (unavailableIngredientsFromResponse.length > 0) {
+            fullErrorMessage = unavailableIngredientsFromResponse.reduce(
+              (message, ingredient) =>
+                `${message}<br>- ${ingredient.ingredientName} (Required: ${ingredient.quantityRequired}, In Stock: ${ingredient.quantityInStock})`,
+              ``
+            );
+          } else {
+            fullErrorMessage = errorMessageFromResponse || fullErrorMessage;
+          }
+        } else {
+          console.log('No response data available');
+          fullErrorMessage = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์';
+        }
+
+        console.log('Error Message:', fullErrorMessage);
+        Swal.mixin({
+          icon: 'error',
+          title: 'วัตถุดิบไม่พร้อมใช้งาน',
+          html: fullErrorMessage,
+          confirmButtonText: 'ตกลง',
+        }).fire();
+      });
   };
-
   const calculateTotalPrice = (items) =>
     items.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -169,7 +292,7 @@ const CartTemplate = () => {
     const updatedCart = cartItems.filter((item) => item._id !== itemId);
     setCartItems(updatedCart);
     setTotalPrice(calculateTotalPrice(updatedCart));
-    setOpenSnackbar(true);
+    toast.error('ลบออกจากตะกร้าเรียบร้อย');
   };
 
   const modalStyle = {
@@ -181,20 +304,41 @@ const CartTemplate = () => {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
-    overflowY: 'auto', // เพิ่ม overflowY เป็น auto เพื่อให้เป็น scrollable เมื่อมีเนื้อหามากเกินไป
   };
-
   const goToDashboard = () => {
-    navigate('/dashboard');
+    navigate('/order');
   };
 
-  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders'; // Correct as per your backend setup
+  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders';
+
   const handleSubmitOrder = async () => {
     try {
-      if (receivedAmount < totalPrice) {
-        // Alert the user if the received amount is less than the total price
-        alert('จำนวนเงินที่รับมาน้อยกว่าเงินที่ต้องจ่าย');
-        return; // Exit the function early
+      const change = calculateChange();
+      const receivedAmountNumber = parseFloat(receivedAmount); // แปลงค่ารับเงินให้อยู่ในรูปแบบตัวเลข
+
+      if (change < 0) {
+        toast.error('จำนวนเงินทอนไม่เพียงพอ');
+        return;
+      }
+
+      if (receivedAmountNumber < totalPrice) {
+        toast.error('จำนวนเงินที่รับน้อยกว่าจำนวนเงินที่ต้องจ่าย');
+        return;
+      }
+      if (cartItems.length === 0) {
+        toast.error('ไม่มีสินค้าในตะกร้า');
+        return;
+      }
+
+      if (totalPrice <= 0) {
+        toast.error('กรุณาเพิ่มสินค้าลงในตะกร้าก่อน');
+        return;
+      }
+
+      // ตรวจสอบว่าเงินทอนเป็นค่าว่างหรือไม่
+      if (paymentMethod === 'เงินสด' && receivedAmount === '') {
+        toast.error('กรุณากรอกจำนวนเงินที่รับ');
+        return;
       }
 
       const userfullname = `${user.firstname} ${user.lastname}`;
@@ -206,19 +350,40 @@ const CartTemplate = () => {
         orderNumber: '1',
         items: cartItems.map((item) => ({
           menuItem: item._id,
+          name: item.name,
           price: item.price,
           quantity: item.quantity,
         })),
+        change,
       };
+
+      setIsModalOpen(false);
 
       const response = await axios.post(endpoint, orderData);
       console.log('Order response:', response.data);
-      alert('Order placed successfully');
+      Swal.fire({
+        title: 'ยืนยัน Order',
+        text: 'กำลังเตรียมเมนู',
+        imageUrl: 'https://media.tenor.com/r_Gf5d2leQQAAAAi/cooking.gif',
+        imageWidth: 250,
+        imageHeight: 250,
+        imageAlt: 'Custom image',
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
       localStorage.removeItem('cartItems');
     } catch (error) {
       console.error('Order submission failed:', error);
-      // Here you could inform the user about the failure to place the order
+      toast.error('การส่งคำสั่งของล้มเหลว กรุณาลองใหม่อีกครั้ง');
     }
+  };
+  const handleOpenModal1 = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen1(true);
+    fetchRecipes(product._id); // Pass the menu item's ID
   };
 
   return (
@@ -261,13 +426,11 @@ const CartTemplate = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
-
       <Container>
         <Button onClick={goToDashboard}>
           <Icon icon="material-symbols:arrow-back" style={{ fontSize: '2rem' }} />
         </Button>
       </Container>
-
       <Container maxWidth="lg" style={{ marginTop: '10px' }}>
         <Box
           sx={{
@@ -296,7 +459,6 @@ const CartTemplate = () => {
           ))}
         </Box>
       </Container>
-
       {/* Display the products dynamically */}
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
@@ -335,15 +497,37 @@ const CartTemplate = () => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    {/* Button to add item to cart */}
                     <Button
                       size="medium"
-                      color="primary"
-                      onClick={() => handleAddToCart(product, product.sweetLevel)} // Assuming sweetLevel is part of your product object
+                      color="secondary"
+                      onClick={() => handleOpenModal1(product)}
                       style={{ minWidth: 'auto', padding: '6px 12px' }}
                     >
-                      <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
+                      Another Action
                     </Button>
+
+                    {ingredientsAvailable ? (
+                      <Button
+                        size="medium"
+                        color="primary"
+                        onClick={() => handleAddToCart(product, product.sweetLevel)}
+                        style={{ minWidth: 'auto', padding: '6px 12px' }}
+                      >
+                        <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
+                      </Button>
+                    ) : (
+                      <Typography variant="body1" color="error">
+                        วัตถุดิบไม่เพียงพอ:
+                        <ul>
+                          {unavailableIngredients.map((ingredient) => (
+                            <li key={ingredient.name}>
+                              {ingredient.name} (ต้องการ {ingredient.quantityRequired}, มีอยู่{' '}
+                              {ingredient.quantityInStock})
+                            </li>
+                          ))}
+                        </ul>
+                      </Typography>
+                    )}
                   </CardActions>
                 </Card>
               </Paper>
@@ -351,6 +535,87 @@ const CartTemplate = () => {
           ))}
         </Grid>
       </Container>
+      {/* Cart Modal */}
+      <Modal
+        open={isModalOpen1}
+        onClose={() => setIsModalOpen1(false)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflowY: 'scroll',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: '20px' }}>
+            {selectedProduct && selectedProduct.name}
+          </Typography>
+          {selectedProduct && (
+            <Box>
+              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Type: {selectedProduct.type}
+              </Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Sweet Level: {selectedProduct.sweetLevel}
+              </Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Price: {selectedProduct.price} ฿
+              </Typography>
+              {/* Add more details as needed */}
+              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Recipes:
+              </Typography>
+              {recipes && recipes.length > 0 ? (
+                <ul>
+                  {recipes.map((recipe) => (
+                    <li key={recipe._id}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                        {recipe.name}
+                      </Typography>
+                      <ul>
+                        <li>
+                          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            Ingredients:
+                          </Typography>
+                          <ul>
+                            {recipe.ingredients.map((ingredient) => (
+                              <li key={ingredient.inventoryItemId}>
+                                {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                        <li>
+                          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            Instructions:
+                          </Typography>
+                          <Typography variant="body1">{recipe.instructions}</Typography>
+                        </li>
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Typography variant="body1">No recipes available</Typography>
+              )}
+            </Box>
+          )}
+        </Box>
+      </Modal>
 
       <Modal
         open={isModalOpen}
@@ -368,117 +633,207 @@ const CartTemplate = () => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             <StyledDiv>รายการเมนู</StyledDiv>
           </Typography>
-          <List>
-            {cartItems.map((item) => (
-              <ListItem
-                key={item._id}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleRemoveItem(item._id)}
+          {currentPage === 1 && (
+            <>
+              <List>
+                {cartItems.map((item) => (
+                  <ListItem
+                    key={item._id}
+                    secondaryAction={
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => handleRemoveItem(item._id)}
+                      >
+                        <Icon icon="clarity:remove-solid" />
+                      </IconButton>
+                    }
                   >
-                    <Icon icon="clarity:remove-solid" />
-                  </IconButton>
-                }
+                    <StyledDiv>
+                      <ListItemText
+                        primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
+                        secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
+                      />
+                    </StyledDiv>
+                  </ListItem>
+                ))}
+                <Divider />
+                <ListItem>
+                  <StyledDiv>
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                          Total
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
+                          ฿ {totalPrice}
+                        </Typography>
+                      }
+                    />
+                  </StyledDiv>
+                </ListItem>
+              </List>
+              <Pagination
+                count={2}
+                page={currentPage}
+                onChange={handlePageChange}
+                style={{ marginBottom: '10px' }}
+              />
+            </>
+          )}
+          {currentPage === 2 && (
+            <>
+              {/* Radio group for payment method */}
+              <RadioGroup
+                aria-label="payment-method"
+                name="payment-method"
+                value={paymentMethod}
+                onChange={handlePaymentMethodChange}
+                row
               >
-                <StyledDiv>
-                  <ListItemText
-                    primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
-                    secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
-                  />
-                </StyledDiv>
-              </ListItem>
-            ))}
-            <Divider />
-            <ListItem>
-              <StyledDiv>
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                      Total
-                    </Typography>
+                <FormControlLabel
+                  value="เงินสด"
+                  control={<Radio />}
+                  label={
+                    <>
+                      เงินสด
+                      <Icon icon="ri:cash-fill" width={24} height={24} />
+                    </>
                   }
-                  secondary={
-                    <Typography component="span" style={{ color: 'green', fontWeight: 'bold' }}>
-                      ฿ {totalPrice}
-                    </Typography>
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="PromptPay"
+                  control={<Radio />}
+                  label={
+                    <>
+                      PromptPay
+                      <Icon icon="material-symbols:qr-code" width={24} height={24} />
+                    </>
                   }
+                  labelPlacement="end"
                 />
-              </StyledDiv>
-            </ListItem>
-          </List>
-          <Container maxWidth="lg" style={{ marginTop: '20px' }}>
-            {paymentMethod === 'PromptPay' && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Typography variant="h6">เลขบัญชี PromptPay: </Typography>
-                <QRCode value={totalPrice.toString()} />
-              </Box>
-            )}
-            <RadioGroup
-              aria-label="payment-method"
-              name="payment-method"
-              value={paymentMethod}
-              onChange={handlePaymentMethodChange}
-              row
-            >
-              <FormControlLabel value="เงินสด" control={<Radio />} label="เงินสด" />
-              <FormControlLabel value="PromptPay" control={<Radio />} label="PromptPay" />
-            </RadioGroup>
-          </Container>
-          <Container maxWidth="lg" style={{ marginTop: '20px' }}>
-            {paymentMethod === 'เงินสด' && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <TextField
-                  id="received-amount"
-                  label="จำนวนเงินที่รับ (บาท)"
-                  type="number"
-                  value={receivedAmount}
-                  onChange={handleReceivedAmountChange}
-                />
-              </Box>
-            )}
-          </Container>
+              </RadioGroup>
 
-          {/* Change calculation */}
-          <Container maxWidth="lg" style={{ marginTop: '20px' }}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+              {/* Show received amount field only when payment method is 'เงินสด' */}
+              {paymentMethod === 'เงินสด' && (
+                <>
+                  <Typography
+                    variant="h4"
+                    component="span"
+                    style={{
+                      color: 'green',
+                      fontWeight: 'bold',
+                      display: 'block',
+                      textAlign: 'center',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    ฿ {totalPrice}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <TextField
+                      id="received-amount"
+                      label="จำนวนเงินที่รับ (บาท)"
+                      type="number"
+                      value={paymentMethod === 'PromptPay' ? totalPrice : receivedAmount}
+                      onChange={handleReceivedAmountChange}
+                    />
+                  </Box>
+
+                  {/* Display change amount */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: '10px', // เพิ่มระยะห่างด้านล่างเพื่อความเป็นระเบียบ
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      style={{
+                        fontWeight: 'bold',
+                        color: calculateChange() <= 0 ? 'red' : 'inherit',
+                      }}
+                    >
+                      เงินทอน: {calculateChange()} บาท
+                    </Typography>
+                  </Box>
+                </>
+              )}
+
+              {/* Show PromptPay details only when payment method is 'PromptPay' */}
+              {paymentMethod === 'PromptPay' && (
+                <>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="h6">เลขบัญชี PromptPay: </Typography>
+                    <QRCode value={totalPrice.toString()} />
+                  </Box>
+
+                  {/* Enable the Submit button when PromptPay is selected */}
+                </>
+              )}
+
+              {/* Pagination for going back to previous page */}
+              <Pagination
+                count={2}
+                page={currentPage}
+                onChange={handlePageChange}
+                style={{ marginBottom: '10px' }}
+              />
+            </>
+          )}
+
+          {currentPage === 1 && (
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: '#4CAF50',
+                marginTop: '10px',
+                width: '150px',
+                height: '40px',
+                borderRadius: '0',
+                margin: '0 auto',
+                display: 'block',
               }}
+              onClick={handleNextPage}
             >
-              <Typography variant="h6">เงินทอน: {calculateChange()} บาท</Typography>
-            </Box>
-          </Container>
-          <Button
-            variant="contained"
-            style={{
-              backgroundColor: '#4CAF50',
-              marginTop: '10px',
-              width: '150px',
-              height: '40px',
-              borderRadius: '0',
-              margin: '0 auto',
-              display: 'block',
-            }}
-            onClick={handleSubmitOrder}
-          >
-            <Icon icon="heroicons:arrow-right-16-solid" style={{ fontSize: '24px' }} />
-          </Button>
+              Next
+            </Button>
+          )}
+          {currentPage === 2 && (
+            <Button
+              variant="contained"
+              disabled={calculateChange() < 0}
+              style={{
+                backgroundColor: '#4CAF50',
+                marginTop: '10px',
+                width: '150px',
+                height: '40px',
+                borderRadius: '0',
+                margin: '0 auto',
+                display: 'block',
+              }}
+              onClick={handleSubmitOrder}
+            >
+              Submit
+            </Button>
+          )}
         </Box>
       </Modal>
 
@@ -492,8 +847,22 @@ const CartTemplate = () => {
           }
           setOpenAddSnackbar(false);
         }}
-        message={addMessage}
       />
+      <ToastContainer position="top-left" className="toast-container" />
+      {/* <Snackbar
+        open={openAddSnackbar}
+        autoHideDuration={1000}
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return; // Keeps the Snackbar open if the reason is a clickaway
+          }
+          setOpenAddSnackbar(false);
+        }}
+      >
+        <Alert severity="success" onClose={() => setOpenAddSnackbar(false)}>
+          {addMessage}
+        </Alert>
+      </Snackbar>
 
       <Snackbar
         open={openSnackbar}
@@ -504,8 +873,11 @@ const CartTemplate = () => {
           }
           setOpenSnackbar(false);
         }}
-        message="ลบออกจากตะกร้าเรียบร้อย"
-      />
+      >
+        <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
+          ลบออกจากตะกร้าเรียบร้อย
+        </Alert>
+      </Snackbar> */}
     </>
   );
 };

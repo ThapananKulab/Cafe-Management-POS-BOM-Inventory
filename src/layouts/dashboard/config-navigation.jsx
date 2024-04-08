@@ -74,7 +74,7 @@ const navConfig = [
   {
     title: 'วัตถุดิบ',
     // path: '/raw',
-    icon: icon('ic_raw'),
+    icon: icon('material-7'),
     subItems: [
       {
         title: 'จัดการวัตถุดิบ',

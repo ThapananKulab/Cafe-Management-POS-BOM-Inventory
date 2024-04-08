@@ -263,7 +263,7 @@ function RealTimeOrderPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/saleorder/saleOrders/currentdate');
+      const response = await fetch('http://localhost:3333/api/saleorder/saleOrders');
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }
@@ -365,7 +365,7 @@ function RealTimeOrderPage() {
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            <StyledDiv>{isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}</StyledDiv>
+            <StyledDiv>{isSaleRoundOpen ? 'Order ทั้งหมด' : 'Orderทั้งหมด'}</StyledDiv>
           </Typography>
           <Box sx={{ '& button': { m: 1 } }}>
             <Button
@@ -396,10 +396,10 @@ function RealTimeOrderPage() {
             {user && user.role === 'เจ้าของร้าน' && (
               <Button
                 variant="contained"
-                sx={{ backgroundColor: '#1976d2', '&:hover': { backgroundColor: '#115293' } }}
-                onClick={() => navigate('/order-all')}
+                sx={{ backgroundColor: '#333333', '&:hover': { backgroundColor: '#555555' } }}
+                onClick={() => navigate('/order')}
               >
-                <StyledDiv>Order ทั้งหมด</StyledDiv>
+                <StyledDiv>Order ประจำวัน</StyledDiv>
               </Button>
             )}
           </Box>
