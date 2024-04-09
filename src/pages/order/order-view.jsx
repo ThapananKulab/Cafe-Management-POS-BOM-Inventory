@@ -177,13 +177,33 @@ function RealTimeOrderPage() {
 
           // อัพเดทสถานะ Order เป็น 'Completed'
           // และอาจจะ Refresh รายการ orders
+
+          // Show success alert
+          Swal.fire({
+            icon: 'success',
+            title: 'รับ Order สำเร็จ',
+            showConfirmButton: false,
+            timer: 1500, // Close alert after 1.5 seconds
+          });
         } else {
           const data = await response.json();
           console.error('Error accepting order:', data.error);
+          // Show error alert
+          Swal.fire({
+            icon: 'error',
+            title: 'ไม่สามารถรับ Order ได้',
+            text: data.error,
+          });
         }
       }
     } catch (error) {
       console.error('Error accepting order:', error);
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'เกิดข้อผิดพลาดในการรับ Order',
+      });
     }
   };
 

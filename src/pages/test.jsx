@@ -1,123 +1,65 @@
-// import axios from 'axios';
-// import React, { useState, useEffect } from 'react';
-
-// import {
-//   Paper,
-//   Table,
-//   TableRow,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableContainer,
-// } from '@mui/material';
-
-// const SaleRoundsTable = () => {
-//   const [saleRounds, setSaleRounds] = useState([]);
-
-//   useEffect(() => {
-//     const fetchSaleRounds = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:3333/api/salerounds/status');
-//         if (response.data && response.data.status) {
-//           // Assuming the API returns an array of sale rounds
-//           setSaleRounds([response.data.status]);
-//         }
-//       } catch (error) {
-//         console.error('Error fetching sale rounds:', error);
-//       }
-//     };
-
-//     fetchSaleRounds();
-//   }, []);
-
-//   return (
-//     <TableContainer component={Paper}>
-//       <Table aria-label="sale rounds table">
-//         <TableHead>
-//           <TableRow>
-//             <TableCell>Status</TableCell>
-//             <TableCell align="right">Opened At</TableCell>
-//             <TableCell align="right">Closed At</TableCell>
-//           </TableRow>
-//         </TableHead>
-//         <TableBody>
-//           {saleRounds.map((round, index) => (
-//             <TableRow key={index}>
-//               <TableCell component="th" scope="row">
-//                 {round.isOpen ? 'Open' : 'Closed'}
-//               </TableCell>
-//               <TableCell align="right">{new Date(round.openedAt).toLocaleString()}</TableCell>
-//               <TableCell align="right">
-//                 {round.closedAt ? new Date(round.closedAt).toLocaleString() : 'N/A'}
-//               </TableCell>
-//             </TableRow>
-//           ))}
-//         </TableBody>
-//       </Table>
-//     </TableContainer>
-//   );
-// };
-
-// export default SaleRoundsTable;
-
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import {
-  Paper,
-  Table,
-  TableRow,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableContainer,
-} from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
-const SaleRoundsTable = () => {
-  const [saleRounds, setSaleRounds] = useState([]);
+const QRCodeGenerator = () => {
+  const [phoneNumber, setPhoneNumber] = useState('0819139936');
+  const [amount, setAmount] = useState('');
+  const [qrCode, setQrCode] = useState('');
 
-  useEffect(() => {
-    const fetchSaleRounds = async () => {
-      try {
-        const response = await axios.get('http://localhost:3333/api/salerounds/statuses');
-        if (response.data && response.data.saleRounds) {
-          // Correctly access the array of sale rounds
-          setSaleRounds(response.data.saleRounds);
-        }
-      } catch (error) {
-        console.error('Error fetching sale rounds:', error);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3333/generateQR', {
+        phoneNumber,
+        amount,
+      });
+      if (response.data.RespCode === 200) {
+        setQrCode(response.data.Result);
+      } else {
+        alert(response.data.RespMessage);
       }
-    };
-
-    fetchSaleRounds();
-  }, []);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      alert('Failed to generate QR code');
+    }
+  };
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="sale rounds table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Status</TableCell>
-            <TableCell align="right">Opened At</TableCell>
-            <TableCell align="right">Closed At</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {saleRounds.map((round, index) => (
-            <TableRow key={index}>
-              <TableCell component="th" scope="row">
-                {round.isOpen ? 'Open' : 'Closed'}
-              </TableCell>
-              <TableCell align="right">{new Date(round.openedAt).toLocaleString()}</TableCell>
-              <TableCell align="right">
-                {round.closedAt ? new Date(round.closedAt).toLocaleString() : 'N/A'}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Generate QR Code
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Phone Number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
+        <Button variant="contained" color="primary" type="submit" fullWidth>
+          Generate QR Code
+        </Button>
+      </form>
+      {qrCode && (
+        <Box mt={4}>
+          <Typography variant="h6" gutterBottom>
+            QR Code
+          </Typography>
+          <img src={qrCode} alt="QR Code" style={{ maxWidth: '100%' }} />
+        </Box>
+      )}
+    </Box>
   );
 };
 
-export default SaleRoundsTable;
+export default QRCodeGenerator;

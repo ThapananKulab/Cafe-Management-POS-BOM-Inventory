@@ -33,6 +33,11 @@ function AddRecipe() {
     title: '',
     ingredients: [],
   });
+  const [ingredientUnits, setIngredientUnits] = useState([]);
+
+  const handleUnitChange = (e) => {
+    // setUnit(e.target.value); // อ้างอิงถึงตัวแปรที่ไม่ได้ใช้งาน
+  };
 
   useEffect(() => {
     // Fetch inventory items from your API
@@ -61,6 +66,27 @@ function AddRecipe() {
       ...prevState,
       [name]: value,
     }));
+  };
+  const convertToUnit = (value, targetUnit) => {
+    switch (targetUnit) {
+      case 'teaspoon':
+        return parseInt(parseFloat(value) / 5, 10); // 1 ช้อนชา = 5 กรัม (ประมาณ)
+      case 'tablespoon':
+        return parseInt(parseFloat(value) / 15, 10); // 1 ช้อนโต๊ะ = 15 กรัม (ประมาณ)
+      default:
+        return value;
+    }
+  };
+
+  const convertToGram = (value, targetUnit) => {
+    switch (targetUnit) {
+      case 'teaspoon':
+        return parseInt(parseFloat(value) * 5, 10); // 1 ช้อนชา = 5 กรัม (ประมาณ)
+      case 'tablespoon':
+        return parseInt(parseFloat(value) * 15, 10); // 1 ช้อนโต๊ะ = 15 กรัม (ประมาณ)
+      default:
+        return value;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -127,24 +153,12 @@ function AddRecipe() {
   // };
 
   const addIngredient = () => {
-    // ตรวจสอบว่ามีชื่อส่วนผสมที่เลือกอยู่แล้วหรือไม่
-    const selectedItems = recipe.ingredients.map((ingredient) => ingredient.inventoryItemId);
-    const availableItems = inventoryItems.map((item) => item._id);
-
-    if (
-      availableItems.length === selectedItems.length &&
-      availableItems.every((item) => selectedItems.includes(item))
-    ) {
-      toast.error('ไม่สามารถเพิ่มส่วนผสมเพิ่มเติมได้', {
-        autoClose: 1000,
-      });
-      return;
-    }
-
+    const newIngredient = { inventoryItemId: '', quantity: 1, name: '', unit: 'gram' }; // เพิ่มค่า unit เข้าไปในข้อมูลของส่วนประกอบใหม่
     setRecipe((prevRecipe) => ({
       ...prevRecipe,
-      ingredients: [...prevRecipe.ingredients, { inventoryItemId: '', quantity: 1, name: '' }],
+      ingredients: [...prevRecipe.ingredients, newIngredient],
     }));
+    setIngredientUnits((prevUnits) => [...prevUnits, 'gram']); // เพิ่มค่าหน่วยใหม่ในรายการหน่วย
   };
 
   const updateIngredient = (index, field, value) => {
@@ -155,7 +169,7 @@ function AddRecipe() {
           const newName = selectedItem ? selectedItem.name : '';
           return { ...ingredient, [field]: value, name: newName };
         }
-        return { ...ingredient, [field]: value };
+        return { ...ingredient, [field]: value, unit: ingredientUnits[index] }; // เพิ่มค่า unit ในข้อมูลส่วนประกอบ
       }
       return ingredient;
     });
@@ -172,12 +186,10 @@ function AddRecipe() {
   return (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
-        {' '}
-        {/* เพิ่ม Paper เพื่อให้มีพื้นหลังและเงา */}
         <Typography variant="h4" gutterBottom component="div">
           <Button variant="outlined" onClick={() => navigate('/recipe')}>
             <Icon icon="lets-icons:back" />
-          </Button>{' '}
+          </Button>
           <StyledDiv>เพิ่มสูตรเมนู</StyledDiv>
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -193,6 +205,9 @@ function AddRecipe() {
           {recipe.ingredients.map((ingredient, index) => (
             <Grid container spacing={2} alignItems="center" key={index} sx={{ mb: 2 }}>
               <Grid item xs={7}>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  {index + 1}. {/* แสดงตัวเลขการนับ */}
+                </Typography>
                 <FormControl fullWidth>
                   <InputLabel>เพิ่มส่วนประกอบ</InputLabel>
                   <Select
@@ -208,14 +223,15 @@ function AddRecipe() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={5}>
                 <TextField
-                  label="จำนวน"
+                  label=""
                   type="number"
                   value={ingredient.quantity}
                   onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
                   fullWidth
-                  // Display suffix based on the ingredient's name
+                  sx={{ mb: -5 }}
+                  disabled
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -230,6 +246,50 @@ function AddRecipe() {
                   }}
                 />
               </Grid>
+
+              <Grid item xs={7}>
+                <FormControl fullWidth>
+                  <InputLabel>หน่วย</InputLabel>
+                  <Select
+                    value={ingredientUnits[index]} // ใช้หน่วยที่เกี่ยวข้องกับส่วนประกอบนี้
+                    onChange={(e) => {
+                      const newUnit = e.target.value;
+                      setIngredientUnits((prevUnits) => {
+                        const updatedUnits = [...prevUnits];
+                        updatedUnits[index] = newUnit; // ปรับค่าหน่วยใหม่สำหรับส่วนประกอบนี้
+                        return updatedUnits;
+                      });
+                      handleUnitChange(e); // เรียกใช้งานฟังก์ชัน handleUnitChange เพื่อเปลี่ยนค่าหน่วยสำหรับทุกส่วนประกอบ
+                    }}
+                  >
+                    <MenuItem value="gram">กรัม</MenuItem>
+                    <MenuItem value="teaspoon">ช้อนชา</MenuItem>
+                    <MenuItem value="tablespoon">ช้อนโต๊ะ</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={3}>
+                <TextField
+                  label="จำนวน"
+                  type="number"
+                  value={
+                    ingredientUnits[index] === 'gram'
+                      ? ingredient.quantity
+                      : convertToUnit(ingredient.quantity, ingredientUnits[index])
+                  }
+                  onChange={(e) =>
+                    updateIngredient(
+                      index,
+                      'quantity',
+                      ingredientUnits[index] === 'gram'
+                        ? e.target.value
+                        : convertToGram(e.target.value, ingredientUnits[index])
+                    )
+                  }
+                  fullWidth
+                />
+              </Grid>
+
               <Grid item xs={2}>
                 <IconButton onClick={() => removeIngredient(index)} color="error">
                   <Icon icon="streamline:delete-1-solid" />

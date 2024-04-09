@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import QRCode from 'react-qr-code';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
@@ -61,10 +60,49 @@ const CartTemplate = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [recipes, setRecipes] = useState([]);
+  const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
+  const [qrCode, setQrCode] = useState('');
+  const [phoneNumber] = useState('0819139936');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3333/generateQR', {
+        phoneNumber,
+        amount: totalPrice, // ให้ใช้ totalPrice แทนค่า amount
+      });
+      if (response.data.RespCode === 200) {
+        setQrCode(response.data.Result);
+      } else {
+        alert(response.data.RespMessage);
+      }
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      alert('Failed to generate QR code');
+    }
+  };
+
+  useEffect(() => {
+    // ดึงข้อมูล inventory items เมื่อคอมโพเนนต์โหลดเสร็จ
+    const fetchInventoryItems = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
+        setInventoryItems(response.data); // เซ็ตข้อมูล inventory items ใน state
+      } catch (error) {
+        console.error('Failed to fetch inventory items:', error);
+      }
+    };
+
+    fetchInventoryItems();
+  }, []);
+
+  useEffect(() => {
+    console.log('Recipes:', recipes);
+  }, [recipes]);
 
   useEffect(() => {
     if (isModalOpen1 && selectedProduct) {
-      fetchRecipes(selectedProduct._id);
+      fetchRecipes(selectedProduct._id); // Pass the menu item's ID
     }
   }, [isModalOpen1, selectedProduct]);
 
@@ -72,7 +110,6 @@ const CartTemplate = () => {
     try {
       if (menuId) {
         const response = await axios.get(`http://localhost:3333/api/menus/menu/${menuId}`);
-        console.log('API Response:', response.data); // พิมพ์ผลลัพธ์ออกมาดู
         setRecipes(response.data.recipe);
       }
     } catch (error) {
@@ -100,9 +137,6 @@ const CartTemplate = () => {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-  // const handleBackToPage1 = () => {
-  //   setCurrentPage(1);
-  // };
 
   const handleNextPage = () => {
     setCurrentPage(2);
@@ -314,7 +348,7 @@ const CartTemplate = () => {
   const handleSubmitOrder = async () => {
     try {
       const change = calculateChange();
-      const receivedAmountNumber = parseFloat(receivedAmount); // แปลงค่ารับเงินให้อยู่ในรูปแบบตัวเลข
+      const receivedAmountNumber = parseFloat(receivedAmount);
 
       if (change < 0) {
         toast.error('จำนวนเงินทอนไม่เพียงพอ');
@@ -325,6 +359,7 @@ const CartTemplate = () => {
         toast.error('จำนวนเงินที่รับน้อยกว่าจำนวนเงินที่ต้องจ่าย');
         return;
       }
+
       if (cartItems.length === 0) {
         toast.error('ไม่มีสินค้าในตะกร้า');
         return;
@@ -335,7 +370,6 @@ const CartTemplate = () => {
         return;
       }
 
-      // ตรวจสอบว่าเงินทอนเป็นค่าว่างหรือไม่
       if (paymentMethod === 'เงินสด' && receivedAmount === '') {
         toast.error('กรุณากรอกจำนวนเงินที่รับ');
         return;
@@ -359,6 +393,24 @@ const CartTemplate = () => {
 
       setIsModalOpen(false);
 
+      if (paymentMethod === 'PromptPay') {
+        // Generate QR Code using the API
+        const response = await axios.post('/generateQR', { amount: totalPrice });
+        if (response.data.RespCode === 200) {
+          const qrCodeUrl = response.data.Result;
+          setQrCode(qrCodeUrl); // อัปเดตสถานะ qrCode ด้วย URL ของ QR Code
+
+          // Display the QR Code using the URL
+          Swal.fire({
+            title: 'สแกน QR Code เพื่อชำระเงิน',
+            imageUrl: qrCodeUrl,
+            imageAlt: 'QR Code',
+          });
+        } else {
+          toast.error(response.data.RespMessage);
+        }
+      }
+
       const response = await axios.post(endpoint, orderData);
       console.log('Order response:', response.data);
       Swal.fire({
@@ -380,6 +432,7 @@ const CartTemplate = () => {
       toast.error('การส่งคำสั่งของล้มเหลว กรุณาลองใหม่อีกครั้ง');
     }
   };
+
   const handleOpenModal1 = (product) => {
     setSelectedProduct(product);
     setIsModalOpen1(true);
@@ -459,13 +512,10 @@ const CartTemplate = () => {
           ))}
         </Box>
       </Container>
-      {/* Display the products dynamically */}
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
-          {/* Map through filteredProducts and display cards */}
           {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
-              {/* Card component with Paper for styling */}
               <Paper elevation={3} style={{ borderRadius: 16 }}>
                 <Card>
                   <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
@@ -497,27 +547,27 @@ const CartTemplate = () => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button
+                    <IconButton
                       size="medium"
                       color="secondary"
                       onClick={() => handleOpenModal1(product)}
                       style={{ minWidth: 'auto', padding: '6px 12px' }}
                     >
-                      Another Action
-                    </Button>
+                      <Icon icon="lets-icons:paper-duotone" />
+                    </IconButton>
 
                     {ingredientsAvailable ? (
-                      <Button
+                      <IconButton
                         size="medium"
                         color="primary"
                         onClick={() => handleAddToCart(product, product.sweetLevel)}
                         style={{ minWidth: 'auto', padding: '6px 12px' }}
                       >
-                        <Icon icon="charm:arrow-right" style={{ fontSize: '1.25rem' }} />
-                      </Button>
+                        <Icon icon="solar:cart-4-bold" style={{ fontSize: '1.5rem' }} />
+                      </IconButton>
                     ) : (
                       <Typography variant="body1" color="error">
-                        วัตถุดิบไม่เพียงพอ:
+                        <StyledDiv>วัตถุดิบไม่เพียงพอ:</StyledDiv>
                         <ul>
                           {unavailableIngredients.map((ingredient) => (
                             <li key={ingredient.name}>
@@ -562,57 +612,45 @@ const CartTemplate = () => {
           }}
         >
           <Typography variant="h6" sx={{ mb: '20px' }}>
-            {selectedProduct && selectedProduct.name}
+            <StyledDiv>{selectedProduct && selectedProduct.name}</StyledDiv>
           </Typography>
           {selectedProduct && (
-            <Box>
-              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Type: {selectedProduct.type}
-              </Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Sweet Level: {selectedProduct.sweetLevel}
-              </Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Price: {selectedProduct.price} ฿
-              </Typography>
-              {/* Add more details as needed */}
-              <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Recipes:
-              </Typography>
-              {recipes && recipes.length > 0 ? (
+            <StyledDiv>
+              <Box>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>ประเภท: {selectedProduct.type}</StyledDiv>
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>ระดับความหวาน: {selectedProduct.sweetLevel}</StyledDiv>
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>ราคา: {selectedProduct.price} ฿</StyledDiv>
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <StyledDiv>สูตร:</StyledDiv>
+                </Typography>
                 <ul>
-                  {recipes.map((recipe) => (
-                    <li key={recipe._id}>
-                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                        {recipe.name}
-                      </Typography>
-                      <ul>
-                        <li>
+                  <li>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                      <StyledDiv>{selectedProduct.recipe.name}</StyledDiv>
+                    </Typography>
+                    <ul>
+                      {selectedProduct.recipe.ingredients.map((ingredient) => (
+                        <li key={ingredient._id}>
                           <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                            Ingredients:
+                            {`${
+                              inventoryItems.find((item) => item._id === ingredient.inventoryItemId)
+                                ?.name || 'Unnamed Ingredient'
+                            }`}
                           </Typography>
-                          <ul>
-                            {recipe.ingredients.map((ingredient) => (
-                              <li key={ingredient.inventoryItemId}>
-                                {ingredient.name} ({ingredient.quantity} {ingredient.unit})
-                              </li>
-                            ))}
-                          </ul>
+                          {` ปริมาณ: ${ingredient.quantity} กรัม `}
                         </li>
-                        <li>
-                          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                            Instructions:
-                          </Typography>
-                          <Typography variant="body1">{recipe.instructions}</Typography>
-                        </li>
-                      </ul>
-                    </li>
-                  ))}
+                      ))}
+                    </ul>
+                  </li>
                 </ul>
-              ) : (
-                <Typography variant="body1">No recipes available</Typography>
-              )}
-            </Box>
+              </Box>
+            </StyledDiv>
           )}
         </Box>
       </Modal>
@@ -779,17 +817,33 @@ const CartTemplate = () => {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
+                      flexDirection: 'column',
                     }}
                   >
-                    <Typography variant="h6">เลขบัญชี PromptPay: </Typography>
-                    <QRCode value={totalPrice.toString()} />
+                    <Typography variant="h6" gutterBottom>
+                      สแกน QR Code เพื่อชำระเงิน
+                    </Typography>
+                    {qrCode && <img src={qrCode} alt="QR Code" style={{ maxWidth: '100%' }} />}
                   </Box>
+                  <form onSubmit={handleSubmit}>
+                    <TextField
+                      label="Amount"
+                      value={totalPrice}
+                      onChange={(e) => setTotalPrice(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      disabled
+                    />
 
-                  {/* Enable the Submit button when PromptPay is selected */}
+                    <Button variant="contained" color="primary" type="submit" fullWidth>
+                      Generate QR Code
+                    </Button>
+                  </form>
                 </>
               )}
 
               {/* Pagination for going back to previous page */}
+              <Box mt={1} />
               <Pagination
                 count={2}
                 page={currentPage}

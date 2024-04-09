@@ -66,7 +66,7 @@ export default function AppView() {
     async function fetchWeeklySales() {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/dailySales'
+          'http://localhost:3333/api/saleorder/dashboard/dailySales'
         );
         setWeeklySales(response.data.totalSales);
       } catch (error) {
@@ -134,7 +134,7 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="จำนวนออเดอร์"
+            title="จำนวนออเดอร์ทั้งหมด (รายการ)"
             total={numberOfOrders} // ใช้จำนวนออเดอร์ที่ได้รับจากเซิร์ฟเวอร์
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/order.png" />}

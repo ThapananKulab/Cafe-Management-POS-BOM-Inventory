@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import QRCode from 'react-qr-code';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import { Helmet } from 'react-helmet-async';
@@ -62,6 +61,26 @@ const CartTemplate = () => {
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [recipes, setRecipes] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
+  const [qrCode, setQrCode] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('0819139936');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3333/generateQR', {
+        phoneNumber,
+        amount: totalPrice, // ให้ใช้ totalPrice แทนค่า amount
+      });
+      if (response.data.RespCode === 200) {
+        setQrCode(response.data.Result);
+      } else {
+        alert(response.data.RespMessage);
+      }
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      alert('Failed to generate QR code');
+    }
+  };
 
   useEffect(() => {
     // ดึงข้อมูล inventory items เมื่อคอมโพเนนต์โหลดเสร็จ
@@ -118,9 +137,6 @@ const CartTemplate = () => {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-  // const handleBackToPage1 = () => {
-  //   setCurrentPage(1);
-  // };
 
   const handleNextPage = () => {
     setCurrentPage(2);
@@ -332,7 +348,7 @@ const CartTemplate = () => {
   const handleSubmitOrder = async () => {
     try {
       const change = calculateChange();
-      const receivedAmountNumber = parseFloat(receivedAmount); // แปลงค่ารับเงินให้อยู่ในรูปแบบตัวเลข
+      const receivedAmountNumber = parseFloat(receivedAmount);
 
       if (change < 0) {
         toast.error('จำนวนเงินทอนไม่เพียงพอ');
@@ -343,6 +359,7 @@ const CartTemplate = () => {
         toast.error('จำนวนเงินที่รับน้อยกว่าจำนวนเงินที่ต้องจ่าย');
         return;
       }
+
       if (cartItems.length === 0) {
         toast.error('ไม่มีสินค้าในตะกร้า');
         return;
@@ -353,7 +370,6 @@ const CartTemplate = () => {
         return;
       }
 
-      // ตรวจสอบว่าเงินทอนเป็นค่าว่างหรือไม่
       if (paymentMethod === 'เงินสด' && receivedAmount === '') {
         toast.error('กรุณากรอกจำนวนเงินที่รับ');
         return;
@@ -398,6 +414,7 @@ const CartTemplate = () => {
       toast.error('การส่งคำสั่งของล้มเหลว กรุณาลองใหม่อีกครั้ง');
     }
   };
+
   const handleOpenModal1 = (product) => {
     setSelectedProduct(product);
     setIsModalOpen1(true);
@@ -782,17 +799,41 @@ const CartTemplate = () => {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
+                      flexDirection: 'column',
                     }}
                   >
-                    <Typography variant="h6">เลขบัญชี PromptPay: </Typography>
-                    <QRCode value={totalPrice.toString()} />
+                    <Typography variant="h6" gutterBottom>
+                      สแกน QR Code เพื่อชำระเงิน
+                    </Typography>
+                    {qrCode && <img src={qrCode} alt="QR Code" style={{ maxWidth: '100%' }} />}
                   </Box>
+                  <form onSubmit={handleSubmit}>
+                    <TextField
+                      label="Phone Number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
 
-                  {/* Enable the Submit button when PromptPay is selected */}
+                    <TextField
+                      label="Amount"
+                      value={totalPrice}
+                      onChange={(e) => setTotalPrice(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      disabled
+                    />
+
+                    <Button variant="contained" color="primary" type="submit" fullWidth>
+                      Generate QR Code
+                    </Button>
+                  </form>
                 </>
               )}
 
               {/* Pagination for going back to previous page */}
+              <Box mt={1} />
               <Pagination
                 count={2}
                 page={currentPage}

@@ -14,14 +14,18 @@ import {
   Paper,
   Stack,
   Modal,
+  Select,
   Button,
+  MenuItem,
   TableRow,
   TableBody,
   Container,
   TableCell,
   TableHead,
   TextField,
+  InputLabel,
   Typography,
+  FormControl,
   Autocomplete,
   TableContainer,
   TablePagination,
@@ -64,6 +68,24 @@ function RecipeTable() {
   const [selectedRecipe, setSelectedRecipe] = useState(null); // ตัวอย่าง state สำหรับการเลือกสูตรอาหาร
   const [editableRecipe, setEditableRecipe] = useState({ name: '', ingredients: [] });
   const [openDetailModal, setOpenDetailModal] = useState(false);
+  const [selectedUnit, setSelectedUnit] = useState('กรัม');
+  const [conversionValue, setConversionValue] = useState('');
+
+  const convertToGram = () => {
+    let gram = 0;
+    if (!conversionValue || Number.isNaN(parseFloat(conversionValue))) {
+      return gram; // ถ้าไม่มีค่าหรือไม่ใช่ตัวเลข ให้คืนค่าเป็น 0
+    }
+
+    if (selectedUnit === 'ช้อนชา') {
+      // 1 ช้อนชา = 5 กรัม
+      gram = parseFloat(conversionValue) * 5;
+    } else if (selectedUnit === 'ช้อนโต๊ะ') {
+      // 1 ช้อนโต๊ะ = 15 กรัม
+      gram = parseFloat(conversionValue) * 15;
+    }
+    return gram;
+  };
 
   const handleOpenModal = (recipe) => {
     setSelectedRecipe(recipe);
@@ -324,16 +346,44 @@ function RecipeTable() {
           >
             {selectedRecipe && (
               <>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
+                <Typography id="modal-modal-title" variant="h6" component="h2" mb={6}>
                   แก้ไขสูตร: {selectedRecipe.name}
                 </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <FormControl>
+                    <TextField
+                      type="number"
+                      value={conversionValue}
+                      onChange={(e) => setConversionValue(e.target.value)}
+                      fullWidth
+                      mb={2}
+                    />
+                  </FormControl>
+                  <InputLabel>หน่วย</InputLabel>
+                  <Select value={selectedUnit} onChange={(e) => setSelectedUnit(e.target.value)}>
+                    <MenuItem value="กรัม">กรัม</MenuItem>
+                    <MenuItem value="ช้อนชา">ช้อนชา</MenuItem>
+                    <MenuItem value="ช้อนโต๊ะ">ช้อนโต๊ะ</MenuItem>
+                  </Select>
+                  <Typography variant="body1">
+                    {`${conversionValue} ${selectedUnit} เท่ากับ `}
+                    <span style={{ fontWeight: 'bold', color: '#ff5722' }}>
+                      {' '}
+                      {` ${convertToGram()} `}
+                    </span>
+                    กรัม
+                  </Typography>
+                </Box>
+
                 <TextField
                   fullWidth
                   label="ชื่อสูตร"
-                  sx={{ my: 2 }}
+                  sx={{ mb: 2, my: 2, mt: 2, maxWidth: 300, display: 'block', margin: 'auto' }}
                   value={editableRecipe?.name || ''}
                   onChange={(e) => setEditableRecipe({ ...editableRecipe, name: e.target.value })}
                 />
+                <br />
+
                 {editableRecipe?.ingredients.map((ingredient, index) => (
                   <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                     <Autocomplete
