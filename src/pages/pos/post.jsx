@@ -63,6 +63,19 @@ const CartTemplate = () => {
   const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
   const [qrCode, setQrCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('0819139936');
+  const handleAddAmount = (amount) => {
+    setReceivedAmount(amount);
+  };
+
+  // ฟังก์ชันเมื่อเลือกเงินสด 100
+  const handleCash100 = () => {
+    setReceivedAmount(100);
+  };
+
+  // ฟังก์ชันเมื่อเลือกเงินสด 1000
+  const handleCash1000 = () => {
+    setReceivedAmount(1000);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -758,6 +771,7 @@ const CartTemplate = () => {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
+                      marginBottom: '20px', // เพิ่มระยะห่างด้านล่างเพื่อความเป็นระเบียบ
                     }}
                   >
                     <TextField
@@ -769,7 +783,41 @@ const CartTemplate = () => {
                     />
                   </Box>
 
-                  {/* Display change amount */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleAddAmount(totalPrice)}
+                      style={{ marginRight: '10px' }}
+                      className="custom-button" // เพิ่มคลาส CSS เพื่อปรับสไตล์ปุ่ม
+                    >
+                      รับมาพอดี
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleCash100}
+                      style={{ marginRight: '10px' }}
+                      className="custom-button" // เพิ่มคลาส CSS เพื่อปรับสไตล์ปุ่ม
+                    >
+                      เงินสด 100
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleCash1000}
+                      className="custom-button"
+                    >
+                      เงินสด 1000
+                    </Button>
+                  </Box>
                   <Box
                     sx={{
                       display: 'flex',

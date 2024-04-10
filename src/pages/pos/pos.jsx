@@ -62,7 +62,7 @@ const CartTemplate = () => {
   const [recipes, setRecipes] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
   const [qrCode, setQrCode] = useState('');
-  const [phoneNumber] = useState('0819139936');
+  const [phoneNumber, setPhoneNumber] = useState('0819139936');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -392,24 +392,6 @@ const CartTemplate = () => {
       };
 
       setIsModalOpen(false);
-
-      if (paymentMethod === 'PromptPay') {
-        // Generate QR Code using the API
-        const response = await axios.post('/generateQR', { amount: totalPrice });
-        if (response.data.RespCode === 200) {
-          const qrCodeUrl = response.data.Result;
-          setQrCode(qrCodeUrl); // อัปเดตสถานะ qrCode ด้วย URL ของ QR Code
-
-          // Display the QR Code using the URL
-          Swal.fire({
-            title: 'สแกน QR Code เพื่อชำระเงิน',
-            imageUrl: qrCodeUrl,
-            imageAlt: 'QR Code',
-          });
-        } else {
-          toast.error(response.data.RespMessage);
-        }
-      }
 
       const response = await axios.post(endpoint, orderData);
       console.log('Order response:', response.data);
@@ -826,6 +808,14 @@ const CartTemplate = () => {
                     {qrCode && <img src={qrCode} alt="QR Code" style={{ maxWidth: '100%' }} />}
                   </Box>
                   <form onSubmit={handleSubmit}>
+                    <TextField
+                      label="Phone Number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+
                     <TextField
                       label="Amount"
                       value={totalPrice}

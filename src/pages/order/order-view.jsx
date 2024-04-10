@@ -84,15 +84,12 @@ function RealTimeOrderPage() {
   const componentRef = useRef();
 
   const handleViewReceipt = (orderId) => {
-    // ค้นหาข้อมูลใบเสร็จจาก orderId ที่ได้รับ
     const foundOrder = orders.find((orderItem) => orderItem._id === orderId);
     if (foundOrder) {
-      // กำหนดข้อมูลใบเสร็จให้กับ state
       setReceiptInfo(foundOrder);
     }
   };
 
-  // เมื่อปิด Modal
   const handleCloseReceiptModal = () => {
     setReceiptInfo(null); // เคลียร์ข้อมูลใบเสร็จที่แสดง
   };
@@ -172,13 +169,7 @@ function RealTimeOrderPage() {
         });
 
         if (response.ok) {
-          // หลังจากยืนยันการรับ Order แล้ว ทำการหักล้างสต็อก
           await deductStock(orderId);
-
-          // อัพเดทสถานะ Order เป็น 'Completed'
-          // และอาจจะ Refresh รายการ orders
-
-          // Show success alert
           Swal.fire({
             icon: 'success',
             title: 'รับ Order สำเร็จ',
@@ -188,7 +179,6 @@ function RealTimeOrderPage() {
         } else {
           const data = await response.json();
           console.error('Error accepting order:', data.error);
-          // Show error alert
           Swal.fire({
             icon: 'error',
             title: 'ไม่สามารถรับ Order ได้',
@@ -198,7 +188,6 @@ function RealTimeOrderPage() {
       }
     } catch (error) {
       console.error('Error accepting order:', error);
-      // Show error alert
       Swal.fire({
         icon: 'error',
         title: 'เกิดข้อผิดพลาด',

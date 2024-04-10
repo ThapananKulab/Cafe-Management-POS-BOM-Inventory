@@ -118,7 +118,7 @@ function RecipeTable() {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/inventoryitems/all'); // ปรับ URL ตาม endpoint ของคุณ
+        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
         setInventoryItems(response.data);
       } catch (error) {
         console.error('Failed to fetch inventory items:', error);
@@ -127,6 +127,7 @@ function RecipeTable() {
 
     fetchInventoryItems();
   }, []);
+
   useEffect(() => {
     fetchRecipes();
   }, []);
@@ -215,6 +216,25 @@ function RecipeTable() {
       });
     }
   };
+  const calculateCostPerCup = () => {
+    if (!selectedRecipe) return ''; // ถ้าไม่มีสูตรที่เลือก ให้คืนค่าเป็นสตริงว่าง
+
+    const selectedIngredients = selectedRecipe.ingredients.map((ingredient) => {
+      const foundItem = inventoryItems.find((item) => item._id === ingredient.inventoryItemId);
+      return { ...ingredient, ...foundItem };
+    });
+
+    console.log('Selected Ingredients:', selectedIngredients); // Log ข้อมูลวัตถุดิบที่ถูกเลือก
+
+    const totalCost = selectedIngredients.reduce((acc, curr) => {
+      const ingredientCost = curr.UnitPrice / curr.realquantity;
+      return acc + ingredientCost;
+    }, 0);
+
+    console.log('Total Cost:', totalCost); // Log ค่าต้นทุนทั้งหมด
+
+    return totalCost.toFixed(2); // แก้ไขเพื่อให้ค่าถูกปัดเป็นทศนิยม 2 ตำแหน่ง
+  };
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', bgcolor: '#f9fafb' }}>
@@ -236,16 +256,26 @@ function RecipeTable() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell>ชื่อสูตร</StyledTableCell>
-                <StyledTableCell align="right">รายละเอียด</StyledTableCell>
-                <StyledTableCell align="center">แก้ไขสูตร</StyledTableCell>
+                <StyledTableCell>
+                  <StyledDiv>ชื่อสูตร</StyledDiv>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <StyledDiv>รายละเอียด</StyledDiv>
+                </StyledTableCell>
+                <StyledTableCell align="" />
               </StyledTableRow>
             </TableHead>
             <TableBody>
               {recipes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((recipe) => (
                 <StyledTableRow hover role="checkbox" tabIndex={-1} key={recipe._id.$oid}>
                   <StyledTableCell component="th" scope="row">
-                    {recipe.name}
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', color: 'black' }}>
+                      <StyledDiv>{recipe.name}</StyledDiv>
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      <StyledDiv>ราคาทั้งหมด: {recipe.cost} บาท</StyledDiv>
+                    </Typography>
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <Button onClick={() => handleOpenDetailModal(recipe)}>
@@ -383,7 +413,6 @@ function RecipeTable() {
                   onChange={(e) => setEditableRecipe({ ...editableRecipe, name: e.target.value })}
                 />
                 <br />
-
                 {editableRecipe?.ingredients.map((ingredient, index) => (
                   <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                     <Autocomplete
@@ -420,7 +449,7 @@ function RecipeTable() {
                         })
                       }
                     />
-                    กรัม
+
                     <Button
                       color="error"
                       sx={{
@@ -440,6 +469,14 @@ function RecipeTable() {
                     </Button>
                   </Box>
                 ))}
+                <TextField
+                  fullWidth
+                  label="ต้นทุนต่อแก้ว"
+                  type="number"
+                  value={calculateCostPerCup()}
+                  disabled // ทำให้ TextField นี้เป็น disabled เพื่อไม่ให้แก้ไขค่าได้
+                />
+
                 <Button
                   sx={{
                     padding: '20px 40px', // Match padding for consistency

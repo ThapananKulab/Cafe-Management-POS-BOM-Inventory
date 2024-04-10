@@ -20,7 +20,7 @@ import {
   InputLabel,
   IconButton,
   FormControl,
-  InputAdornment,
+  // InputAdornment,
 } from '@mui/material';
 
 function AddRecipe() {
@@ -33,23 +33,30 @@ function AddRecipe() {
     title: '',
     ingredients: [],
   });
-  const [ingredientUnits, setIngredientUnits] = useState([]);
+  const [ingredientUnits, setIngredientUnits] = useState(['gram']);
+  const [totalCost, setTotalCost] = useState(0);
 
-  const handleUnitChange = (e) => {
-    // setUnit(e.target.value); // อ้างอิงถึงตัวแปรที่ไม่ได้ใช้งาน
-  };
+  const handleUnitChange = (e) => {};
 
   useEffect(() => {
-    // Fetch inventory items from your API
     const fetchInventoryItems = async () => {
-      const { data } = await axios.get('http://localhost:3333/api/inventoryitems/all');
-      setInventoryItems(data);
+      try {
+        const { data } = await axios.get('http://localhost:3333/api/inventoryitems/all');
+        const updatedIngredients = data.map((item) => ({
+          ...item,
+          unitPrice: item.unitPrice || 0, // Default value if unitPrice is undefined
+          realquantity: item.realquantity || 0, // Default value if realquantity is undefined
+        }));
+        setInventoryItems(updatedIngredients);
+      } catch (error) {
+        console.error('Error fetching inventory items:', error);
+      }
     };
+
     fetchInventoryItems();
   }, []);
 
   useEffect(() => {
-    // Load saved recipe from localStorage, if any
     const savedRecipe = localStorage.getItem('savedRecipe');
     if (savedRecipe) {
       setRecipe(JSON.parse(savedRecipe));
@@ -67,6 +74,19 @@ function AddRecipe() {
       [name]: value,
     }));
   };
+
+  const calculateQuantity = (quantity, unit, targetUnit) => {
+    switch (unit) {
+      case 'gram':
+        return targetUnit === 'gram' ? quantity : convertToUnit(quantity, targetUnit);
+      case 'teaspoon':
+      case 'tablespoon':
+        return targetUnit === 'gram' ? convertToGram(quantity, unit) : quantity;
+      default:
+        return quantity;
+    }
+  };
+
   const convertToUnit = (value, targetUnit) => {
     switch (targetUnit) {
       case 'teaspoon':
@@ -124,10 +144,11 @@ function AddRecipe() {
 
       const response = await axios.post('http://localhost:3333/api/recipes/add', {
         name: recipe.title,
-        ingredients: recipe.ingredients.map((ingredient) => ({
+        ingredients: ingredients.map((ingredient) => ({
           inventoryItemId: ingredient.inventoryItemId,
           quantity: ingredient.quantity,
         })),
+        cost: totalCost, // เพิ่มค่า cost ที่คำนวณได้จาก totalCost ไปยังฐานข้อมูล
       });
 
       console.log(response.data);
@@ -153,27 +174,57 @@ function AddRecipe() {
   // };
 
   const addIngredient = () => {
-    const newIngredient = { inventoryItemId: '', quantity: 1, name: '', unit: 'gram' }; // เพิ่มค่า unit เข้าไปในข้อมูลของส่วนประกอบใหม่
+    const newIngredient = {
+      inventoryItemId: '',
+      quantity: 1,
+      name: '',
+      unit: 'gram',
+      unitPrice: '', // เพิ่ม unitPrice เข้าไปในข้อมูลของส่วนประกอบใหม่
+      realquantity: '', // เพิ่ม realQuantity เข้าไปในข้อมูลของส่วนประกอบใหม่
+    };
     setRecipe((prevRecipe) => ({
       ...prevRecipe,
       ingredients: [...prevRecipe.ingredients, newIngredient],
     }));
-    setIngredientUnits((prevUnits) => [...prevUnits, 'gram']); // เพิ่มค่าหน่วยใหม่ในรายการหน่วย
+    setIngredientUnits((prevUnits) => [...prevUnits, 'gram']);
   };
 
+  // Assuming unitPrice and realquantity are supposed to be fetched from the inventory item
   const updateIngredient = (index, field, value) => {
     const updatedIngredients = recipe.ingredients.map((ingredient, i) => {
       if (i === index) {
+        let newValue = value;
         if (field === 'inventoryItemId') {
           const selectedItem = inventoryItems.find((inventoryItem) => inventoryItem._id === value);
           const newName = selectedItem ? selectedItem.name : '';
-          return { ...ingredient, [field]: value, name: newName };
+          newValue = { ...ingredient, [field]: value, name: newName };
+        } else if (field === 'quantity') {
+          const unit = ingredientUnits[index];
+          const targetUnit = 'gram';
+          const inventoryItem = inventoryItems.find(
+            (item) => item._id === ingredient.inventoryItemId
+          );
+          const { unitPrice, realquantity } = inventoryItem || { unitPrice: 0, realquantity: 0 }; // Destructure with default values
+          newValue = {
+            ...ingredient,
+            [field]: calculateQuantity(value, unit, targetUnit),
+            unitPrice,
+            realquantity,
+          };
         }
-        return { ...ingredient, [field]: value, unit: ingredientUnits[index] }; // เพิ่มค่า unit ในข้อมูลส่วนประกอบ
+        return newValue;
       }
       return ingredient;
     });
-    setRecipe({ ...recipe, ingredients: updatedIngredients });
+
+    // Update total cost
+    const newTotalCost = updatedIngredients.reduce((acc, curr) => {
+      const itemCost = curr.unitPrice * (curr.quantity / curr.realquantity);
+      return acc + itemCost;
+    }, 0);
+    setTotalCost(newTotalCost);
+
+    setRecipe((prevRecipe) => ({ ...prevRecipe, ingredients: updatedIngredients }));
   };
 
   const removeIngredient = (index) => {
@@ -206,8 +257,9 @@ function AddRecipe() {
             <Grid container spacing={2} alignItems="center" key={index} sx={{ mb: 2 }}>
               <Grid item xs={7}>
                 <Typography variant="body1" sx={{ mb: 1 }}>
-                  {index + 1}. {/* แสดงตัวเลขการนับ */}
+                  {index + 1}.
                 </Typography>
+
                 <FormControl fullWidth>
                   <InputLabel>เพิ่มส่วนประกอบ</InputLabel>
                   <Select
@@ -218,11 +270,13 @@ function AddRecipe() {
                     {inventoryItems.map((item) => (
                       <MenuItem key={item._id} value={item._id}>
                         {item.name}
+                        {/* เพิ่มการแสดง unitPrice ที่ตรงกับ item.name */}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               </Grid>
+
               <Grid item xs={5}>
                 <TextField
                   label=""
@@ -232,18 +286,6 @@ function AddRecipe() {
                   fullWidth
                   sx={{ mb: -5 }}
                   disabled
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {ingredient.name &&
-                          ((ingredient.name.includes('น้ำ') || ingredient.name.includes('นม')) &&
-                          !ingredient.name.includes('น้ำตาล') &&
-                          !ingredient.name.includes('ทราย')
-                            ? 'ml'
-                            : 'กรัม')}
-                      </InputAdornment>
-                    ),
-                  }}
                 />
               </Grid>
 
@@ -263,8 +305,8 @@ function AddRecipe() {
                     }}
                   >
                     <MenuItem value="gram">กรัม</MenuItem>
-                    <MenuItem value="teaspoon">ช้อนชา</MenuItem>
-                    <MenuItem value="tablespoon">ช้อนโต๊ะ</MenuItem>
+                    {/* <MenuItem value="teaspoon">ช้อนชา</MenuItem>
+                    <MenuItem value="tablespoon">ช้อนโต๊ะ</MenuItem> */}
                   </Select>
                 </FormControl>
               </Grid>
@@ -289,6 +331,21 @@ function AddRecipe() {
                   fullWidth
                 />
               </Grid>
+              <Grid item xs={7}>
+                <TextField
+                  label="ราคาต้นทุนวัตถุดิบ"
+                  value={
+                    ingredient.unitPrice && ingredient.realquantity && ingredient.quantity
+                      ? (
+                          ingredient.unitPrice *
+                          (ingredient.quantity / ingredient.realquantity)
+                        ).toFixed(2)
+                      : 'ราคาต้นทุน'
+                  }
+                  fullWidth
+                  disabled
+                />
+              </Grid>
 
               <Grid item xs={2}>
                 <IconButton onClick={() => removeIngredient(index)} color="error">
@@ -301,13 +358,25 @@ function AddRecipe() {
             <Button
               onClick={addIngredient}
               variant="outlined"
-              startIcon={<Icon icon="akar-icons:plus" />}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              เพิ่ม
+              <Icon icon="akar-icons:plus" sx={{ marginRight: '0.5rem' }} />
             </Button>
+
             <Button type="submit" variant="contained" color="primary">
               ตกลง
             </Button>
+            <TextField
+              label="ราคาทั้งหมด"
+              value={Number.isNaN(totalCost) ? '0.00' : totalCost.toFixed(2)}
+              fullWidth
+              disabled
+              sx={{ mt: 3 }}
+            />
             <ToastContainer />
           </Stack>
         </Box>
