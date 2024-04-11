@@ -70,8 +70,20 @@ const navConfig = [
   },
   {
     title: 'แจ้งเตือน',
-    // path: '/raw',
+    path: '/notification',
     icon: icon('ic-notic'),
+    subItems: [
+      {
+        title: 'chat',
+        path: '/notification',
+        icon: icon('chat-81'),
+      },
+      {
+        title: 'ข้อมูลทั่วไป',
+        path: '/topic',
+        icon: icon('g-1'),
+      },
+    ],
   },
   {
     title: 'POS',

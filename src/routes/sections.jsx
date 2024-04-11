@@ -26,6 +26,7 @@ export const ProductAddQuantity = lazy(() => import('src/pages/product-addquanti
 export const TestOL = lazy(() => import('src/pages/test-ol'));
 export const TestMenu = lazy(() => import('src/pages/menu/menu-add'));
 export const TestReceip = lazy(() => import('src/pages/receip/add-receip'));
+export const AddOneReceip = lazy(() => import('src/pages/receip/add-one-receip'));
 export const AddInvent = lazy(() => import('src/pages/invent/add-invent'));
 export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
@@ -38,6 +39,7 @@ export const Test = lazy(() => import('src/pages/test'));
 export const OpenOrderPage = lazy(() => import('src/pages/order/open-order'));
 export const OrderAll = lazy(() => import('src/pages/order/order-all'));
 export const Notification = lazy(() => import('src/pages/notification'));
+export const Topic = lazy(() => import('src/pages/topic'));
 
 // ----------------------------------------------------------------------
 
@@ -102,6 +104,14 @@ export default function Router() {
         {
           path: '/edit-invent/:rawId',
           element: <EditInventPage />,
+        },
+        {
+          path: '/notification',
+          element: <Notification />,
+        },
+        {
+          path: '/topic',
+          element: <Topic />,
         },
       ],
     },
@@ -180,12 +190,16 @@ export default function Router() {
       element: <TestR />,
     },
     {
+      path: '/topic',
+      element: <Topic />,
+    },
+    {
       path: '/test',
       element: <Test />,
     },
     {
-      path: '/notification',
-      element: <Notification />,
+      path: '/add-one-receip',
+      element: <AddOneReceip />,
     },
   ]);
 

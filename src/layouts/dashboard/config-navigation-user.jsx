@@ -99,6 +99,11 @@ const navConfigUser = [
   //   icon: icon('ic-notic'),
   // },
   {
+    title: 'ข้อมูลทั่วไป',
+    path: '/topic',
+    icon: icon('g-1'),
+  },
+  {
     title: 'ขายสินค้า',
     path: '/sale/pos',
     icon: icon('ic_sell'),

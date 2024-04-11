@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-// import { Icon } from '@iconify/react';
+import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -13,8 +13,8 @@ import {
   Divider,
   TextField,
   Container,
+  IconButton,
   Typography,
-  // IconButton,
   CardHeader,
   CardContent,
   CardActions,
@@ -23,7 +23,6 @@ import {
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -96,6 +95,36 @@ function App() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleDelete = async (postId) => {
+    const confirmation = await Swal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: 'คุณต้องการที่จะลบโพสต์นี้?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3333/api/post/delete/${postId}`);
+        setPosts(posts.filter((post) => post._id !== postId));
+        Swal.fire({
+          icon: 'success',
+          title: 'ลบโพสต์สำเร็จ',
+          text: 'โพสต์ถูกลบออกจากระบบแล้ว',
+        });
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาดในการลบโพสต์',
+          text: 'ไม่สามารถลบโพสต์ได้ กรุณาลองใหม่ภายหลัง',
+        });
+      }
+    }
   };
 
   return (
@@ -172,21 +201,17 @@ function App() {
                 subheader={new Date(post.createdAt).toLocaleString()}
               />
               <CardContent>
-                <Typography variant="h6" component="div">
+                <Typography variant="h3" component="div">
                   {post.title}
                 </Typography>
                 <Typography>{post.content}</Typography>
               </CardContent>
               <CardActions>
-                {/* <IconButton>
-                  <Icon icon="ph:heart-fill" />
-                </IconButton>
-                <IconButton>
-                  <Icon icon="material-symbols:share-outline" />
-                </IconButton>
-                <IconButton>
-                  <Icon icon="ic:sharp-message" />
-                </IconButton> */}
+                {user && user.role === 'เจ้าของร้าน' ? (
+                  <IconButton color="error" onClick={() => handleDelete(post._id)}>
+                    <Icon icon="material-symbols:delete-sharp" />
+                  </IconButton>
+                ) : null}
               </CardActions>
               <Divider />
               {/* Add comments here */}
