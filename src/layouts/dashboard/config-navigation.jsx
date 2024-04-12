@@ -6,13 +6,24 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'รายงาน',
+    title: 'Dashboard',
     path: '/dashboard',
-    icon: icon('ic-ana'),
+    icon: icon('ic_analytics'),
+    subItems: [
+      {
+        title: 'ภาพรวมร้านค้า',
+        path: '/dashboard',
+        icon: icon('ic-ana'),
+      },
+      {
+        title: 'รายงาน',
+        path: '/report/daily',
+        icon: icon('report'),
+      },
+    ],
   },
   {
     title: 'บริหารข้อมูลกลาง',
-    // path: '/user',
     icon: icon('ic_user'),
     subItems: [
       {
@@ -28,18 +39,18 @@ const navConfig = [
     ],
   },
   {
-    title: 'วัตถุดิบ',
+    title: 'บริหารสต๊อค',
     // path: '/raw',
     icon: icon('material-7'),
     subItems: [
       {
-        title: 'วัตถุดิบ',
+        title: 'รายการวัตถุดิบ',
         path: '/invent',
         icon: icon('ic-manage'),
       },
       {
         title: 'วัตถุดิบใกล้หมด',
-        path: '',
+        path: '/manage/near-invent',
         icon: icon('stock-low'),
       },
       {
@@ -75,7 +86,7 @@ const navConfig = [
   },
   {
     title: 'ออเดอร์',
-    path: '/order',
+    // path: '/order',
     icon: icon('ic-order'),
     subItems: [
       {
@@ -97,7 +108,7 @@ const navConfig = [
   },
   {
     title: 'แจ้งเตือน',
-    path: '/notification',
+    // path: '/notification',
     icon: icon('ic-notic'),
     subItems: [
       {

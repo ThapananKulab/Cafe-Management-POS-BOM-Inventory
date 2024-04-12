@@ -512,7 +512,7 @@ const CartTemplate = () => {
               <Paper elevation={3} style={{ borderRadius: 16 }}>
                 <Card>
                   <CardMedia style={{ height: 200 }} image={product.image} title={product.name} />
-                  <CardContent style={{ height: '100px', overflow: 'auto' }}>
+                  <CardContent style={{ height: '100px', overflowY: 'auto' }}>
                     <Typography gutterBottom variant="h5" component="h2">
                       <StyledDiv> {product.name}</StyledDiv>
                     </Typography>

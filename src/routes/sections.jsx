@@ -28,6 +28,7 @@ export const TestMenu = lazy(() => import('src/pages/menu/menu-add'));
 export const TestReceip = lazy(() => import('src/pages/receip/add-receip'));
 export const AddOneReceip = lazy(() => import('src/pages/receip/add-one-receip'));
 export const AddInvent = lazy(() => import('src/pages/invent/add-invent'));
+export const NearInvent = lazy(() => import('src/pages/invent/near-invent'));
 export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/pos/post'));
@@ -41,6 +42,7 @@ export const OrderAll = lazy(() => import('src/pages/order/order-all'));
 export const Notification = lazy(() => import('src/pages/notification'));
 export const Topic = lazy(() => import('src/pages/topic'));
 export const Store = lazy(() => import('src/pages/store'));
+export const ReportDaily = lazy(() => import('src/pages/report/report-daily'));
 
 // ----------------------------------------------------------------------
 
@@ -103,6 +105,10 @@ export default function Router() {
           element: <InventUpdateStock />,
         },
         {
+          path: '/manage/near-invent',
+          element: <NearInvent />,
+        },
+        {
           path: '/edit-invent/:rawId',
           element: <EditInventPage />,
         },
@@ -130,6 +136,10 @@ export default function Router() {
           path: '/add-user',
           element: <AddUser />,
         },
+        {
+          path: '/report/daily',
+          element: <ReportDaily />,
+        },
       ],
     },
     { index: true, element: <LoginPage /> },
@@ -151,7 +161,7 @@ export default function Router() {
       // element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <AddProducts /> : <Navigate to="/404" />,
     },
     {
-      path: '/pos',
+      path: '/menus',
       element: <Pos />,
     },
     {
