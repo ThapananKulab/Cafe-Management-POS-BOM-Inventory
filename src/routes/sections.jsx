@@ -40,6 +40,7 @@ export const OpenOrderPage = lazy(() => import('src/pages/order/open-order'));
 export const OrderAll = lazy(() => import('src/pages/order/order-all'));
 export const Notification = lazy(() => import('src/pages/notification'));
 export const Topic = lazy(() => import('src/pages/topic'));
+export const Store = lazy(() => import('src/pages/store'));
 
 // ----------------------------------------------------------------------
 
@@ -113,6 +114,22 @@ export default function Router() {
           path: '/topic',
           element: <Topic />,
         },
+        {
+          path: '/add-one-receip',
+          element: <AddOneReceip />,
+        },
+        {
+          path: '/manage/recipe',
+          element: <TestReceip />,
+        },
+        {
+          path: '/store',
+          element: <Store />,
+        },
+        {
+          path: '/add-user',
+          element: <AddUser />,
+        },
       ],
     },
     { index: true, element: <LoginPage /> },
@@ -132,10 +149,6 @@ export default function Router() {
       path: '/add-product',
       element: <AddProducts />,
       // element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <AddProducts /> : <Navigate to="/404" />,
-    },
-    {
-      path: '/add-user',
-      element: <AddUser />,
     },
     {
       path: '/pos',
@@ -165,10 +178,7 @@ export default function Router() {
       path: '/manage/menu',
       element: <TestMenu />,
     },
-    {
-      path: '/manage/recipe',
-      element: <TestReceip />,
-    },
+
     {
       path: '/manage/invent',
       element: <AddInvent />,
@@ -196,10 +206,6 @@ export default function Router() {
     {
       path: '/test',
       element: <Test />,
-    },
-    {
-      path: '/add-one-receip',
-      element: <AddOneReceip />,
     },
   ]);
 

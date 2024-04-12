@@ -374,7 +374,8 @@ function RealTimeOrderPage() {
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            <StyledDiv>{isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}</StyledDiv>
+            {/* <StyledDiv>{isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}</StyledDiv> */}
+            <StyledDiv>{isSaleRoundOpen ? 'ออเดอร์ประจำวัน' : 'ออเดอร์ประจำวัน'}</StyledDiv>
           </Typography>
           <Box sx={{ '& button': { m: 1 } }}>
             <Button

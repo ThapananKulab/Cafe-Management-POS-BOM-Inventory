@@ -137,20 +137,6 @@ function MenuTable() {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchMenus = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         'https://test-api-01.azurewebsites.net/api/menus/allMenus'
-  //       );
-  //       setMenus(response.data);
-  //       setFilteredMenus(response.data);
-  //     } catch (error) {
-  //       console.error('Could not fetch menus:', error);
-  //     }
-  //   };
-  //   fetchMenus();
-  // }, []);
   const fetchMenus = async () => {
     try {
       const response = await axios.get('https://test-api-01.azurewebsites.net/api/menus/allMenus');
@@ -166,7 +152,7 @@ function MenuTable() {
     const intervalId = setInterval(fetchMenus, 5000);
 
     return () => clearInterval(intervalId);
-  }, []); //
+  }, []);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -181,7 +167,10 @@ function MenuTable() {
     const result = menus.filter(
       (menu) =>
         menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        menu.description.toLowerCase().includes(searchQuery.toLowerCase()) // Add other fields if needed
+        menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        menu.price.toString().includes(searchQuery) || // ค้นหาด้วยราคา (price)
+        menu.type.toLowerCase().includes(searchQuery.toLowerCase()) || // ค้นหาด้วยประเภท (type)
+        menu.sweetLevel.toLowerCase().includes(searchQuery.toLowerCase()) // ค้นหาด้วยระดับความหวาน (sweetLevel)
     );
     setFilteredMenus(result);
   }, [searchQuery, menus]);
@@ -574,22 +563,10 @@ function MenuTable() {
                       const inventoryItem = inventoryItems.find(
                         (item) => item._id === ingredient.inventoryItemId.toString()
                       );
-                      let unit = 'กรัม';
-                      if (
-                        inventoryItem?.name.includes('น้ำ') ||
-                        inventoryItem?.name.includes('นม')
-                      ) {
-                        if (
-                          !inventoryItem?.name.includes('น้ำตาล') &&
-                          !inventoryItem?.name.includes('ทราย')
-                        ) {
-                          unit = 'ml';
-                        }
-                      }
 
                       return (
                         <li key={ingredient.inventoryItemId}>
-                          {inventoryItem?.name}: {ingredient.quantity} {unit}
+                          {inventoryItem?.name}: {ingredient.quantity} {inventoryItem?.unit}
                         </li>
                       );
                     })}

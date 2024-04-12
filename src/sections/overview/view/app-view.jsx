@@ -31,6 +31,47 @@ export default function AppView() {
   const [weeklySales, setWeeklySales] = useState(0);
   const [mostPurchasedMenuItems, setMostPurchasedMenuItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
+  const [previousWeeklySales, setPreviousWeeklySales] = useState(0);
+  const [dailySales, setDailySales] = useState({});
+
+  useEffect(() => {
+    async function fetchWeeklyTotal() {
+      try {
+        const response = await axios.get(
+          'http://localhost:3333/api/saleorder/dashboard/weeklyTotal'
+        );
+        setDailySales(response.data.dailySales);
+      } catch (error) {
+        console.error('Error fetching weekly total:', error);
+      }
+    }
+
+    async function fetchPreviousWeeklyTotal() {
+      try {
+        const response = await axios.get(
+          'http://localhost:3333/api/saleorder/dashboard/previousWeeklyTotal'
+        );
+        setPreviousWeeklySales(response.data.totalSales);
+      } catch (error) {
+        console.error('Error fetching previous weekly total:', error);
+      }
+    }
+
+    fetchWeeklyTotal();
+    fetchPreviousWeeklyTotal();
+  }, []);
+
+  const chartData = {
+    labels: Object.keys(dailySales),
+    series: [
+      {
+        name: 'ยอดขาย',
+        type: 'line',
+        fill: 'solid',
+        data: Object.values(dailySales),
+      },
+    ],
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -82,7 +123,7 @@ export default function AppView() {
       try {
         const response = await axios.get(
           'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/saleOrders'
-        ); // เรียกข้อมูลออเดอร์จากเซิร์ฟเวอร์
+        );
         setNumberOfOrders(response.data.numberOfOrders);
       } catch (error) {
         console.error('Error fetching sale orders:', error);
@@ -103,6 +144,7 @@ export default function AppView() {
   const timeString = currentTime.toLocaleTimeString('th-TH', {
     hour12: false,
   });
+  const percentageChange = ((weeklySales - previousWeeklySales) / previousWeeklySales) * 100;
 
   return (
     <Container maxWidth="xl">
@@ -152,43 +194,9 @@ export default function AppView() {
 
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
-            title="Website Visits"
-            subheader="(+43%) than last year"
-            chart={{
-              labels: [
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ],
-              series: [
-                {
-                  name: 'Team A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: 'Team B',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: 'Team C',
-                  type: 'line',
-                  fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
-                },
-              ],
-            }}
+            title="ยอดขาย 7 วันหลังสุด"
+            subheader={`(${percentageChange.toFixed(2)}%) ในสัปดาห์นี้`}
+            chart={chartData}
           />
         </Grid>
 

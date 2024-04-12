@@ -165,14 +165,6 @@ function AddRecipe() {
       });
     }
   };
-
-  // const addIngredient = () => {
-  //   setRecipe((prevRecipe) => ({
-  //     ...prevRecipe,
-  //     ingredients: [...prevRecipe.ingredients, { inventoryItemId: '', quantity: 1, name: '' }],
-  //   }));
-  // };
-
   const addIngredient = () => {
     const newIngredient = {
       inventoryItemId: '',
@@ -189,7 +181,6 @@ function AddRecipe() {
     setIngredientUnits((prevUnits) => [...prevUnits, 'gram']);
   };
 
-  // Assuming unitPrice and realquantity are supposed to be fetched from the inventory item
   const updateIngredient = (index, field, value) => {
     const updatedIngredients = recipe.ingredients.map((ingredient, i) => {
       if (i === index) {
@@ -236,11 +227,11 @@ function AddRecipe() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <IconButton variant="outlined" onClick={() => navigate('/recipe')}>
+        <Icon icon="lets-icons:back" />
+      </IconButton>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom component="div">
-          <Button variant="outlined" onClick={() => navigate('/recipe')}>
-            <Icon icon="lets-icons:back" />
-          </Button>
           <StyledDiv>เพิ่มสูตรเมนู</StyledDiv>
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>

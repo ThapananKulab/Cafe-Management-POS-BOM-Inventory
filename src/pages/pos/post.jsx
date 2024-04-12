@@ -115,7 +115,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     if (isModalOpen1 && selectedProduct) {
-      fetchRecipes(selectedProduct._id); // Pass the menu item's ID
+      fetchRecipes(selectedProduct._id);
     }
   }, [isModalOpen1, selectedProduct]);
 
@@ -160,7 +160,7 @@ const CartTemplate = () => {
       return 0;
     }
     const change = receivedAmount - totalPrice;
-    return change >= 0 ? change : 0; // ถ้าเงินทอนน้อยกว่า 0 ให้แสดงเป็น 0
+    return change >= 0 ? change : 0;
   };
 
   useEffect(() => {
@@ -219,7 +219,7 @@ const CartTemplate = () => {
     axios
       .get('http://localhost:3333/api/menus/allMenus')
       .then((response) => {
-        console.log('Sample product:', response.data[0]); // Log the first product to check its structure
+        console.log('Sample product:', response.data[0]);
         setProducts(response.data);
       })
       .catch((err) => {
@@ -236,7 +236,6 @@ const CartTemplate = () => {
     let productExists = false;
     let newCartItems = [];
 
-    // ตรวจสอบว่ามีวัตถุดิบเพียงพอสำหรับการเพิ่มสินค้าหรือไม่
     const existingCartItem = cartItems.find(
       (item) => item._id === productToAdd._id && item.sweetLevel === sweetLevel
     );
@@ -250,7 +249,6 @@ const CartTemplate = () => {
       .then((response) => {
         console.log('API Response:', response.data);
         if (response.data.success) {
-          // Ingredients are available, proceed with adding the item to the cart
           const updatedCartItems = cartItems.map((cartItem) => {
             if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
               productExists = true;
@@ -266,9 +264,9 @@ const CartTemplate = () => {
           }
 
           setCartItems(newCartItems);
-          setIngredientsAvailable(true); // Set ingredientsAvailable to true
-          setUnavailableIngredients([]); // Reset unavailableIngredients
-          toast.success(`${productToAdd.name} added to cart`);
+          setIngredientsAvailable(true);
+          setUnavailableIngredients([]);
+          toast.success(`เพิ่ม ${productToAdd.name} แล้ว`);
         } else {
           const { unavailableIngredients: serverUnavailableIngredients } = response.data;
           const errorMessage = serverUnavailableIngredients.reduce((message, ingredient) => {
@@ -513,9 +511,8 @@ const CartTemplate = () => {
             <Grid item xs={12} sm={6} md={4} key={product._id}>
               <Paper elevation={3} style={{ borderRadius: 16 }}>
                 <Card>
-                  <CardMedia style={{ height: 140 }} image={product.image} title={product.name} />
-
-                  <CardContent>
+                  <CardMedia style={{ height: 200 }} image={product.image} title={product.name} />
+                  <CardContent style={{ height: '100px', overflow: 'auto' }}>
                     <Typography gutterBottom variant="h5" component="h2">
                       <StyledDiv> {product.name}</StyledDiv>
                     </Typography>
@@ -580,7 +577,7 @@ const CartTemplate = () => {
           ))}
         </Grid>
       </Container>
-      {/* Cart Modal */}
+
       <Modal
         open={isModalOpen1}
         onClose={() => setIsModalOpen1(false)}
@@ -615,35 +612,46 @@ const CartTemplate = () => {
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <StyledDiv>ประเภท: {selectedProduct.type}</StyledDiv>
                 </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <StyledDiv>ระดับความหวาน: {selectedProduct.sweetLevel}</StyledDiv>
-                </Typography>
+
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <StyledDiv>ราคา: {selectedProduct.price} ฿</StyledDiv>
                 </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <StyledDiv>สูตร:</StyledDiv>
-                </Typography>
-                <ul>
-                  <li>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      <StyledDiv>{selectedProduct.recipe.name}</StyledDiv>
+
+                {selectedProduct.type !== 'ทั่วไป' && (
+                  <>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <StyledDiv>ระดับความหวาน: {selectedProduct.sweetLevel}</StyledDiv>
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <StyledDiv>สูตร:</StyledDiv>
                     </Typography>
                     <ul>
-                      {selectedProduct.recipe.ingredients.map((ingredient) => (
-                        <li key={ingredient._id}>
-                          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                            {`${
-                              inventoryItems.find((item) => item._id === ingredient.inventoryItemId)
-                                ?.name || 'Unnamed Ingredient'
-                            }`}
-                          </Typography>
-                          {` ปริมาณ: ${ingredient.quantity} กรัม `}
-                        </li>
-                      ))}
+                      <li>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                          <StyledDiv>{selectedProduct.recipe.name}</StyledDiv>
+                        </Typography>
+                        <ul>
+                          {selectedProduct.recipe.ingredients.map((ingredient) => (
+                            <li key={ingredient._id}>
+                              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                {`${
+                                  inventoryItems.find(
+                                    (item) => item._id === ingredient.inventoryItemId
+                                  )?.name
+                                }`}
+                              </Typography>
+                              {` ปริมาณ: ${ingredient.quantity} ${
+                                inventoryItems.find(
+                                  (item) => item._id === ingredient.inventoryItemId
+                                )?.unit
+                              }`}
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
                     </ul>
-                  </li>
-                </ul>
+                  </>
+                )}
               </Box>
             </StyledDiv>
           )}
@@ -750,7 +758,6 @@ const CartTemplate = () => {
                 />
               </RadioGroup>
 
-              {/* Show received amount field only when payment method is 'เงินสด' */}
               {paymentMethod === 'เงินสด' && (
                 <>
                   <Typography
@@ -873,8 +880,8 @@ const CartTemplate = () => {
                       disabled
                     />
 
-                    <Button variant="contained" color="primary" type="submit" fullWidth>
-                      Generate QR Code
+                    <Button variant="contained" color="primary" type="submit" textAlign="center">
+                      สร้างคิวอาร์โค้ดใหม่
                     </Button>
                   </form>
                 </>
@@ -905,7 +912,7 @@ const CartTemplate = () => {
               }}
               onClick={handleNextPage}
             >
-              Next
+              ต่อไป
             </Button>
           )}
           {currentPage === 2 && (
@@ -923,7 +930,7 @@ const CartTemplate = () => {
               }}
               onClick={handleSubmitOrder}
             >
-              Submit
+              ยืนยัน
             </Button>
           )}
         </Box>
@@ -941,35 +948,6 @@ const CartTemplate = () => {
         }}
       />
       <ToastContainer position="top-left" className="toast-container" />
-      {/* <Snackbar
-        open={openAddSnackbar}
-        autoHideDuration={1000}
-        onClose={(event, reason) => {
-          if (reason === 'clickaway') {
-            return; // Keeps the Snackbar open if the reason is a clickaway
-          }
-          setOpenAddSnackbar(false);
-        }}
-      >
-        <Alert severity="success" onClose={() => setOpenAddSnackbar(false)}>
-          {addMessage}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={1000}
-        onClose={(event, reason) => {
-          if (reason === 'clickaway') {
-            return; // Keeps the Snackbar open if the reason is a clickaway
-          }
-          setOpenSnackbar(false);
-        }}
-      >
-        <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
-          ลบออกจากตะกร้าเรียบร้อย
-        </Alert>
-      </Snackbar> */}
     </>
   );
 };

@@ -19,6 +19,7 @@ import {
   TableCell,
   Container,
   TableHead,
+  TextField,
   Typography,
   IconButton,
   TableContainer,
@@ -82,6 +83,11 @@ function RealTimeOrderPage() {
   const [user, setUser] = useState(null);
   const [receiptInfo, setReceiptInfo] = useState(null);
   const componentRef = useRef();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   const handleViewReceipt = (orderId) => {
     // ค้นหาข้อมูลใบเสร็จจาก orderId ที่ได้รับ
@@ -347,7 +353,55 @@ function RealTimeOrderPage() {
 
   const filteredOrders = showTodayOnly
     ? orders.filter((order) => isOrderFromToday(order.date))
-    : orders;
+    : orders.filter((order) => {
+        const searchTermLower = searchTerm.toLowerCase();
+        const statusLower = order.status.toLowerCase();
+        const containsSearchTerm = (keyword) => keyword.toLowerCase().includes(searchTermLower);
+
+        if (
+          containsSearchTerm(order.user) ||
+          containsSearchTerm(order.paymentMethod) ||
+          containsSearchTerm(statusLower)
+        ) {
+          return true;
+        }
+
+        if (
+          (searchTermLower === 'completed' || searchTermLower === 'เสร็จสิ้น') &&
+          statusLower === 'completed'
+        ) {
+          return true;
+        }
+
+        if (
+          (searchTermLower.includes('รอ') || searchTermLower === 'pending') &&
+          statusLower === 'pending'
+        ) {
+          return true;
+        }
+
+        if (
+          (searchTermLower === 'ยกเลิก' || searchTermLower === 'cancelled') &&
+          statusLower === 'cancelled'
+        ) {
+          return true;
+        }
+
+        // Check if the search term is similar to 'ยกเลิก' or 'cancelled'
+        if (searchTermLower.includes('ยก') && statusLower === 'cancelled') {
+          return true;
+        }
+
+        // Check if the search term is similar to 'เสร็จสิ้น' or 'completed'
+        if (
+          (searchTermLower === 'เสร็จสิ้น' || searchTermLower === 'completed') &&
+          statusLower === 'completed'
+        ) {
+          return true;
+        }
+
+        return false;
+      });
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat('th-TH', {
@@ -404,6 +458,13 @@ function RealTimeOrderPage() {
             )}
           </Box>
         </Stack>
+        <TextField
+          id="search"
+          label="ค้นหา"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
         {isSaleRound && (
           <Paper sx={{ mt: 3 }}>
             <TableContainer component={Paper}>
@@ -452,11 +513,6 @@ function RealTimeOrderPage() {
                         )}
                       </TableCell>
 
-                      {/* <TableCell align="right">
-                        {order.total + (order.change || 0) === order.total
-                          ? 'รับมาพอดี'
-                          : formatCurrency(order.total + (order.change || 0))}
-                      </TableCell> */}
                       <TableCell align="right">
                         {order.status === 'Pending' && (
                           <Box>

@@ -230,11 +230,11 @@ function AddRecipe() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <IconButton variant="outlined" onClick={() => navigate('/recipe')}>
+        <Icon icon="lets-icons:back" />
+      </IconButton>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom component="div">
-          <Button variant="outlined" onClick={() => navigate('/recipe')}>
-            <Icon icon="lets-icons:back" />
-          </Button>
           <StyledDiv>เพิ่มเมนูพร้อมขาย</StyledDiv>
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>

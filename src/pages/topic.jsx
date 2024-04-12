@@ -132,9 +132,20 @@ function App() {
       <Typography variant="h4" gutterBottom>
         แจ้งเรื่อง
       </Typography>
-      <Button variant="contained" color="primary" onClick={handleModalOpen}>
-        Post
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleModalOpen}
+        style={{
+          display: 'block',
+          margin: 'auto',
+          fontSize: '1rem', // Adjust the font size as needed
+          padding: '5px 20px', // Adjust the padding as needed
+        }}
+      >
+        โพสต์
       </Button>
+
       <Modal
         open={isModalOpen}
         onClose={handleModalClose}

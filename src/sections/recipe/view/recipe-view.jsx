@@ -65,7 +65,7 @@ function RecipeTable() {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [inventoryItems, setInventoryItems] = useState([]);
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // ตัวอย่าง state สำหรับการเลือกสูตรอาหาร
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [editableRecipe, setEditableRecipe] = useState({ name: '', ingredients: [] });
 
   const [openDetailModal, setOpenDetailModal] = useState(false);
@@ -79,10 +79,8 @@ function RecipeTable() {
     }
 
     if (selectedUnit === 'ช้อนชา') {
-      // 1 ช้อนชา = 5 กรัม
       gram = parseFloat(conversionValue) * 5;
     } else if (selectedUnit === 'ช้อนโต๊ะ') {
-      // 1 ช้อนโต๊ะ = 15 กรัม
       gram = parseFloat(conversionValue) * 15;
     }
     return gram;
@@ -156,13 +154,8 @@ function RecipeTable() {
 
   const updateRecipe = async () => {
     try {
-      // Calculate the new total cost
       const newTotalCost = calculateTotalCost();
-
-      // Update the cost in the editableRecipe object
       const updatedRecipe = { ...editableRecipe, cost: newTotalCost };
-
-      // Send the updated recipe data to the server
       const response = await axios.put(
         `http://localhost:3333/api/recipes/update/${editableRecipe._id}`,
         updatedRecipe
@@ -237,31 +230,9 @@ function RecipeTable() {
     }
   };
 
-  // const calculateTotalCost = () => {
-  //   let totalCost = 0;
-
-  //   editableRecipe.ingredients.forEach((ingredient) => {
-  //     // Destructure the properties of foundItem
-  //     const { unitPrice, realquantity } =
-  //       inventoryItems.find((item) => {
-  //         console.log('Ingredient ID:', ingredient.inventoryItemId?._id);
-  //         console.log('Item ID:', item._id);
-  //         return item._id === ingredient.inventoryItemId?._id;
-  //       }) || {};
-  //     if (unitPrice !== undefined && realquantity !== undefined) {
-  //       const quantity = parseFloat(ingredient.quantity) || 0;
-  //       totalCost += (unitPrice * quantity) / realquantity;
-  //     }
-  //   });
-
-  //   return totalCost;
-  // };
-
   const calculateTotalCost = () => {
     let totalCost = 0;
-
     editableRecipe.ingredients.forEach((ingredient) => {
-      // Destructure the properties of foundItem
       const { unitPrice, realquantity } =
         inventoryItems.find((item) => {
           console.log('Ingredient ID:', ingredient.inventoryItemId?._id);
@@ -355,31 +326,14 @@ function RecipeTable() {
                           sx={{ fontWeight: 'bold', mb: 1 }}
                         >
                           <strong>สูตร (หน่วยเป็นกรัม) ยกเว้นพวก ขนม</strong>
-                          {/* <Box sx={{ mt: 1 }}>
-                            {selectedRecipe?.ingredients.map(
-                              ({ inventoryItemId, quantity }, index) => {
-                                const name = inventoryItemId?.name || 'Item';
-                                let unit = 'กรัม';
-                                if (name.includes('น้ำ') || name.includes('นม')) {
-                                  if (!name.includes('น้ำตาล') && !name.includes('ทราย')) {
-                                    unit = 'ml';
-                                  }
-                                }
-                                return (
-                                  <Typography key={index} variant="body2" sx={{ mt: 0.5 }}>
-                                    {name}: {quantity} {unit}
-                                  </Typography>
-                                );
-                              }
-                            )}
-                          </Box> */}
                           <Box sx={{ mt: 1 }}>
                             {selectedRecipe?.ingredients.map(
                               ({ inventoryItemId, quantity }, index) => {
-                                const name = inventoryItemId?.name || 'Item';
+                                const name = inventoryItemId?.name;
+                                const unit = inventoryItemId?.unit;
                                 return (
                                   <Typography key={index} variant="body2" sx={{ mt: 0.5 }}>
-                                    {name}: {quantity}
+                                    {name} : <strong>{quantity}</strong> {unit}
                                   </Typography>
                                 );
                               }
@@ -429,10 +383,10 @@ function RecipeTable() {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: '80%', // Use a percentage of the viewport width for responsiveness
-              maxWidth: '1200px', // Optional: Set a maximum width to ensure it doesn't get too large on bigger screens
+              width: '80%',
+              maxWidth: '1200px',
               maxHeight: '90vh',
-              overflowY: 'auto', // Enable vertical scrolling within the modal if content overflows
+              overflowY: 'auto',
               bgcolor: 'background.paper',
               border: '2px solid #000',
               boxShadow: 24,
@@ -463,7 +417,6 @@ function RecipeTable() {
                   <Typography variant="body1">
                     {`${conversionValue} ${selectedUnit} เท่ากับ `}
                     <span style={{ fontWeight: 'bold', color: '#ff5722' }}>
-                      {' '}
                       {` ${convertToGram()} `}
                     </span>
                     กรัม
@@ -508,12 +461,12 @@ function RecipeTable() {
                       value={ingredient.quantity}
                       onChange={(e) => handleIngredientChange(e, index)}
                     />
-
+                    {ingredient.inventoryItemId?.unit}
                     <Button
                       color="error"
                       sx={{
-                        padding: '10px 20px', // Increase padding for a larger button
-                        fontSize: '1rem', // Adjust font size as needed
+                        padding: '10px 20px',
+                        fontSize: '1rem',
                       }}
                       onClick={() =>
                         setEditableRecipe({
@@ -540,17 +493,17 @@ function RecipeTable() {
                   <br />
                   <Button
                     sx={{
-                      padding: '20px 40px', // Match padding for consistency
-                      fontSize: '1.5rem', // Match font size for a consistent look
-                      borderRadius: '8px', // Optional: Rounded corners
-                      margin: '5px', // Optional: Space between buttons
+                      padding: '20px 40px',
+                      fontSize: '1.5rem',
+                      borderRadius: '8px',
+                      margin: '5px',
                     }}
                     onClick={() =>
                       setEditableRecipe({
                         ...editableRecipe,
                         ingredients: [
                           ...editableRecipe.ingredients,
-                          { inventoryItemId: null, quantity: '' }, // ทำให้เป็นโครงสร้างเปล่าสำหรับเลือกจาก Autocomplete
+                          { inventoryItemId: null, quantity: '' },
                         ],
                       })
                     }
@@ -559,10 +512,10 @@ function RecipeTable() {
                   </Button>
                   <Button
                     sx={{
-                      padding: '20px 40px', // Match padding for consistency
-                      fontSize: '1.5rem', // Match font size for a consistent look
-                      borderRadius: '8px', // Optional: Rounded corners
-                      margin: '5px', // Optional: Space between buttons
+                      padding: '20px 40px',
+                      fontSize: '1.5rem',
+                      borderRadius: '8px',
+                      margin: '5px',
                     }}
                     onClick={updateRecipe}
                   >

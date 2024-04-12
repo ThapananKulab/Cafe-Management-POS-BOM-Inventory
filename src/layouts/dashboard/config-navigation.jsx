@@ -11,14 +11,19 @@ const navConfig = [
     icon: icon('ic-ana'),
   },
   {
-    title: 'พนักงาน',
+    title: 'บริหารข้อมูลกลาง',
     // path: '/user',
     icon: icon('ic_user'),
     subItems: [
       {
-        title: 'จัดการพนักงาน',
+        title: 'พนักงาน',
         path: '/user',
         icon: icon('ic-manager'),
+      },
+      {
+        title: 'ซัพพลายเออร์',
+        path: '/store',
+        icon: icon('store-svgrepo-com'),
       },
     ],
   },
@@ -28,9 +33,14 @@ const navConfig = [
     icon: icon('material-7'),
     subItems: [
       {
-        title: 'จัดการวัตถุดิบ',
+        title: 'วัตถุดิบ',
         path: '/invent',
         icon: icon('ic-manage'),
+      },
+      {
+        title: 'วัตถุดิบใกล้หมด',
+        path: '',
+        icon: icon('stock-low'),
       },
       {
         title: 'สต็อกวัตถุดิบ',
@@ -67,17 +77,29 @@ const navConfig = [
     title: 'ออเดอร์',
     path: '/order',
     icon: icon('ic-order'),
+    subItems: [
+      {
+        title: 'ออเดอร์ทัังหมด',
+        path: '/order-all',
+        icon: icon('order-all'),
+      },
+      {
+        title: 'ออเดอร์ประจำวัน',
+        path: '/order',
+        icon: icon('order-today'),
+      },
+      {
+        title: 'ระยะเวลาการเปิดปิดร้าน',
+        path: '/open-order',
+        icon: icon('time-svgrepo-com'),
+      },
+    ],
   },
   {
     title: 'แจ้งเตือน',
     path: '/notification',
     icon: icon('ic-notic'),
     subItems: [
-      {
-        title: 'chat',
-        path: '/notification',
-        icon: icon('chat-81'),
-      },
       {
         title: 'ข้อมูลทั่วไป',
         path: '/topic',
