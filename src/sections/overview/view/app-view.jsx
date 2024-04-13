@@ -33,12 +33,28 @@ export default function AppView() {
   const [itemCount, setItemCount] = useState(0);
   const [previousWeeklySales, setPreviousWeeklySales] = useState(0);
   const [dailySales, setDailySales] = useState({});
+  const [totalProfit, setTotalProfit] = useState(0);
+
+  useEffect(() => {
+    const fetchTotalProfit = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3333/api/saleorder/dashboard/total-profit'
+        );
+        setTotalProfit(response.data.totalProfit);
+      } catch (error) {
+        console.error('Error fetching total profit:', error);
+      }
+    };
+
+    fetchTotalProfit();
+  }, []);
 
   useEffect(() => {
     async function fetchWeeklyTotal() {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/weeklyTotal'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/weeklyTotal'
         );
         setDailySales(response.data.dailySales);
       } catch (error) {
@@ -49,7 +65,7 @@ export default function AppView() {
     async function fetchPreviousWeeklyTotal() {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/previousWeeklyTotal'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/previousWeeklyTotal'
         );
         setPreviousWeeklySales(response.data.totalSales);
       } catch (error) {
@@ -168,7 +184,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="กำไร (บาท)"
-            total={1352831}
+            total={totalProfit}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/profits.png" />}
           />
