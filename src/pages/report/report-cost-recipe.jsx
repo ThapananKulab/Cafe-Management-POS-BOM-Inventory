@@ -1,5 +1,3 @@
-import axios from 'axios';
-import moment from 'moment-timezone';
 import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -12,75 +10,53 @@ import {
   Select,
   MenuItem,
   TableRow,
+  TableCell,
   TableHead,
   TableBody,
-  TableCell,
   Container,
   Typography,
   TableContainer,
 } from '@mui/material';
 
-// Thai month names
-const thaiMonths = [
-  'มกราคม',
-  'กุมภาพันธ์',
-  'มีนาคม',
-  'เมษายน',
-  'พฤษภาคม',
-  'มิถุนายน',
-  'กรกฎาคม',
-  'สิงหาคม',
-  'กันยายน',
-  'ตุลาคม',
-  'พฤศจิกายน',
-  'ธันวาคม',
-];
+function HighestCostRecipeReport() {
+  const navigate = useNavigate();
+  const [highestCostRecipes, setHighestCostRecipes] = useState([]);
 
-const SalesReportPage = () => {
   const StyledDiv = styled1.div`
     font-family: 'Prompt', sans-serif;
   `;
 
-  const StyledDiv1 = styled1.div`
-   font-family: 'Prompt', sans-serif;
-    font-weight: bold;
-  color: #ff5722; /* เปลี่ยนสีตามที่ต้องการ */
-  `;
-
-  const [weeklySales, setWeeklySales] = useState([]);
-  const [totalSales, setTotalSales] = useState(0);
-  const navigate = useNavigate();
-
   useEffect(() => {
-    const fetchWeeklySales = async () => {
+    async function fetchHighestCostRecipes() {
       try {
-        const response = await axios.get('http://localhost:3333/api/saleorder/report/weeklySales');
-        setWeeklySales(response.data.weeklySales);
-        setTotalSales(response.data.totalSales); // Set total sales for the week
+        const response = await fetch(
+          'http://localhost:3333/api/recipes/reports/highest-cost-recipes'
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch highest cost recipes');
+        }
+        const data = await response.json();
+        setHighestCostRecipes(data);
       } catch (error) {
-        console.error('Error fetching weekly sales:', error);
+        console.error('Error fetching highest cost recipes:', error);
       }
-    };
-
-    fetchWeeklySales();
+    }
+    fetchHighestCostRecipes();
   }, []);
 
   return (
     <Container>
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h4">
-            <StyledDiv>รายงานยอดขาย 7 วันย้อนหลัง</StyledDiv>
-          </Typography>
-          <Typography variant="h6">
-            <StyledDiv1>ยอดขาย: {totalSales}</StyledDiv1>
+            <StyledDiv>รายชื่อราคาต้นทุนสูงสุด</StyledDiv>
           </Typography>
         </Stack>
         <Stack direction="row" spacing={2} justifyContent="center" marginBottom={4}>
           <Paper>
             <Select
               onChange={(event) => navigate(event.target.value)}
-              defaultValue="/report/daily"
+              defaultValue="/report/cost"
               inputProps={{ 'aria-label': 'select' }}
             >
               <MenuItem value="/report/daily">รายงานยอดขาย 7 วันย้อนหลัง</MenuItem>
@@ -92,24 +68,27 @@ const SalesReportPage = () => {
             </Select>
           </Paper>
         </Stack>
-
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>วัน</TableCell>
-                <TableCell align="right">ยอดขายประจำวัน</TableCell>
+                <TableCell>รายชื่อสูตร</TableCell>
+                <TableCell>ราคาต้นทุน</TableCell>
+                <TableCell>สูตร</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {weeklySales.map((sale) => (
-                <TableRow key={sale.date}>
-                  <TableCell component="th" scope="row">
-                    {moment(sale.date)
-                      .add(1, 'days')
-                      .format(`D ${thaiMonths[moment(sale.date).month()]} YYYY`)}{' '}
+              {highestCostRecipes.map((recipe, recipeIndex) => (
+                <TableRow key={recipeIndex}>
+                  <TableCell>{recipe.name}</TableCell>
+                  <TableCell>{recipe.cost}</TableCell>
+                  <TableCell>
+                    <ul>
+                      {recipe.ingredients.map((ingredient, ingredientIndex) => (
+                        <li key={ingredientIndex}>{ingredient.inventoryItemId.name}</li>
+                      ))}
+                    </ul>
                   </TableCell>
-                  <TableCell align="right">{sale.dailySales}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -118,6 +97,6 @@ const SalesReportPage = () => {
       </Box>
     </Container>
   );
-};
+}
 
-export default SalesReportPage;
+export default HighestCostRecipeReport;

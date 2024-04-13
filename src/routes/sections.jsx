@@ -43,6 +43,11 @@ export const Notification = lazy(() => import('src/pages/notification'));
 export const Topic = lazy(() => import('src/pages/topic'));
 export const Store = lazy(() => import('src/pages/store'));
 export const ReportDaily = lazy(() => import('src/pages/report/report-daily'));
+export const ReportCancelBill = lazy(() => import('src/pages/report/report-cancel-bill'));
+export const ReportSaleMenu = lazy(() => import('src/pages/report/report-sale-menu'));
+export const ReportPayment = lazy(() => import('src/pages/report/report-payment'));
+export const ReportCost = lazy(() => import('src/pages/report/report-cost-recipe'));
+export const ReportPopular = lazy(() => import('src/pages/report/report-popular-menu'));
 
 // ----------------------------------------------------------------------
 
@@ -75,7 +80,6 @@ export default function Router() {
           path: 'user',
           element: getUserRoleFromToken() === 'เจ้าของร้าน' ? <UserPage /> : <Navigate to="/404" />,
         },
-        { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'product', element: <ProductPage /> },
         { path: 'raw', element: <RawPage /> },
@@ -91,6 +95,10 @@ export default function Router() {
         {
           path: '/menu',
           element: <MenuShow />,
+        },
+        {
+          path: '/manage/menu',
+          element: <TestMenu />,
         },
         {
           path: '/open-order',
@@ -140,9 +148,30 @@ export default function Router() {
           path: '/report/daily',
           element: <ReportDaily />,
         },
+        {
+          path: '/report/cancelbill',
+          element: <ReportCancelBill />,
+        },
+        {
+          path: '/report/salemenu',
+          element: <ReportSaleMenu />,
+        },
+        {
+          path: '/report/payment',
+          element: <ReportPayment />,
+        },
+        {
+          path: '/report/cost',
+          element: <ReportCost />,
+        },
+        {
+          path: '/report/popular-menu',
+          element: <ReportPopular />,
+        },
       ],
     },
     { index: true, element: <LoginPage /> },
+    { path: 'products', element: <ProductsPage /> },
     {
       path: '404',
       element: <Page404 />,
@@ -183,10 +212,6 @@ export default function Router() {
     {
       path: '/test-ol',
       element: <TestOL />,
-    },
-    {
-      path: '/manage/menu',
-      element: <TestMenu />,
     },
 
     {

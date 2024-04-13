@@ -6,12 +6,12 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'Dashboard',
+    title: 'ภาพรวมร้านค้า',
     path: '/dashboard',
     icon: icon('ic_analytics'),
     subItems: [
       {
-        title: 'ภาพรวมร้านค้า',
+        title: 'Dashboard',
         path: '/dashboard',
         icon: icon('ic-ana'),
       },

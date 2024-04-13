@@ -29,10 +29,11 @@ function AddMenuItem() {
     name: '',
     description: '',
     price: '',
-    sweetLevel: 'ปกติ', // Default to 'Regular' or any preferred default
-    type: 'ร้อน', // Default to 'Hot' or any preferred default
+    sweetLevel: 'ปกติ',
+    type: 'ร้อน',
     recipe: '',
     image: '',
+    cost: '', // เพิ่ม cost เข้าไป
   });
 
   const [recipes, setRecipes] = useState([]);
@@ -50,6 +51,7 @@ function AddMenuItem() {
 
     fetchRecipes();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'recipe') {
@@ -58,6 +60,7 @@ function AddMenuItem() {
         ...prevState,
         recipe: value,
         name: selectedRecipe ? selectedRecipe.name : '',
+        cost: selectedRecipe ? selectedRecipe.cost : '', // เพิ่มการกำหนดค่า cost จาก recipe
       }));
     } else {
       setMenuItem((prevState) => ({
@@ -78,21 +81,6 @@ function AddMenuItem() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // try {
-    //   const checkDuplicate = await axios.get(
-    //     `http://localhost:3333/api/menus/checkName?name=${encodeURIComponent(menuItem.name)}`
-    //   );
-    //   if (checkDuplicate.data.exists) {
-    //     toast.error('ชื่อเมนูนี้ถูกใช้แล้ว');
-    //     return;
-    //   }
-    // } catch (error) {
-    //   console.error('Error checking for duplicate names:', error);
-    //   toast.error('ชื่อเมนูซ้ำ');
-    //   return;
-    // }
-
     const formData = new FormData();
     formData.append('name', menuItem.name);
     formData.append('description', menuItem.description);
@@ -101,6 +89,7 @@ function AddMenuItem() {
     formData.append('image', menuItem.image);
     formData.append('sweetLevel', menuItem.sweetLevel);
     formData.append('type', menuItem.type);
+    formData.append('cost', menuItem.cost); // เพิ่ม cost ไปยัง formData
 
     try {
       const response = await axios.post('http://localhost:3333/api/menus/addMenu', formData, {
@@ -150,16 +139,6 @@ function AddMenuItem() {
             ))}
           </Select>
         </FormControl>
-        {/* <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="recipe"
-          label="Recipe ID"
-          name="recipe"
-          value={menuItem.recipe}
-          onChange={handleChange}
-        /> */}
         <TextField
           margin="normal"
           required
@@ -232,8 +211,8 @@ function AddMenuItem() {
         <Stack
           direction="row"
           spacing={2}
-          justifyContent="center" // Centers the buttons horizontally in the Stack
-          alignItems="center" // Align items vertically
+          justifyContent="center"
+          alignItems="center"
           sx={{ width: '100%', mt: 3 }}
         >
           {' '}
@@ -243,9 +222,9 @@ function AddMenuItem() {
             color="error"
             size="large"
             sx={{
-              width: '150px', // Ensure both buttons have the same width
-              height: '56px', // Match the height if needed
-              fontSize: '20px', // Adjust the font size as needed
+              width: '150px',
+              height: '56px',
+              fontSize: '20px',
             }}
           >
             <Icon icon="material-symbols:cancel-outline" sx={{ fontSize: '28px' }} />{' '}
@@ -255,9 +234,9 @@ function AddMenuItem() {
             type="submit"
             variant="contained"
             sx={{
-              width: '150px', // Ensure both buttons have the same width
-              height: '56px', // Match the height if needed
-              fontSize: '20px', // Adjust the font size as needed
+              width: '150px',
+              height: '56px',
+              fontSize: '20px',
               mb: 2,
               py: 1.5,
               bgcolor: 'primary.main',
@@ -265,7 +244,6 @@ function AddMenuItem() {
             }}
           >
             <Icon icon="material-symbols-light:send" sx={{ fontSize: '28px' }} />{' '}
-            {/* Adjust icon size as needed */}
           </Button>
         </Stack>
       </Box>

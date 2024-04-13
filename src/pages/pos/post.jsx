@@ -63,6 +63,7 @@ const CartTemplate = () => {
   const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
   const [qrCode, setQrCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('0819139936');
+
   const handleAddAmount = (amount) => {
     setReceivedAmount(amount);
   };
@@ -387,7 +388,10 @@ const CartTemplate = () => {
       }
 
       const userfullname = `${user.firstname} ${user.lastname}`;
-
+      const totalProfit = cartItems.reduce(
+        (acc, item) => acc + (item.price * item.quantity - item.cost * item.quantity),
+        0
+      );
       const orderData = {
         user: userfullname,
         paymentMethod,
@@ -398,8 +402,10 @@ const CartTemplate = () => {
           name: item.name,
           price: item.price,
           quantity: item.quantity,
+          cost: item.cost,
         })),
         change,
+        profit: totalProfit,
       };
 
       setIsModalOpen(false);
@@ -417,7 +423,7 @@ const CartTemplate = () => {
 
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 1000);
 
       localStorage.removeItem('cartItems');
     } catch (error) {
@@ -445,11 +451,11 @@ const CartTemplate = () => {
             variant="h6"
             color="inherit"
             noWrap
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} // เพิ่ม display เป็น flex และ align items เพื่อจัดข้อความและไอคอนให้ได้ตำแหน่งเดียวกัน
             onClick={() => navigate('/dashboard')}
           >
-            <Icon icon="mdi:network-pos" style={{ marginRight: 8 }} />
-            POS
+            <Icon icon="mdi:network-pos" style={{ marginLeft: 8 }} />
+            &nbsp; <StyledDiv> POS</StyledDiv>
           </Typography>
 
           {/* Current time display */}
@@ -486,7 +492,6 @@ const CartTemplate = () => {
             flexWrap: 'wrap',
           }}
         >
-          {/* Category buttons */}
           {categories.map((category) => (
             <Button
               key={category.name}
@@ -494,17 +499,19 @@ const CartTemplate = () => {
               onClick={() => setSelectedCategory(category.name)}
               sx={{
                 m: 1,
-                padding: '5px 15px',
-                fontSize: '0.8rem',
-                minWidth: '100px',
+                padding: '10px 20px', // เพิ่มขนาดของ padding ให้มีรูปทรงที่ดูดีขึ้น
+                fontSize: '0.9rem', // ปรับขนาดตัวอักษรให้ใหญ่ขึ้นเล็กน้อย
+                minWidth: '120px', // เพิ่มความกว้างขั้นต่ำ
+                borderRadius: '20px', // เพิ่มขนาดของ borderRadius เพื่อสร้างรูปทรงมนุษย์ธรรมชาติ
               }}
             >
               <Icon icon={category.icon} style={{ marginRight: 8, marginBottom: -2 }} />
-              {category.name}
+              <StyledDiv> {category.name}</StyledDiv>
             </Button>
           ))}
         </Box>
       </Container>
+
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
           {filteredProducts.map((product) => (
@@ -942,7 +949,7 @@ const CartTemplate = () => {
         autoHideDuration={1000}
         onClose={(event, reason) => {
           if (reason === 'clickaway') {
-            return; // Keeps the Snackbar open if the reason is a clickaway
+            return;
           }
           setOpenAddSnackbar(false);
         }}
