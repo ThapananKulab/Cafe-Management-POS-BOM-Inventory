@@ -30,7 +30,7 @@ function HighestCostRecipeReport() {
     async function fetchHighestCostRecipes() {
       try {
         const response = await fetch(
-          'http://localhost:3333/api/recipes/reports/highest-cost-recipes'
+          'https://test-api-01.azurewebsites.net/api/recipes/reports/highest-cost-recipes'
         );
         if (!response.ok) {
           throw new Error('Failed to fetch highest cost recipes');

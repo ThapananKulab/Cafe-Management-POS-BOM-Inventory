@@ -54,7 +54,9 @@ const SalesReportPage = () => {
   useEffect(() => {
     const fetchWeeklySales = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/saleorder/report/weeklySales');
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/saleorder/report/weeklySales'
+        );
         setWeeklySales(response.data.weeklySales);
         setTotalSales(response.data.totalSales); // Set total sales for the week
       } catch (error) {

@@ -28,7 +28,9 @@ function PaymentMethodReport() {
   useEffect(() => {
     async function fetchReport() {
       try {
-        const response = await fetch('http://localhost:3333/api/saleorder/report/payment-methods');
+        const response = await fetch(
+          'https://test-api-01.azurewebsites.net/api/saleorder/report/payment-methods'
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch payment method report');
         }

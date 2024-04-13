@@ -136,7 +136,7 @@ function RealTimeOrderPage() {
 
   const checkSaleRoundStatus = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/status');
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/status');
       if (response.ok) {
         const data = await response.json();
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
@@ -152,7 +152,9 @@ function RealTimeOrderPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/saleorder/saleOrders');
+      const response = await fetch(
+        'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders'
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }
