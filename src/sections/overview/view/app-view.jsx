@@ -184,7 +184,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="กำไร (บาท)"
-            total={totalProfit}
+            total={totalProfit.toFixed(2)}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/profits.png" />}
           />

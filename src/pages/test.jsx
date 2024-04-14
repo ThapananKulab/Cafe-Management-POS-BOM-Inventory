@@ -1,200 +1,120 @@
 import axios from 'axios';
-import Swal from 'sweetalert2';
-// import { Icon } from '@iconify/react';
-import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
-  Box,
-  Card,
-  Modal,
-  Stack,
+  List,
+  Select,
   Button,
-  Divider,
-  TextField,
+  MenuItem,
+  ListItem,
   Container,
+  TextField,
   Typography,
-  // IconButton,
-  CardHeader,
-  CardContent,
-  CardActions,
+  ListItemText,
 } from '@mui/material';
 
-function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-  });
+const CreatePurchaseReceiptPage = () => {
+  const [inventoryItems, setInventoryItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [quantity, setQuantity] = useState('');
+  const [unitPrice, setUnitPrice] = useState('');
+  const [purchaseItems, setPurchaseItems] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchInventoryItems = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        if (result.status === 'ok') {
-          setUser(result.decoded.user);
-        } else {
-          localStorage.removeItem('token');
-          Swal.fire({
-            icon: 'error',
-            title: 'กรุณา Login ก่อน',
-            text: result.message,
-          });
-          navigate('/');
-        }
+        const response = await axios.get('/api/inventory');
+        setInventoryItems(response.data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching inventory items:', error);
       }
     };
-    fetchData();
-  }, [navigate]);
-
-  useEffect(() => {
-    axios
-      .get('http://localhost:3333/api/post/all')
-      .then((res) => setPosts(res.data))
-      .catch((err) => console.log(err));
+    fetchInventoryItems();
   }, []);
 
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
+  const handleAddItem = () => {
+    const newItem = {
+      item: selectedItems,
+      quantity: parseInt(quantity, 10), // เราระบุ radix เป็น 10 ที่นี่
+      unitPrice: parseFloat(unitPrice),
+    };
+    setPurchaseItems([...purchaseItems, newItem]);
+    setSelectedItems([]);
+    setQuantity('');
+    setUnitPrice('');
   };
 
   const handleSubmit = async () => {
     try {
-      const dataToSend = {
-        ...formData,
-        author: `${user?.firstname} ${user?.lastname} (${user?.role})`,
-      };
-      const res = await axios.post('http://localhost:3333/api/post/add', dataToSend);
-      setPosts([...posts, res.data]);
-      setFormData({ title: '', content: '' });
-      handleModalClose();
+      const response = await axios.post('/api/purchase-receipts', { items: purchaseItems });
+      console.log('Purchase receipt created:', response.data);
+      // Clear the purchase items after submission
+      setPurchaseItems([]);
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error('Error creating purchase receipt:', error);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>
-        แจ้งเรื่อง
+    <Container>
+      <Typography variant="h2" gutterBottom>
+        Create Purchase Receipt
       </Typography>
-      <Button variant="contained" color="primary" onClick={handleModalOpen}>
-        Post
-      </Button>
-      <Modal
-        open={isModalOpen}
-        onClose={handleModalClose}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+      <Select
+        multiple
+        value={selectedItems}
+        onChange={(e) =>
+          setSelectedItems(Array.from(e.target.selectedOptions, (option) => option.value))
+        }
+        fullWidth
+        sx={{ marginBottom: 2 }}
       >
-        <Box
-          sx={{
-            width: 400,
-            bgcolor: 'background.paper',
-            p: 3,
-            borderRadius: '8px',
-            outline: 'none',
-          }}
-        >
-          <Typography variant="h5" gutterBottom>
-            เพิ่มโพสต์ใหม่
-          </Typography>
-          <Stack spacing={2}>
-            <TextField
-              name="title"
-              label="Title"
-              variant="outlined"
-              fullWidth
-              value={formData.title}
-              onChange={handleChange}
-            />
-            <TextField
-              name="content"
-              label="Content"
-              variant="outlined"
-              multiline
-              rows={4}
-              fullWidth
-              value={formData.content}
-              onChange={handleChange}
-            />
-            <TextField
-              label="Author"
-              variant="outlined"
-              fullWidth
-              value={`${user?.firstname} ${user?.lastname} ${user?.role}`}
-              disabled
-            />
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Post
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Box mt={3}>
-        <Typography variant="h5" gutterBottom>
-          โพสต์ทั้งหมด
+        <MenuItem value="">Select item(s)</MenuItem>
+        {inventoryItems.map((item) => (
+          <MenuItem key={item._id} value={item._id}>
+            {item.name}
+          </MenuItem>
+        ))}
+      </Select>
+      <TextField
+        type="number"
+        value={quantity}
+        onChange={(e) => setQuantity(e.target.value)}
+        placeholder="Quantity"
+        fullWidth
+        sx={{ marginBottom: 2 }}
+      />
+      <TextField
+        type="number"
+        value={unitPrice}
+        onChange={(e) => setUnitPrice(e.target.value)}
+        placeholder="Unit Price"
+        fullWidth
+        sx={{ marginBottom: 2 }}
+      />
+      <Button variant="contained" onClick={handleAddItem} sx={{ marginBottom: 2 }}>
+        Add Item
+      </Button>
+      <div>
+        <Typography variant="h3" gutterBottom>
+          Purchase Items
         </Typography>
-        {posts
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .map((post) => (
-            <Card key={post._id} sx={{ mb: 2 }}>
-              <CardHeader
-                title={`${post.author}`}
-                subheader={new Date(post.createdAt).toLocaleString()}
+        <List>
+          {purchaseItems.map((item, index) => (
+            <ListItem key={index}>
+              <ListItemText
+                primary={`Items: ${item.item.join(', ')}`}
+                secondary={`Quantity: ${item.quantity}, Unit Price: ${item.unitPrice}`}
               />
-              <CardContent>
-                <Typography variant="h6" component="div">
-                  {post.title}
-                </Typography>
-                <Typography>{post.content}</Typography>
-              </CardContent>
-              <CardActions>
-                {/* <IconButton>
-                  <Icon icon="ph:heart-fill" />
-                </IconButton>
-                <IconButton>
-                  <Icon icon="material-symbols:share-outline" />
-                </IconButton>
-                <IconButton>
-                  <Icon icon="ic:sharp-message" />
-                </IconButton> */}
-              </CardActions>
-              <Divider />
-              {/* Add comments here */}
-            </Card>
+            </ListItem>
           ))}
-      </Box>
+        </List>
+      </div>
+      <Button variant="contained" onClick={handleSubmit}>
+        Create Purchase Receipt
+      </Button>
     </Container>
   );
-}
+};
 
-export default App;
+export default CreatePurchaseReceiptPage;

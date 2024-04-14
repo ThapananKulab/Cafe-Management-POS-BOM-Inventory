@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -29,6 +30,9 @@ import navConfigUser from './config-navigation-user';
 export default function Nav({ openNav, onCloseNav }) {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const StyledDiv = styled1.div`
+    font-family: 'Prompt', sans-serif;
+  `;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,10 +90,12 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">
-          {user?.firstname} {user?.lastname}
+          <StyledDiv>
+            {user?.firstname} {user?.lastname}
+          </StyledDiv>
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {user?.role}
+          <StyledDiv>{user?.role}</StyledDiv>
         </Typography>
       </Box>
     </Box>

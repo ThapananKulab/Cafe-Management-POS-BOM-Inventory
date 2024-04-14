@@ -48,6 +48,8 @@ export const ReportSaleMenu = lazy(() => import('src/pages/report/report-sale-me
 export const ReportPayment = lazy(() => import('src/pages/report/report-payment'));
 export const ReportCost = lazy(() => import('src/pages/report/report-cost-recipe'));
 export const ReportPopular = lazy(() => import('src/pages/report/report-popular-menu'));
+export const ImPurchase = lazy(() => import('src/pages/po/purchase'));
+export const ReportPurchase = lazy(() => import('src/pages/po/po-purchase'));
 
 // ----------------------------------------------------------------------
 
@@ -167,6 +169,14 @@ export default function Router() {
         {
           path: '/report/popular-menu',
           element: <ReportPopular />,
+        },
+        {
+          path: '/purchase/create',
+          element: <ImPurchase />,
+        },
+        {
+          path: '/purchase/report',
+          element: <ReportPurchase />,
         },
       ],
     },

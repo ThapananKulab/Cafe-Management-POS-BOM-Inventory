@@ -6,9 +6,9 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'ภาพรวมร้านค้า',
-    path: '/dashboard',
-    icon: icon('ic_analytics'),
+    title: 'เอกสาร/รายงาน',
+    // path: '/dashboard',
+    icon: icon('chart-pie'),
     subItems: [
       {
         title: 'Dashboard',
@@ -20,8 +20,35 @@ const navConfig = [
         path: '/report/daily',
         icon: icon('report'),
       },
+      {
+        title: 'ประวัติการขายทั้งหมด',
+        path: '/order-all',
+        icon: icon('order-all'),
+      },
+      {
+        title: 'ประวัติการขายประจำวัน',
+        path: '/order',
+        icon: icon('order-today'),
+      },
+      {
+        title: 'ระยะเวลาการเปิดปิดร้าน',
+        path: '/open-order',
+        icon: icon('time-svgrepo-com'),
+      },
     ],
   },
+
+  // {
+  //   title: 'ออเดอร์',
+  //   icon: icon('ic-order'),
+  //   subItems: [
+  //     {
+  //       title: 'ออเดอร์ทัังหมด',
+  //       path: '/order-all',
+  //       icon: icon('order-all'),
+  //     },
+  //   ],
+  // },
   {
     title: 'บริหารข้อมูลกลาง',
     icon: icon('ic_user'),
@@ -44,7 +71,7 @@ const navConfig = [
     icon: icon('material-7'),
     subItems: [
       {
-        title: 'รายการวัตถุดิบ',
+        title: 'วัตถุดิบ',
         path: '/invent',
         icon: icon('ic-manage'),
       },
@@ -57,6 +84,11 @@ const navConfig = [
         title: 'สต็อกวัตถุดิบ',
         path: '/manage/invent/update-stock',
         icon: icon('ic-improduct'),
+      },
+      {
+        title: 'นำเข้า PO',
+        path: '/purchase/create',
+        icon: icon('invoice'),
       },
     ],
   },
@@ -78,31 +110,9 @@ const navConfig = [
     icon: icon('cafe-8'),
     subItems: [
       {
-        title: 'จัดการเมนู',
+        title: 'เมนู',
         path: '/menu',
         icon: icon('ic-drink-a'),
-      },
-    ],
-  },
-  {
-    title: 'ออเดอร์',
-    // path: '/order',
-    icon: icon('ic-order'),
-    subItems: [
-      {
-        title: 'ออเดอร์ทัังหมด',
-        path: '/order-all',
-        icon: icon('order-all'),
-      },
-      {
-        title: 'ออเดอร์ประจำวัน',
-        path: '/order',
-        icon: icon('order-today'),
-      },
-      {
-        title: 'ระยะเวลาการเปิดปิดร้าน',
-        path: '/open-order',
-        icon: icon('time-svgrepo-com'),
       },
     ],
   },

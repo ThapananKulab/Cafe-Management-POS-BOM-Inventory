@@ -10,7 +10,8 @@ import {
   Paper,
   Table,
   Stack,
-  Button,
+  Select,
+  MenuItem,
   TableRow,
   TableHead,
   TableBody,
@@ -27,10 +28,6 @@ const SaleRoundsTable = () => {
   const [saleRounds, setSaleRounds] = useState([]);
 
   const navigate = useNavigate(); // สร้าง instance ของ useNavigate
-
-  const handleNavigateToOrders = () => {
-    navigate('/order'); // ใช้ navigate ไปยัง path '/orders'
-  };
 
   useEffect(() => {
     const fetchDailySales = async () => {
@@ -59,18 +56,23 @@ const SaleRoundsTable = () => {
           <Typography variant="h4">
             <StyledDiv>รอบขายทั้งหมด</StyledDiv>
           </Typography>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#696969',
-              '&:hover': {
-                backgroundColor: '#696969',
-              },
-            }}
-            onClick={handleNavigateToOrders}
-          >
-            รายการ Order
-          </Button>
+        </Stack>
+        <Stack direction="row" spacing={2} justifyContent="center" marginBottom={4}>
+          <Paper>
+            <Select
+              onChange={(event) => navigate(event.target.value)}
+              defaultValue="/open-order"
+              inputProps={{ 'aria-label': 'select' }}
+            >
+              <MenuItem value="/report/daily">รายงานยอดขาย 7 วันย้อนหลัง</MenuItem>
+              <MenuItem value="/report/cancelbill">รานงานการยกเลิกบิล</MenuItem>
+              <MenuItem value="/report/salemenu">ประวัติการขายสินค้า</MenuItem>
+              <MenuItem value="/report/payment">รายงานการขายจำแนกตามประเภทการชำระเงิน</MenuItem>
+              <MenuItem value="/report/cost">รายชื่อวัตถุดิบราคาต้นทุนสูงสุด</MenuItem>
+              <MenuItem value="/report/popular-menu">ยอดขายที่ขายดีสุดตามเวลา</MenuItem>
+              <MenuItem value="/open-order">ประวัติการปิด-เปิดร้าน</MenuItem>
+            </Select>
+          </Paper>
         </Stack>
         <TableContainer component={Paper}>
           <Table aria-label="sale rounds table">
