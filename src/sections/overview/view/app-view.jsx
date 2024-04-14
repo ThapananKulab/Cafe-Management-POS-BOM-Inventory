@@ -39,7 +39,7 @@ export default function AppView() {
     const fetchTotalProfit = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/total-profit'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/total-profit'
         );
         setTotalProfit(response.data.totalProfit);
       } catch (error) {
