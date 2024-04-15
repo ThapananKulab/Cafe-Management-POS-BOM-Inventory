@@ -23,8 +23,8 @@ function AddMenuItem() {
   const navigate = useNavigate();
 
   const StyledDiv = styled1.div`
-  font-family: 'Prompt', sans-serif;
-`;
+    font-family: 'Prompt', sans-serif;
+  `;
   const [menuItem, setMenuItem] = useState({
     name: '',
     description: '',
@@ -34,6 +34,7 @@ function AddMenuItem() {
     recipe: '',
     image: '',
     cost: '', // เพิ่ม cost เข้าไป
+    glassSize: 'เล็ก', // เพิ่มฟิลด์ glassSize
   });
 
   const [recipes, setRecipes] = useState([]);
@@ -89,7 +90,8 @@ function AddMenuItem() {
     formData.append('image', menuItem.image);
     formData.append('sweetLevel', menuItem.sweetLevel);
     formData.append('type', menuItem.type);
-    formData.append('cost', menuItem.cost); // เพิ่ม cost ไปยัง formData
+    formData.append('cost', menuItem.cost);
+    formData.append('glassSize', menuItem.glassSize); // เพิ่ม glassSize ไปยัง formData
 
     try {
       const response = await axios.post('http://localhost:3333/api/menus/addMenu', formData, {
@@ -184,6 +186,19 @@ function AddMenuItem() {
             <MenuItem value="เย็น">เย็น</MenuItem>
             <MenuItem value="ปั่น">ปั่น</MenuItem>
             <MenuItem value="ทั่วไป">ทั่วไป</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>ขนาดแก้ว</InputLabel>
+          <Select
+            name="glassSize"
+            value={menuItem.glassSize}
+            label="ขนาดแก้ว"
+            onChange={handleChange}
+          >
+            <MenuItem value="เล็ก">เล็ก</MenuItem>
+            <MenuItem value="กลาง">กลาง</MenuItem>
+            <MenuItem value="ใหญ่">ใหญ่</MenuItem>
           </Select>
         </FormControl>
         <TextField

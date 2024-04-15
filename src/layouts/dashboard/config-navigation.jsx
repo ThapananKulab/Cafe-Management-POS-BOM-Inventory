@@ -30,11 +30,6 @@ const navConfig = [
         path: '/order',
         icon: icon('order-today'),
       },
-      {
-        title: 'ระยะเวลาการเปิดปิดร้าน',
-        path: '/open-order',
-        icon: icon('time-svgrepo-com'),
-      },
     ],
   },
 
@@ -98,7 +93,7 @@ const navConfig = [
     icon: icon('m_bom'),
     subItems: [
       {
-        title: 'สูตรเครื่องดื่ม',
+        title: 'ท็อปปิ้ง/สูตรเครื่องดื่ม',
         path: '/recipe',
         icon: icon('ic-rec'),
       },

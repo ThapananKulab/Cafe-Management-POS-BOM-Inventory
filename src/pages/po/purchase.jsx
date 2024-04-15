@@ -1,6 +1,8 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -28,6 +30,7 @@ const CreatePurchaseReceiptPage = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [purchaseItems, setPurchaseItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
@@ -122,6 +125,16 @@ const CreatePurchaseReceiptPage = () => {
           <Typography variant="h4" gutterBottom>
             <StyledDiv>สร้างใบสั่งซื้อ</StyledDiv>
           </Typography>
+          <StyledDiv>
+            <Button
+              variant="contained"
+              color="inherit"
+              startIcon={<Icon icon="ic:baseline-history" />}
+              onClick={() => navigate('/purchase/report')}
+            >
+              <StyledDiv>ประวัติ PO</StyledDiv>
+            </Button>
+          </StyledDiv>
         </Stack>
         <Select
           multiple

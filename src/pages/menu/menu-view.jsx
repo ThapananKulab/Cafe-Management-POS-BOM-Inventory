@@ -88,11 +88,12 @@ function MenuTable() {
 
   const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก', 'ทั่วไป'];
   const types = ['ร้อน', 'เย็น', 'ปั่น', 'ทั่วไป'];
+  const glassSize = ['เล็ก', 'กลาง', 'ใหญ่'];
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/recipes/all');
+        const response = await axios.get('https://test-api-01.azurewebsites.net/api/recipes/all');
         setRecipes(response.data);
       } catch (error) {
         console.error('Failed to fetch recipes', error);
@@ -170,7 +171,8 @@ function MenuTable() {
         menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         menu.price.toString().includes(searchQuery) || // ค้นหาด้วยราคา (price)
         menu.type.toLowerCase().includes(searchQuery.toLowerCase()) || // ค้นหาด้วยประเภท (type)
-        menu.sweetLevel.toLowerCase().includes(searchQuery.toLowerCase()) // ค้นหาด้วยระดับความหวาน (sweetLevel)
+        menu.sweetLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        menu.glassSize.toLowerCase().includes(searchQuery.toLowerCase()) // ค้นหาด้วยระดับความหวาน (sweetLevel)
     );
     setFilteredMenus(result);
   }, [searchQuery, menus]);
@@ -501,6 +503,22 @@ function MenuTable() {
                     {types.map((type) => (
                       <MenuItem key={type} value={type}>
                         {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="sweetLevel-select-label">glassSize</InputLabel>
+                  <Select
+                    labelId="sweetLevel-select-label"
+                    id="sweetLevel-select"
+                    value={updateData.glassSize}
+                    label="Sweet Level"
+                    onChange={(e) => setUpdateData({ ...updateData, glassSize: e.target.value })}
+                  >
+                    {glassSize.map((size) => (
+                      <MenuItem key={size} value={size}>
+                        {size}
                       </MenuItem>
                     ))}
                   </Select>
