@@ -66,7 +66,7 @@ const navConfig = [
     icon: icon('material-7'),
     subItems: [
       {
-        title: 'วัตถุดิบ',
+        title: 'คลังวัตถุดิบ',
         path: '/invent',
         icon: icon('ic-manage'),
       },
@@ -76,7 +76,7 @@ const navConfig = [
         icon: icon('stock-low'),
       },
       {
-        title: 'สต็อกวัตถุดิบ',
+        title: 'รับวัตถุดิบเข้า',
         path: '/manage/invent/update-stock',
         icon: icon('ic-improduct'),
       },

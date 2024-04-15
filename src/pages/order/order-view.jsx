@@ -82,6 +82,14 @@ function RealTimeOrderPage() {
   const [user, setUser] = useState(null);
   const [receiptInfo, setReceiptInfo] = useState(null);
   const componentRef = useRef();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (status) => {
+    setSearchTerm(status);
+    if (status === 'All') {
+      setSearchTerm('');
+    }
+  };
 
   const handleViewReceipt = (orderId) => {
     const foundOrder = orders.find((orderItem) => orderItem._id === orderId);
@@ -160,13 +168,16 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/accept`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId }),
-        });
+        const response = await fetch(
+          `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/accept`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }),
+          }
+        );
 
         if (response.ok) {
           await deductStock(orderId);
@@ -199,12 +210,15 @@ function RealTimeOrderPage() {
   // ฟังก์ชันสำหรับหักล้างสต็อก
   const deductStock = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/deductStock`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/deductStock`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         const data = await response.json();
@@ -229,16 +243,18 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/cancel`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId }), // Corrected to use property shorthand
-        });
+        const response = await fetch(
+          `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/cancel`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }),
+          }
+        );
 
         if (response.ok) {
-          // Refresh the list of orders after canceling the order
           fetchOrders();
         } else {
           const data = await response.json();
@@ -252,7 +268,7 @@ function RealTimeOrderPage() {
 
   const checkSaleRoundStatus = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/status');
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/status');
       if (response.ok) {
         const data = await response.json();
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
@@ -272,7 +288,9 @@ function RealTimeOrderPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/saleorder/saleOrders/currentdate');
+      const response = await fetch(
+        'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders/currentdate'
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }
@@ -289,7 +307,9 @@ function RealTimeOrderPage() {
 
   const handleOpenSaleRound = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/open', { method: 'POST' });
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+        method: 'POST',
+      });
       if (response.ok) {
         setIsSaleRound(true);
         setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
@@ -315,7 +335,7 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch('http://localhost:3333/api/salerounds/close', {
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
           method: 'POST',
         });
         if (response.ok) {
@@ -358,6 +378,10 @@ function RealTimeOrderPage() {
     ? orders.filter((order) => isOrderFromToday(order.date))
     : orders;
 
+  const filteredOrdersByStatus = searchTerm
+    ? filteredOrders.filter((order) => order.status === searchTerm)
+    : filteredOrders;
+
   const formatCurrency = (value) =>
     new Intl.NumberFormat('th-TH', {
       style: 'currency',
@@ -366,7 +390,7 @@ function RealTimeOrderPage() {
     }).format(value);
 
   const totalAmount = filteredOrders
-    .filter((order) => order.status === 'Completed') // Filter only completed orders
+    .filter((order) => order.status === 'Completed')
     .reduce((acc, order) => acc + order.total, 0);
 
   return (
@@ -382,7 +406,7 @@ function RealTimeOrderPage() {
               variant="contained"
               color="success"
               onClick={handleOpenSaleRound}
-              disabled={isSaleRound || !isSaleRoundOpen} // ปุ่มจะถูก disable ถ้าเปิดร้านอยู่แล้ว หรือไม่ได้อยู่ในช่วงเวลาเปิดร้าน
+              disabled={isSaleRound || !isSaleRoundOpen}
             >
               <StyledDiv>เปิดรอบขาย</StyledDiv>
             </Button>
@@ -414,6 +438,41 @@ function RealTimeOrderPage() {
             )}
           </Box>
         </Stack>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#78909C', color: '#fff' }} // Show All
+            onClick={() => handleSearch('All')}
+            disabled={searchTerm === 'All'}
+          >
+            <StyledDiv>ทั้งหมด</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#66BB6A', color: '#fff' }} // Completed
+            onClick={() => handleSearch('Completed')}
+            disabled={searchTerm === 'Completed'}
+          >
+            <StyledDiv>เสร็จสิ้น</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#FFA726', color: '#fff' }} // Pending
+            onClick={() => handleSearch('Pending')}
+            disabled={searchTerm === 'Pending'}
+          >
+            <StyledDiv>กำลังรอ</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#EF5350', color: '#fff' }} // Cancelled
+            onClick={() => handleSearch('Cancelled')}
+            disabled={searchTerm === 'Cancelled'}
+          >
+            <StyledDiv>ยกเลิก</StyledDiv>
+          </Button>
+        </Box>
+
         {isSaleRound && (
           <Paper sx={{ mt: 3 }}>
             <TableContainer component={Paper}>
@@ -434,7 +493,7 @@ function RealTimeOrderPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredOrders.map((order) => (
+                  {filteredOrdersByStatus.map((order) => (
                     <TableRow key={order._id}>
                       <TableCell>{order.user}</TableCell>
                       <TableCell align="right">

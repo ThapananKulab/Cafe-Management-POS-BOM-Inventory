@@ -23,6 +23,7 @@ import {
   Typography,
   IconButton,
   TableContainer,
+  TablePagination,
 } from '@mui/material';
 
 function StatusBadge({ status }) {
@@ -76,6 +77,8 @@ function RealTimeOrderPage() {
     font-family: 'Prompt', sans-serif;
   `;
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isSaleRound, setIsSaleRound] = useState(false);
   const [orders, setOrders] = useState([]);
   const [showTodayOnly, setShowTodayOnly] = useState(false);
@@ -85,22 +88,29 @@ function RealTimeOrderPage() {
   const componentRef = useRef();
   const [searchTerm, setSearchTerm] = useState('');
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const handleViewReceipt = (orderId) => {
-    // ค้นหาข้อมูลใบเสร็จจาก orderId ที่ได้รับ
     const foundOrder = orders.find((orderItem) => orderItem._id === orderId);
     if (foundOrder) {
-      // กำหนดข้อมูลใบเสร็จให้กับ state
       setReceiptInfo(foundOrder);
     }
   };
 
   // เมื่อปิด Modal
   const handleCloseReceiptModal = () => {
-    setReceiptInfo(null); // เคลียร์ข้อมูลใบเสร็จที่แสดง
+    setReceiptInfo(null);
   };
 
   useEffect(() => {
@@ -169,20 +179,19 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/accept`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId }),
-        });
+        const response = await fetch(
+          `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/accept`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }),
+          }
+        );
 
         if (response.ok) {
-          // หลังจากยืนยันการรับ Order แล้ว ทำการหักล้างสต็อก
           await deductStock(orderId);
-
-          // อัพเดทสถานะ Order เป็น 'Completed'
-          // และอาจจะ Refresh รายการ orders
         } else {
           const data = await response.json();
           console.error('Error accepting order:', data.error);
@@ -196,12 +205,15 @@ function RealTimeOrderPage() {
   // ฟังก์ชันสำหรับหักล้างสต็อก
   const deductStock = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/deductStock`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/deductStock`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         const data = await response.json();
@@ -226,13 +238,16 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:3333/api/saleorder/${orderId}/cancel`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId }), // Corrected to use property shorthand
-        });
+        const response = await fetch(
+          `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/cancel`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }), // Corrected to use property shorthand
+          }
+        );
 
         if (response.ok) {
           // Refresh the list of orders after canceling the order
@@ -249,7 +264,7 @@ function RealTimeOrderPage() {
 
   const checkSaleRoundStatus = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/status');
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/status');
       if (response.ok) {
         const data = await response.json();
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
@@ -269,7 +284,9 @@ function RealTimeOrderPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/saleorder/saleOrders');
+      const response = await fetch(
+        'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders'
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }
@@ -286,7 +303,9 @@ function RealTimeOrderPage() {
 
   const handleOpenSaleRound = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/open', { method: 'POST' });
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+        method: 'POST',
+      });
       if (response.ok) {
         setIsSaleRound(true);
         setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
@@ -312,7 +331,7 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch('http://localhost:3333/api/salerounds/close', {
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
           method: 'POST',
         });
         if (response.ok) {
@@ -458,17 +477,44 @@ function RealTimeOrderPage() {
             )}
           </Box>
         </Stack>
-        <TextField
-          id="search"
-          label="ค้นหา"
-          variant="outlined"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+        <Box sx={{ '& button': { m: 1 } }}>
+          <TextField
+            id="search"
+            label="ค้นหา"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#66BB6A', color: '#fff' }} // Completed
+            onClick={() => setSearchTerm('Completed')}
+            disabled={searchTerm === 'Completed'}
+          >
+            <StyledDiv>เสร็จสิ้น</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#FFA726', color: '#fff' }} // Pending
+            onClick={() => setSearchTerm('Pending')}
+            disabled={searchTerm === 'Pending'}
+          >
+            <StyledDiv>รอดำเนินการ</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: '#EF5350', color: '#fff' }} // Cancelled
+            onClick={() => setSearchTerm('Cancelled')}
+            disabled={searchTerm === 'Cancelled'}
+          >
+            <StyledDiv>ยกเลิก</StyledDiv>
+          </Button>
+        </Box>
+
         {isSaleRound && (
           <Paper sx={{ mt: 3 }}>
             <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
                     {/* <TableCell>เลขออเดอร์</TableCell> */}
@@ -485,51 +531,67 @@ function RealTimeOrderPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredOrders.map((order) => (
-                    <TableRow key={order._id}>
-                      <TableCell>{order.user}</TableCell>
-                      <TableCell align="right">
-                        <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
-                          {order.items.map((item, index) => (
-                            <li key={index}>
-                              {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
-                            </li>
-                          ))}
-                        </ul>
-                      </TableCell>
-                      <TableCell align="right">
-                        <StatusBadge status={order.status} />
-                      </TableCell>
-                      <TableCell align="right">
-                        {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
-                      </TableCell>
-                      <TableCell align="right">{order.paymentMethod}</TableCell>
-                      <TableCell align="right">{formatCurrency(order.total)}</TableCell>
-                      <TableCell align="right">
-                        {(order.status === 'Completed' || order.status === 'Pending') && (
-                          <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
-                            ดูใบเสร็จ
-                          </Button>
-                        )}
-                      </TableCell>
+                  {filteredOrders
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((order) => (
+                      <TableRow key={order._id}>
+                        <TableCell>{order.user}</TableCell>
+                        <TableCell align="right">
+                          <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                            {order.items.map((item, index) => (
+                              <li key={index}>
+                                {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
+                              </li>
+                            ))}
+                          </ul>
+                        </TableCell>
+                        <TableCell align="right">
+                          <StatusBadge status={order.status} />
+                        </TableCell>
+                        <TableCell align="right">
+                          {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
+                        </TableCell>
+                        <TableCell align="right">{order.paymentMethod}</TableCell>
+                        <TableCell align="right">{formatCurrency(order.total)}</TableCell>
+                        <TableCell align="right">
+                          {(order.status === 'Completed' || order.status === 'Pending') && (
+                            <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
+                              ดูใบเสร็จ
+                            </Button>
+                          )}
+                        </TableCell>
 
-                      <TableCell align="right">
-                        {order.status === 'Pending' && (
-                          <Box>
-                            <IconButton onClick={() => handleAcceptOrder(order._id)}>
-                              <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
-                            </IconButton>
-                            <IconButton onClick={() => handleCancelOrder(order._id)}>
-                              <Icon icon="mdi:cancel-bold" color="#f44336" width={30} height={30} />
-                            </IconButton>
-                          </Box>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        <TableCell align="right">
+                          {order.status === 'Pending' && (
+                            <Box>
+                              <IconButton onClick={() => handleAcceptOrder(order._id)}>
+                                <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
+                              </IconButton>
+                              <IconButton onClick={() => handleCancelOrder(order._id)}>
+                                <Icon
+                                  icon="mdi:cancel-bold"
+                                  color="#f44336"
+                                  width={30}
+                                  height={30}
+                                />
+                              </IconButton>
+                            </Box>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={filteredOrders.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
 
             <Modal
               open={
@@ -643,23 +705,22 @@ function RealTimeOrderPage() {
                 </Box>
               </StyledDiv>
             </Modal>
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Box
-                sx={{
-                  p: 2,
-                  backgroundColor: 'success.main',
-                  color: 'white',
-                  borderRadius: '4px',
-                }}
-              >
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
-                  <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
-                </Typography>
-              </Box>
-            </Box>
           </Paper>
         )}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Box
+            sx={{
+              p: 2,
+              backgroundColor: 'success.main',
+              color: 'white',
+              borderRadius: '4px',
+            }}
+          >
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
+              <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     </Container>
   );

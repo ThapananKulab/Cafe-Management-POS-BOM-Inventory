@@ -27,14 +27,34 @@ const PurchaseReceiptPage = () => {
   const [purchaseReceipts, setPurchaseReceipts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [suppliers, setSuppliers] = useState([]);
 
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/supplier/suppliers'
+        );
+        setSuppliers(response.data);
+      } catch (error) {
+        console.error('Error fetching suppliers:', error);
+      }
+    };
+    fetchSuppliers();
+  }, []);
+
+  // แก้ไขการใช้ useEffect เพื่อรับข้อมูลใหม่เมื่อมีการเปลี่ยนแปลงใน state
   useEffect(() => {
     const fetchPurchaseReceipts = async () => {
       try {
         const response = await axios.get(
           'https://test-api-01.azurewebsites.net/api/purchaseitem/all'
         );
-        setPurchaseReceipts(response.data);
+        // เรียงลำดับข้อมูลจากเวลาล่าสุด
+        const sortedReceipts = response.data.sort(
+          (a, b) => new Date(b.receivedAt) - new Date(a.receivedAt)
+        );
+        setPurchaseReceipts(sortedReceipts);
       } catch (error) {
         console.error('Error fetching purchase receipts:', error);
       }
@@ -69,6 +89,7 @@ const PurchaseReceiptPage = () => {
                   <TableCell>วันที่</TableCell>
                   <TableCell>เวลา</TableCell>
                   <TableCell>จำนวนเงินทั้งหมด</TableCell>
+                  <TableCell>ร้านค้าที่ซื้อ</TableCell>
                   <TableCell>รายละเอียด</TableCell>
                 </TableRow>
               </TableHead>
@@ -83,6 +104,10 @@ const PurchaseReceiptPage = () => {
                       </TableCell>
                     </TableCell>
                     <TableCell>{receipt.total}</TableCell>
+                    <TableCell>
+                      {suppliers.find((supplier) => supplier._id === receipt.supplier)?.name}
+                    </TableCell>
+
                     <TableCell>
                       <IconButton onClick={() => handleOpenModal(receipt)}>
                         <Icon icon="zondicons:news-paper" />
@@ -111,6 +136,11 @@ const PurchaseReceiptPage = () => {
           <h2>รายละเอียดใบสั่งซื้อ</h2>
           <p>ID ใบสั่งซื้อ {selectedReceipt && selectedReceipt._id}</p>
           <p>
+            ร้านค้าที่ซื้อ:{' '}
+            {selectedReceipt &&
+              suppliers.find((supplier) => supplier._id === selectedReceipt.supplier)?.name}
+          </p>
+          <p>
             วันที่ {selectedReceipt && new Date(selectedReceipt.receivedAt).toLocaleDateString()}
           </p>
           <p>
@@ -120,6 +150,7 @@ const PurchaseReceiptPage = () => {
           <p style={{ fontSize: '18px', fontWeight: 'bold', color: 'green' }}>
             ยอดรวม {selectedReceipt && selectedReceipt.total}
           </p>
+
           <h3 style={{ textAlign: 'center' }}>วัตถุดิบ</h3>
           <TableContainer component={Paper}>
             <Table>

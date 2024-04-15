@@ -242,7 +242,8 @@ export default function InventPage() {
                     {/* <TableCell align="center">ID</TableCell> */}
                     <TableCell>ชื่อวัตถุดิบ</TableCell>
                     <TableCell>ปริมาณ</TableCell>
-                    <TableCell align="center">ปริมาณใน Stock</TableCell>
+                    <TableCell align="center">ปริมาณใน Stock (น้ำหนัก)</TableCell>
+                    <TableCell align="center">ปริมาณที่นับได้</TableCell>
                     <TableCell align="center">ปริมาณที่ใช้ไป</TableCell>
                     <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
@@ -270,41 +271,15 @@ export default function InventPage() {
                         <TableCell>{index + 1}</TableCell>
                         {/* <TableCell>{raw._id}</TableCell> */}
                         <TableCell>{raw.name}</TableCell>
+
                         <TableCell align="center">{raw.realquantity}</TableCell>
-                        {/* <TableCell align="center">
-                          {raw.quantityInStock < 10 ? (
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                backgroundColor: 'error.light',
-                                color: 'white',
-                                p: 0.5,
-                                borderRadius: '4px',
-                              }}
-                            >
-                              ไม่พร้อมใช้งาน
-                            </Typography>
-                          ) : (
-                            raw.quantityInStock
-                          )}
-                        </TableCell> */}
-                        {/* <TableCell
-                          align="center"
-                          sx={{ color: raw.quantityInStock < 10 ? 'error.main' : 'text.primary' }}
-                        >
-                          {raw.quantityInStock}
-                        </TableCell> */}
-                        {/* <TableCell align="center">
-                          {raw.quantityInStock <= 5 ? (
-                            <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
-                              {raw.quantityInStock} <span style={{ color: '#ff1744' }}>หมด!</span>
-                            </Typography>
-                          ) : (
-                            raw.quantityInStock
-                          )}
-                        </TableCell> */}
                         <TableCell align="center">
                           {renderStockStatus(raw.quantityInStock)}
+                        </TableCell>
+                        <TableCell align="center">
+                          {raw.quantityInStock !== 0
+                            ? (raw.realquantity / raw.quantityInStock).toFixed(0)
+                            : 0}
                         </TableCell>
 
                         <TableCell align="center">{raw.useInStock}</TableCell>

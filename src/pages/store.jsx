@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import styled1 from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -15,6 +16,9 @@ import {
 } from '@mui/material';
 
 const App = () => {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [suppliers, setSuppliers] = useState([]);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -79,7 +83,7 @@ const App = () => {
   return (
     <Container maxWidth="md" style={{ marginTop: '40px' }}>
       <Typography variant="h4" gutterBottom>
-        ข้อมูล Supplier
+        <StyledDiv>ข้อมูล Supplier</StyledDiv>
       </Typography>
       <Button
         variant="contained"
@@ -87,7 +91,7 @@ const App = () => {
         onClick={() => setOpenModal(true)}
         style={{ marginBottom: '20px' }}
       >
-        เพิ่ม Supplier
+        <StyledDiv>เพิ่ม Supplier</StyledDiv>
       </Button>
       <List>
         {suppliers.map((supplier, index) => (
@@ -99,9 +103,15 @@ const App = () => {
               primary={supplier.name}
               secondary={
                 <div>
-                  <div style={{ marginBottom: '5px' }}>เบอร์โทร: {supplier.phone}</div>
-                  <div style={{ marginBottom: '5px' }}>อีเมล: {supplier.email}</div>
-                  <div>ที่อยู่: {supplier.address}</div>
+                  <div style={{ marginBottom: '5px' }}>
+                    <StyledDiv>เบอร์โทร: {supplier.phone}</StyledDiv>
+                  </div>
+                  <div style={{ marginBottom: '5px' }}>
+                    <StyledDiv>อีเมล: {supplier.email}</StyledDiv>
+                  </div>
+                  <div>
+                    <StyledDiv>ที่อยู่: {supplier.address}</StyledDiv>
+                  </div>
                 </div>
               }
             />
@@ -111,7 +121,7 @@ const App = () => {
               color="secondary"
               onClick={() => handleDeleteSupplier(supplier._id)}
             >
-              ลบ
+              <StyledDiv>ลบ</StyledDiv>
             </Button>
           </ListItem>
         ))}
@@ -132,7 +142,7 @@ const App = () => {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            เพิ่ม Supplier
+            <StyledDiv>เพิ่ม Supplier</StyledDiv>
           </Typography>
           <TextField
             label="ชื่อ Supplier"

@@ -30,14 +30,26 @@ const CreatePurchaseReceiptPage = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [purchaseItems, setPurchaseItems] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState('');
+
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get('http://localhost:3333/api/supplier/suppliers');
+        setSuppliers(response.data);
+      } catch (error) {
+        console.error('Error fetching suppliers:', error);
+      }
+    };
+    fetchSuppliers();
+  }, []);
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
       try {
-        const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
-        );
+        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
         setInventoryItems(response.data);
       } catch (error) {
         console.error('Error fetching inventory items:', error);
@@ -47,14 +59,15 @@ const CreatePurchaseReceiptPage = () => {
   }, []);
 
   const handleAddItem = () => {
-    // เพิ่มรายการสั่งซื้อโดยใช้ข้อมูลจาก Inventory
     const newItem = selectedItems.map((itemId) => {
       const selectedItem = inventoryItems.find((item) => item._id === itemId);
       return {
         item: selectedItem,
-        quantity: 1, // ตั้งค่าจำนวนที่สั่งซื้อเป็น 1 ตามความต้องการ
-        unitPrice: selectedItem.unitPrice, // ใช้ราคาต่อหน่วยจาก Inventory
-        total: selectedItem.unitPrice, // ให้ totalPrice เริ่มต้นเป็นราคารวมของรายการเดียวกัน
+        quantity: 1,
+        unitPrice: selectedItem.unitPrice,
+        realquantity: selectedItem.realquantity, // เพิ่มการรับค่า realquantity จาก selectedItem
+        total: selectedItem.unitPrice,
+        quantityInStock: selectedItem.quantity * selectedItem.realquantity, 
       };
     });
 
@@ -63,15 +76,19 @@ const CreatePurchaseReceiptPage = () => {
   };
 
   const handleQuantityChange = (index, quantity) => {
+    // ตรวจสอบว่าค่าจำนวนใหม่ที่รับเข้ามามีค่าน้อยกว่าหรือเท่ากับ 0 หรือไม่
+    if (quantity <= 0) {
+      return; // ถ้ามีค่าน้อยกว่าหรือเท่ากับ 0 ให้ยกเลิกการเปลี่ยนแปลง
+    }
+
     const newPurchaseItems = [...purchaseItems];
     newPurchaseItems[index].quantity = quantity;
-    newPurchaseItems[index].total = quantity * newPurchaseItems[index].unitPrice; // คำนวณค่ารวมใหม่
+    newPurchaseItems[index].total = quantity * newPurchaseItems[index].unitPrice;
     setPurchaseItems(newPurchaseItems);
   };
 
   const handleCreatePurchaseReceipt = async () => {
     try {
-      // แสดง Confirm Dialog ด้วย SweetAlert
       const result = await Swal.fire({
         icon: 'question',
         title: 'ยืนยันการสร้างใบสั่งซื้อ',
@@ -80,19 +97,14 @@ const CreatePurchaseReceiptPage = () => {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',
       });
-
-      // หากผู้ใช้กด Yes
       if (result.isConfirmed) {
-        // ส่งข้อมูลไปยังเซิร์ฟเวอร์
-        const response = await axios.post(
-          'https://test-api-01.azurewebsites.net/api/purchaseitem/add',
-          {
-            items: purchaseItems,
-          }
-        );
+        const response = await axios.post('http://localhost:3333/api/purchaseitem/add', {
+          items: purchaseItems,
+          supplier: selectedSupplier,
+        });
+
         console.log('Purchase receipt created:', response.data);
         setPurchaseItems([]);
-        // แสดง SweetAlert เมื่อสร้างใบสั่งซื้อสำเร็จ
         Swal.fire({
           icon: 'success',
           title: 'สร้างใบสั่งซื้อสำเร็จ',
@@ -101,7 +113,6 @@ const CreatePurchaseReceiptPage = () => {
       }
     } catch (error) {
       console.error('Error creating purchase receipt:', error);
-      // แสดง SweetAlert เมื่อเกิดข้อผิดพลาดในการสร้างใบสั่งซื้อ
       Swal.fire({
         icon: 'error',
         title: 'เกิดข้อผิดพลาด',
@@ -137,11 +148,27 @@ const CreatePurchaseReceiptPage = () => {
           </StyledDiv>
         </Stack>
         <Select
+          value={selectedSupplier}
+          onChange={(e) => setSelectedSupplier(e.target.value)}
+          fullWidth
+          sx={{ marginBottom: 2, minWidth: 200 }}
+        >
+          <MenuItem disabled value="">
+            เลือก Supplier
+          </MenuItem>
+          {suppliers.map((supplier) => (
+            <MenuItem key={supplier._id} value={supplier._id}>
+              {supplier.name}
+            </MenuItem>
+          ))}
+        </Select>
+
+        <Select
           multiple
           value={selectedItems}
           onChange={(e) => setSelectedItems(e.target.value)}
           fullWidth
-          sx={{ marginBottom: 2, minWidth: 200 }} // เพิ่ม minWidth เพื่อกำหนดขนาดของ Select
+          sx={{ marginBottom: 2, minWidth: 200 }}
           renderValue={(selected) => (
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               {selected.map((value) => (
@@ -174,6 +201,7 @@ const CreatePurchaseReceiptPage = () => {
                 <TableCell>รหัสสินค้า</TableCell>
                 <TableCell>ชื่อวัตถุดิบ</TableCell>
                 <TableCell>จำนวน</TableCell>
+                <TableCell>ปริมาณ</TableCell>
                 <TableCell>ราคาต่อหน่วย</TableCell>
                 <TableCell>ยอดรวม</TableCell>
                 <TableCell align="center">จัดการ</TableCell>
@@ -188,11 +216,12 @@ const CreatePurchaseReceiptPage = () => {
                     <TextField
                       type="number"
                       value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, e.target.value)}
+                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
                       fullWidth
-                      label="Quantity"
+                      label="จำนวน"
                     />
                   </TableCell>
+                  <TableCell>{item.realquantity}</TableCell>
                   <TableCell>{item.unitPrice}</TableCell>
                   <TableCell>{item.total}</TableCell>
                   <TableCell>

@@ -1,120 +1,97 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import {
-  List,
-  Select,
-  Button,
-  MenuItem,
-  ListItem,
-  Container,
-  TextField,
-  Typography,
-  ListItemText,
-} from '@mui/material';
+import { Grid, Paper, Button, TextField, Typography } from '@mui/material';
 
-const CreatePurchaseReceiptPage = () => {
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [quantity, setQuantity] = useState('');
-  const [unitPrice, setUnitPrice] = useState('');
-  const [purchaseItems, setPurchaseItems] = useState([]);
+function StockOutForm() {
+  const [date, setDate] = useState(new Date());
+  const [items, setItems] = useState([{ item: '', quantity: '' }]);
 
-  useEffect(() => {
-    const fetchInventoryItems = async () => {
-      try {
-        const response = await axios.get('/api/inventory');
-        setInventoryItems(response.data);
-      } catch (error) {
-        console.error('Error fetching inventory items:', error);
-      }
-    };
-    fetchInventoryItems();
-  }, []);
-
-  const handleAddItem = () => {
-    const newItem = {
-      item: selectedItems,
-      quantity: parseInt(quantity, 10), // เราระบุ radix เป็น 10 ที่นี่
-      unitPrice: parseFloat(unitPrice),
-    };
-    setPurchaseItems([...purchaseItems, newItem]);
-    setSelectedItems([]);
-    setQuantity('');
-    setUnitPrice('');
+  const handleItemChange = (index, e) => {
+    const { name, value } = e.target;
+    const list = [...items];
+    list[index][name] = value;
+    setItems(list);
   };
 
-  const handleSubmit = async () => {
+  const handleAddItem = () => {
+    setItems([...items, { item: '', quantity: '' }]);
+  };
+
+  const handleRemoveItem = (index) => {
+    const list = [...items];
+    list.splice(index, 1);
+    setItems(list);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post('/api/purchase-receipts', { items: purchaseItems });
-      console.log('Purchase receipt created:', response.data);
-      // Clear the purchase items after submission
-      setPurchaseItems([]);
+      await axios.post('/api/stock-out', { date, items });
+      alert('Stock Out saved successfully!');
     } catch (error) {
-      console.error('Error creating purchase receipt:', error);
+      console.error('Error saving Stock Out:', error);
+      alert('Error saving Stock Out!');
     }
   };
 
   return (
-    <Container>
-      <Typography variant="h2" gutterBottom>
-        Create Purchase Receipt
+    <Paper elevation={3} style={{ padding: 20 }}>
+      <Typography variant="h5" gutterBottom>
+        Stock Out Form
       </Typography>
-      <Select
-        multiple
-        value={selectedItems}
-        onChange={(e) =>
-          setSelectedItems(Array.from(e.target.selectedOptions, (option) => option.value))
-        }
-        fullWidth
-        sx={{ marginBottom: 2 }}
-      >
-        <MenuItem value="">Select item(s)</MenuItem>
-        {inventoryItems.map((item) => (
-          <MenuItem key={item._id} value={item._id}>
-            {item.name}
-          </MenuItem>
-        ))}
-      </Select>
-      <TextField
-        type="number"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-        placeholder="Quantity"
-        fullWidth
-        sx={{ marginBottom: 2 }}
-      />
-      <TextField
-        type="number"
-        value={unitPrice}
-        onChange={(e) => setUnitPrice(e.target.value)}
-        placeholder="Unit Price"
-        fullWidth
-        sx={{ marginBottom: 2 }}
-      />
-      <Button variant="contained" onClick={handleAddItem} sx={{ marginBottom: 2 }}>
-        Add Item
-      </Button>
-      <div>
-        <Typography variant="h3" gutterBottom>
-          Purchase Items
-        </Typography>
-        <List>
-          {purchaseItems.map((item, index) => (
-            <ListItem key={index}>
-              <ListItemText
-                primary={`Items: ${item.item.join(', ')}`}
-                secondary={`Quantity: ${item.quantity}, Unit Price: ${item.unitPrice}`}
-              />
-            </ListItem>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+            />
+          </Grid>
+          {items.map((item, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={6}>
+                <TextField
+                  label="Item"
+                  value={item.item}
+                  name="item"
+                  onChange={(e) => handleItemChange(index, e)}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  label="Quantity"
+                  type="number"
+                  value={item.quantity}
+                  name="quantity"
+                  onChange={(e) => handleItemChange(index, e)}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Button variant="contained" color="error" onClick={() => handleRemoveItem(index)}>
+                  Remove
+                </Button>
+              </Grid>
+            </React.Fragment>
           ))}
-        </List>
-      </div>
-      <Button variant="contained" onClick={handleSubmit}>
-        Create Purchase Receipt
-      </Button>
-    </Container>
+        </Grid>
+        <Button variant="contained" onClick={handleAddItem} style={{ marginTop: 10 }}>
+          Add Item
+        </Button>
+        <Button variant="contained" color="primary" type="submit" style={{ marginTop: 10 }}>
+          Save
+        </Button>
+      </form>
+    </Paper>
   );
-};
+}
 
-export default CreatePurchaseReceiptPage;
+export default StockOutForm;

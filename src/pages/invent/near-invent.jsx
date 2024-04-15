@@ -20,6 +20,7 @@ export default function InventoryItemsTable() {
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
+
   const [nearEmptyItems, setNearEmptyItems] = useState([]);
 
   useEffect(() => {
@@ -36,12 +37,12 @@ export default function InventoryItemsTable() {
     fetchNearEmptyItems();
   }, []);
   const StyledTableCell = styled(TableCell)`
-    color: ${({ item }) => (item.quantityInStock <= 10 ? 'red' : 'black')};
+    color: ${({ quantityInStock }) => (quantityInStock <= 10 ? 'red' : 'black')};
   `;
 
   StyledTableCell.propTypes = {
     children: PropTypes.node.isRequired,
-    item: PropTypes.object.isRequired,
+    quantityInStock: PropTypes.number.isRequired,
   };
 
   return (
@@ -67,7 +68,9 @@ export default function InventoryItemsTable() {
                 {nearEmptyItems.map((item) => (
                   <TableRow key={item._id}>
                     <TableCell>{item.name}</TableCell>
-                    <StyledTableCell item={item}>{item.quantityInStock}</StyledTableCell>
+                    <StyledTableCell quantityInStock={item.quantityInStock}>
+                      {item.quantityInStock}
+                    </StyledTableCell>
                     <TableCell>{item.unit}</TableCell>
                     <TableCell>{item.type}</TableCell>
                     {/* <TableCell>{item.status}</TableCell> */}

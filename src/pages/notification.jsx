@@ -17,7 +17,7 @@ function ChatPage() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3333/api/authen', {
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ function ChatPage() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:3333/api/chatmessage/get-messages/${userId}`,
+          `https://test-api-01.azurewebsites.net/api/chatmessage/get-messages/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ function ChatPage() {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:3333/api/chatmessage/send-message',
+        'https://test-api-01.azurewebsites.net/api/chatmessage/send-message',
         { senderId: user?.id, receiverId: '6573c88a1871d28dee176da0', message },
         {
           headers: {

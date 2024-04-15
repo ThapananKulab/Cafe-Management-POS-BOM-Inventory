@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -21,6 +22,9 @@ import {
 } from '@mui/material';
 
 function App() {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
@@ -65,7 +69,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3333/api/post/all')
+      .get('https://test-api-01.azurewebsites.net/api/post/all')
       .then((res) => setPosts(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -84,7 +88,10 @@ function App() {
         ...formData,
         author: `${user?.firstname} ${user?.lastname} (${user?.role})`,
       };
-      const res = await axios.post('http://localhost:3333/api/post/add', dataToSend);
+      const res = await axios.post(
+        'https://test-api-01.azurewebsites.net/api/post/add',
+        dataToSend
+      );
       setPosts([...posts, res.data]);
       setFormData({ title: '', content: '' });
       handleModalClose();
@@ -109,7 +116,7 @@ function App() {
 
     if (confirmation.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3333/api/post/delete/${postId}`);
+        await axios.delete(`https://test-api-01.azurewebsites.net/api/post/delete/${postId}`);
         setPosts(posts.filter((post) => post._id !== postId));
         Swal.fire({
           icon: 'success',
@@ -130,7 +137,7 @@ function App() {
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
-        แจ้งเรื่อง
+        <StyledDiv>แจ้งเรื่อง</StyledDiv>
       </Typography>
       <Button
         variant="contained"
@@ -143,7 +150,7 @@ function App() {
           padding: '5px 20px', // Adjust the padding as needed
         }}
       >
-        โพสต์
+        <StyledDiv>โพสต์</StyledDiv>
       </Button>
 
       <Modal
@@ -165,7 +172,7 @@ function App() {
           }}
         >
           <Typography variant="h5" gutterBottom>
-            เพิ่มโพสต์ใหม่
+            <StyledDiv>เพิ่มโพสต์ใหม่</StyledDiv>
           </Typography>
           <Stack spacing={2}>
             <TextField
@@ -201,7 +208,7 @@ function App() {
       </Modal>
       <Box mt={3}>
         <Typography variant="h5" gutterBottom>
-          โพสต์ทั้งหมด
+          <StyledDiv>โพสต์ทั้งหมด</StyledDiv>
         </Typography>
         {posts
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -213,9 +220,11 @@ function App() {
               />
               <CardContent>
                 <Typography variant="h3" component="div">
-                  {post.title}
+                  <StyledDiv> {post.title}</StyledDiv>
                 </Typography>
-                <Typography>{post.content}</Typography>
+                <Typography>
+                  <StyledDiv>{post.content}</StyledDiv>
+                </Typography>
               </CardContent>
               <CardActions>
                 {user && user.role === 'เจ้าของร้าน' ? (

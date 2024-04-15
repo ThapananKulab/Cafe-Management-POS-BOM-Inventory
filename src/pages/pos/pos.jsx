@@ -51,7 +51,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3333/api/menus/allMenus')
+      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);
