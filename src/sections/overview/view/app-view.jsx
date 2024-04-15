@@ -123,7 +123,7 @@ export default function AppView() {
     async function fetchWeeklySales() {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/dailySales'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/dailySales'
         );
         setWeeklySales(response.data.totalSales);
       } catch (error) {
