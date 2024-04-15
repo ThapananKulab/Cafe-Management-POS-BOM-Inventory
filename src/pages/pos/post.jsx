@@ -367,7 +367,7 @@ const CartTemplate = () => {
     navigate('/order');
   };
 
-  const endpoint = 'http://localhost:3333/api/saleorder/saleOrders';
+  const endpoint = 'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders';
 
   const handleSubmitOrder = async () => {
     try {

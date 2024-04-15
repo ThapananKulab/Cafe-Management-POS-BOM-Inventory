@@ -67,7 +67,7 @@ const CreatePurchaseReceiptPage = () => {
         unitPrice: selectedItem.unitPrice,
         realquantity: selectedItem.realquantity, // เพิ่มการรับค่า realquantity จาก selectedItem
         total: selectedItem.unitPrice,
-        quantityInStock: selectedItem.quantity * selectedItem.realquantity, 
+        quantityInStock: selectedItem.quantity * selectedItem.realquantity,
       };
     });
 
