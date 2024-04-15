@@ -34,7 +34,7 @@ function AddMenuItem() {
     recipe: '',
     image: '',
     cost: '', // เพิ่ม cost เข้าไป
-    glassSize: 'เล็ก', // เพิ่มฟิลด์ glassSize
+    glassSize: 'ไม่มี', // เพิ่มฟิลด์ glassSize
   });
 
   const [recipes, setRecipes] = useState([]);
@@ -196,6 +196,7 @@ function AddMenuItem() {
             label="ขนาดแก้ว"
             onChange={handleChange}
           >
+            <MenuItem value="ไม่มี">ไม่มี</MenuItem>
             <MenuItem value="เล็ก">เล็ก</MenuItem>
             <MenuItem value="กลาง">กลาง</MenuItem>
             <MenuItem value="ใหญ่">ใหญ่</MenuItem>

@@ -52,6 +52,9 @@ function MenuTable() {
   const [recipes, setRecipes] = useState([]); // This line defines 'recipes'
   const [selectedFile, setSelectedFile] = useState(null);
   const [user, setUser] = useState(null);
+  const [searchSweetLevel, setSearchSweetLevel] = useState('');
+  const [searchType, setSearchType] = useState('');
+  const [searchGlassSize, setSearchGlassSize] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,7 +91,7 @@ function MenuTable() {
 
   const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก', 'ทั่วไป'];
   const types = ['ร้อน', 'เย็น', 'ปั่น', 'ทั่วไป'];
-  const glassSize = ['เล็ก', 'กลาง', 'ใหญ่'];
+  const glassSize = ['ไม่มี', 'เล็ก', 'กลาง', 'ใหญ่'];
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -165,17 +168,21 @@ function MenuTable() {
   };
 
   useEffect(() => {
-    const result = menus.filter(
-      (menu) =>
-        menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        menu.price.toString().includes(searchQuery) || // ค้นหาด้วยราคา (price)
-        menu.type.toLowerCase().includes(searchQuery.toLowerCase()) || // ค้นหาด้วยประเภท (type)
-        menu.sweetLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        menu.glassSize.toLowerCase().includes(searchQuery.toLowerCase()) // ค้นหาด้วยระดับความหวาน (sweetLevel)
-    );
+    const result = menus
+      .filter(
+        (menu) =>
+          menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          menu.price.toString().includes(searchQuery) || // ค้นหาด้วยราคา (price)
+          menu.type.toLowerCase().includes(searchQuery.toLowerCase()) || // ค้นหาด้วยประเภท (type)
+          menu.sweetLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          menu.glassSize.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .filter((menu) => menu.sweetLevel.toLowerCase().includes(searchSweetLevel.toLowerCase()))
+      .filter((menu) => menu.type.toLowerCase().includes(searchType.toLowerCase()))
+      .filter((menu) => menu.glassSize.toLowerCase().includes(searchGlassSize.toLowerCase()));
     setFilteredMenus(result);
-  }, [searchQuery, menus]);
+  }, [searchQuery, searchSweetLevel, searchType, searchGlassSize, menus]);
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -346,6 +353,62 @@ function MenuTable() {
             },
           }}
         />
+        <Stack direction="row" spacing={2}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="sweetLevel-select-label">ความหวาน</InputLabel>
+            <Select
+              labelId="sweetLevel-select-label"
+              id="sweetLevel-select"
+              value={searchSweetLevel}
+              label="Sweet Level"
+              onChange={(e) => setSearchSweetLevel(e.target.value)}
+            >
+              <MenuItem value="">ทั้งหมด</MenuItem> {/* เพิ่มตัวเลือกว่าง */}
+              {sweetLevels.map((level) => (
+                <MenuItem key={level} value={level}>
+                  {level}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="type-select-label">ประเภท</InputLabel>
+            <Select
+              labelId="type-select-label"
+              id="type-select"
+              value={searchType}
+              label="Type"
+              onChange={(e) => setSearchType(e.target.value)}
+            >
+              <MenuItem value="">ทั้งหมด</MenuItem> {/* เพิ่มตัวเลือกว่าง */}
+              {types.map((type) => (
+                <MenuItem key={type} value={type}>
+                  {type}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="glassSize-select-label">ขนาดแก้ว</InputLabel>
+            <Select
+              labelId="glassSize-select-label"
+              id="glassSize-select"
+              value={searchGlassSize}
+              label="Glass Size"
+              onChange={(e) => setSearchGlassSize(e.target.value)}
+            >
+              <MenuItem value="">ทั้งหมด</MenuItem> {/* เพิ่มตัวเลือกว่าง */}
+              {glassSize.map((size) => (
+                <MenuItem key={size} value={size}>
+                  {size}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+
         <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -362,6 +425,7 @@ function MenuTable() {
                 <TableCell>รูปภาพ</TableCell>
                 <TableCell>ประเภท</TableCell>
                 <TableCell>รสชาติ</TableCell>
+                <TableCell>ขนาดแก้ว</TableCell>
                 <TableCell>รายละเอียด</TableCell>
                 <TableCell>ราคา</TableCell>
                 <TableCell>ใบสูตร</TableCell>
@@ -392,6 +456,7 @@ function MenuTable() {
                       </TableCell>
                       <TableCell>{menu.type}</TableCell>
                       <TableCell>{menu.sweetLevel}</TableCell>
+                      <TableCell>{menu.glassSize}</TableCell>
                       <TableCell>{menu.description}</TableCell>
                       <TableCell>{`${menu.price.toFixed(2)} บาท`}</TableCell>
                       <TableCell
@@ -461,13 +526,6 @@ function MenuTable() {
                   margin="normal"
                 />
                 <TextField
-                  label="Description"
-                  value={updateData.description}
-                  onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
-                  fullWidth
-                  margin="normal"
-                />
-                <TextField
                   label="Price"
                   type="number"
                   value={updateData.price}
@@ -523,10 +581,34 @@ function MenuTable() {
                     ))}
                   </Select>
                 </FormControl>
-                <Button variant="outlined" component="label" sx={{ mt: 2 }}>
-                  อัปโหลดรูป
-                  <input type="file" hidden onChange={handleFileChange} />
-                </Button>
+                <TextField
+                  label="Description"
+                  value={updateData.description}
+                  onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
+                  fullWidth
+                  margin="normal"
+                  multiline
+                  rows={3}
+                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    mt: 3,
+                  }}
+                >
+                  <Avatar
+                    src={updateData.image}
+                    alt="รูปภาพเมนู"
+                    variant="rounded"
+                    sx={{ width: 100, height: 100, mb: 2 }}
+                  />
+                  <Button variant="outlined" component="label" sx={{ mb: 2 }}>
+                    อัปโหลดรูป
+                    <input type="file" hidden onChange={handleFileChange} />
+                  </Button>
+                </Box>
                 <Box
                   sx={{
                     display: 'flex',

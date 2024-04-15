@@ -25,7 +25,9 @@ export default function InventoryItemsTable() {
   useEffect(() => {
     const fetchNearEmptyItems = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/inventoryitems/nearEmpty');
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/inventoryitems/nearEmpty'
+        );
         setNearEmptyItems(response.data);
       } catch (error) {
         console.error('Error fetching near empty items:', error);
@@ -33,10 +35,7 @@ export default function InventoryItemsTable() {
     };
     fetchNearEmptyItems();
   }, []);
-
-  const StyledTableCell = styled(({ item, children, ...props }) => (
-    <TableCell {...props}>{children}</TableCell>
-  ))`
+  const StyledTableCell = styled(TableCell)`
     color: ${({ item }) => (item.quantityInStock <= 10 ? 'red' : 'black')};
   `;
 

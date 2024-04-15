@@ -154,7 +154,7 @@ function RecipeTable() {
 
   const updateRecipe = async () => {
     try {
-      const newTotalCost = calculateTotalCost();
+      const newTotalCost = calculateTotalCost().toFixed(2);
       const updatedRecipe = { ...editableRecipe, cost: newTotalCost };
       const response = await axios.put(
         `http://localhost:3333/api/recipes/update/${editableRecipe._id}`,

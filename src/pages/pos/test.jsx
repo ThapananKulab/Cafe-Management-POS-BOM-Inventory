@@ -64,14 +64,6 @@ const CartTemplate = () => {
   const [qrCode, setQrCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('0819139936');
 
-  const countItemsInCart = (id) =>
-    cartItems.reduce((total, item) => {
-      if (item._id === id) {
-        return total + item.quantity;
-      }
-      return total;
-    }, 0);
-
   const handleAddAmount = (amount) => {
     setReceivedAmount(amount);
   };
@@ -89,7 +81,7 @@ const CartTemplate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://test-api-01.azurewebsites.net/generateQR', {
+      const response = await axios.post('http://localhost:3333/generateQR', {
         phoneNumber,
         amount: totalPrice, // ให้ใช้ totalPrice แทนค่า amount
       });
@@ -108,9 +100,7 @@ const CartTemplate = () => {
     // ดึงข้อมูล inventory items เมื่อคอมโพเนนต์โหลดเสร็จ
     const fetchInventoryItems = async () => {
       try {
-        const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
-        );
+        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
         setInventoryItems(response.data); // เซ็ตข้อมูล inventory items ใน state
       } catch (error) {
         console.error('Failed to fetch inventory items:', error);
@@ -133,9 +123,7 @@ const CartTemplate = () => {
   const fetchRecipes = async (menuId) => {
     try {
       if (menuId) {
-        const response = await axios.get(
-          `https://test-api-01.azurewebsites.net/api/menus/menu/${menuId}`
-        );
+        const response = await axios.get(`http://localhost:3333/api/menus/menu/${menuId}`);
         setRecipes(response.data.recipe);
       }
     } catch (error) {
@@ -230,7 +218,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
+      .get('http://localhost:3333/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]);
         setProducts(response.data);
@@ -245,17 +233,17 @@ const CartTemplate = () => {
     setTotalPrice(calculateTotalPrice(cartItems));
   }, [cartItems]);
 
-  const handleAddToCart = (productToAdd, id) => {
+  const handleAddToCart = (productToAdd, sweetLevel) => {
     let productExists = false;
     let newCartItems = [];
 
     const existingCartItem = cartItems.find(
-      (item) => item._id === productToAdd._id && item._id === id
+      (item) => item._id === productToAdd._id && item.sweetLevel === sweetLevel
     );
     const quantityToAdd = existingCartItem ? existingCartItem.quantity + 1 : 1;
 
     axios
-      .post('https://test-api-01.azurewebsites.net/api/menus/checkIngredients', {
+      .post('http://localhost:3333/api/menus/checkIngredients', {
         id: productToAdd._id,
         quantityToAdd,
       })
@@ -263,7 +251,7 @@ const CartTemplate = () => {
         console.log('API Response:', response.data);
         if (response.data.success) {
           const updatedCartItems = cartItems.map((cartItem) => {
-            if (cartItem._id === productToAdd._id && cartItem._id === id) {
+            if (cartItem._id === productToAdd._id && cartItem.sweetLevel === sweetLevel) {
               productExists = true;
               return { ...cartItem, quantity: cartItem.quantity + 1 };
             }
@@ -271,7 +259,7 @@ const CartTemplate = () => {
           });
 
           if (!productExists) {
-            newCartItems = [...cartItems, { ...productToAdd, quantity: 1, id }];
+            newCartItems = [...cartItems, { ...productToAdd, quantity: 1, sweetLevel }];
           } else {
             newCartItems = [...updatedCartItems];
           }
@@ -279,7 +267,7 @@ const CartTemplate = () => {
           setCartItems(newCartItems);
           setIngredientsAvailable(true);
           setUnavailableIngredients([]);
-          // toast.success(`เพิ่ม ${productToAdd.name} แล้ว`);
+          toast.success(`เพิ่ม ${productToAdd.name} แล้ว`);
         } else {
           const { unavailableIngredients: serverUnavailableIngredients } = response.data;
           const errorMessage = serverUnavailableIngredients.reduce((message, ingredient) => {
@@ -350,7 +338,7 @@ const CartTemplate = () => {
     const updatedCart = cartItems.filter((item) => item._id !== itemId);
     setCartItems(updatedCart);
     setTotalPrice(calculateTotalPrice(updatedCart));
-    // toast.error('ลบออกจากตะกร้าเรียบร้อย');
+    toast.error('ลบออกจากตะกร้าเรียบร้อย');
   };
 
   const modalStyle = {
@@ -482,7 +470,7 @@ const CartTemplate = () => {
           <IconButton
             color="inherit"
             onClick={() => setIsModalOpen(true)}
-            style={{ marginLeft: 'auto', visibility: 'hidden' }}
+            style={{ marginLeft: 'auto' }}
           >
             <Badge badgeContent={cartItems.length} color="secondary">
               <Icon icon="ic:round-shopping-bag" />
@@ -523,366 +511,77 @@ const CartTemplate = () => {
           ))}
         </Box>
       </Container>
+
       <Container maxWidth="lg" style={{ marginTop: '80px' }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={8}>
-            <Grid container spacing={4}>
-              {filteredProducts.map((product) => (
-                <Grid item xs={12} sm={6} md={4} key={product._id}>
-                  <Paper elevation={3} style={{ borderRadius: 16 }}>
-                    <Card>
-                      <CardMedia
-                        style={{ height: 150 }}
-                        image={product.image}
-                        title={product.name}
-                        onClick={() => handleAddToCart(product, product._id)}
-                      />
-                      <CardContent style={{ height: '80px', overflowY: 'auto' }}>
-                        <Typography gutterBottom variant="h6" component="h2">
-                          <StyledDiv> {product.name}</StyledDiv>
-                        </Typography>
-                        <Typography
-                          variant="subtitle1"
-                          component="p"
-                          style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
-                        >
-                          <StyledDiv>ราคา {product.price} ฿</StyledDiv>
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                          {product.type}
-                        </Typography>
-                        {product.type !== 'ทั่วไป' && (
-                          <Typography variant="body2" color="textSecondary" component="p">
-                            <StyledDiv>ประเภท: {product.type}</StyledDiv>
-                          </Typography>
-                        )}
-                        <Typography variant="body2" color="textSecondary" component="p">
-                          {product.sweetLevel !== 'ทั่วไป' && (
-                            <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
-                          )}
-                          {product.sweetLevel !== 'ทั่วไป' && (
-                            <StyledDiv>แก้ว: {product.glassSize}</StyledDiv>
-                          )}
-                        </Typography>
-                      </CardContent>
-                      <CardActions>
-                        <IconButton
-                          size="medium"
-                          color="secondary"
-                          onClick={() => handleOpenModal1(product)}
-                          style={{ minWidth: 'auto', padding: '6px 12px' }}
-                        >
-                          <Icon icon="lets-icons:paper-duotone" />
-                        </IconButton>
-
-                        {ingredientsAvailable ? (
-                          <IconButton
-                            size="medium"
-                            color="primary"
-                            onClick={() => handleAddToCart(product, product._id)}
-                            style={{ minWidth: 'auto', padding: '6px 12px' }}
-                          >
-                            {' '}
-                            <Badge badgeContent={countItemsInCart(product._id)} color="error">
-                              {/* แสดงจำนวนสินค้าที่ถูกเพิ่มลงในตะกร้า */}
-                            </Badge>
-                          </IconButton>
-                        ) : (
-                          <Typography variant="body1" color="error">
-                            <StyledDiv>วัตถุดิบไม่เพียงพอ:</StyledDiv>
-                            <ul>
-                              {unavailableIngredients.map((ingredient) => (
-                                <li key={ingredient.name}>
-                                  {ingredient.name} (ต้องการ {ingredient.quantityRequired}, มีอยู่{' '}
-                                  {ingredient.quantityInStock})
-                                </li>
-                              ))}
-                            </ul>
-                          </Typography>
-                        )}
-                      </CardActions>
-                    </Card>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-          <Grid item xs={12} md={4} style={{ marginTop: '-37px' }}>
-            <Box border={1} borderColor="grey.400" borderRadius={2} p={2}>
-              <Typography variant="h6" gutterBottom textAlign="center">
-                <StyledDiv>รายการเมนู</StyledDiv>
-              </Typography>
-              {currentPage === 1 && (
-                <>
-                  <List>
-                    {cartItems.map((item) => (
-                      <ListItem
-                        key={item._id}
-                        secondaryAction={
-                          <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            onClick={() => handleRemoveItem(item._id)}
-                          >
-                            <Icon icon="clarity:remove-solid" />
-                          </IconButton>
-                        }
-                      >
-                        <StyledDiv>
-                          <ListItemText
-                            primary={`${item.name} x ${item.quantity} (${item.sweetLevel})`}
-                            secondary={`ประเภท: ${item.type}, ราคา: ฿ ${item.price}`}
-                          />
-                        </StyledDiv>
-                      </ListItem>
-                    ))}
-                    <Divider />
-                    <ListItem>
-                      <StyledDiv>
-                        <ListItemText
-                          primary={
-                            <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                              รวมสุทธิ
-                            </Typography>
-                          }
-                          secondary={
-                            <Typography
-                              component="span"
-                              style={{ color: 'green', fontWeight: 'bold' }}
-                            >
-                              ฿ {totalPrice}
-                            </Typography>
-                          }
-                        />
-                      </StyledDiv>
-                    </ListItem>
-                  </List>
-                  <Box mt={1} />
-                  {/* <Pagination
-                    count={2}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    style={{ marginBottom: '10px' }}
-                  /> */}
-                </>
-              )}
-
-              {currentPage === 2 && (
-                <>
-                  {/* Radio group for payment method */}
-                  <RadioGroup
-                    aria-label="payment-method"
-                    name="payment-method"
-                    value={paymentMethod}
-                    onChange={handlePaymentMethodChange}
-                    row
-                  >
-                    <FormControlLabel
-                      value="เงินสด"
-                      control={<Radio />}
-                      label={
-                        <>
-                          เงินสด
-                          <Icon icon="ri:cash-fill" width={24} height={24} />
-                        </>
-                      }
-                      labelPlacement="end"
-                    />
-                    <FormControlLabel
-                      value="PromptPay"
-                      control={<Radio />}
-                      label={
-                        <>
-                          PromptPay
-                          <Icon icon="material-symbols:qr-code" width={24} height={24} />
-                        </>
-                      }
-                      labelPlacement="end"
-                    />
-                  </RadioGroup>
-
-                  {paymentMethod === 'เงินสด' && (
-                    <>
-                      <Typography
-                        variant="h4"
-                        component="span"
-                        style={{
-                          color: 'green',
-                          fontWeight: 'bold',
-                          display: 'block',
-                          textAlign: 'center',
-                          marginBottom: '10px',
-                        }}
-                      >
-                        ฿ {totalPrice}
+          {filteredProducts.map((product) => (
+            <Grid item xs={12} sm={6} md={4} key={product._id}>
+              <Paper elevation={3} style={{ borderRadius: 16 }}>
+                <Card>
+                  <CardMedia style={{ height: 200 }} image={product.image} title={product.name} />
+                  <CardContent style={{ height: '100px', overflowY: 'auto' }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      <StyledDiv> {product.name}</StyledDiv>
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {product.type}
+                    </Typography>
+                    {product.type !== 'ทั่วไป' && (
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        <StyledDiv>ประเภท: {product.type}</StyledDiv>
                       </Typography>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginBottom: '20px', // เพิ่มระยะห่างด้านล่างเพื่อความเป็นระเบียบ
-                        }}
+                    )}
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {product.sweetLevel !== 'ทั่วไป' && (
+                        <StyledDiv>รสชาติ: {product.sweetLevel}</StyledDiv>
+                      )}
+                    </Typography>
+
+                    <Typography
+                      variant="h6"
+                      component="p"
+                      style={{ color: 'green', fontWeight: 'bold', marginTop: '8px' }}
+                    >
+                      <StyledDiv>ราคา {product.price} ฿</StyledDiv>
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <IconButton
+                      size="medium"
+                      color="secondary"
+                      onClick={() => handleOpenModal1(product)}
+                      style={{ minWidth: 'auto', padding: '6px 12px' }}
+                    >
+                      <Icon icon="lets-icons:paper-duotone" />
+                    </IconButton>
+
+                    {ingredientsAvailable ? (
+                      <IconButton
+                        size="medium"
+                        color="primary"
+                        onClick={() => handleAddToCart(product, product.sweetLevel)}
+                        style={{ minWidth: 'auto', padding: '6px 12px' }}
                       >
-                        <TextField
-                          id="received-amount"
-                          label="จำนวนเงินที่รับ (บาท)"
-                          type="number"
-                          value={paymentMethod === 'PromptPay' ? totalPrice : receivedAmount}
-                          onChange={handleReceivedAmountChange}
-                        />
-                      </Box>
-
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginBottom: '10px',
-                        }}
-                      >
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleAddAmount(totalPrice)}
-                          style={{ marginRight: '10px' }}
-                          className="custom-button" // เพิ่มคลาส CSS เพื่อปรับสไตล์ปุ่ม
-                        >
-                          รับมาพอดี
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleCash100}
-                          style={{ marginRight: '10px' }}
-                          className="custom-button" // เพิ่มคลาส CSS เพื่อปรับสไตล์ปุ่ม
-                        >
-                          เงินสด 100
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleCash1000}
-                          className="custom-button"
-                        >
-                          เงินสด 1000
-                        </Button>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginBottom: '10px', // เพิ่มระยะห่างด้านล่างเพื่อความเป็นระเบียบ
-                        }}
-                      >
-                        <Typography
-                          variant="h6"
-                          style={{
-                            fontWeight: 'bold',
-                            color: calculateChange() <= 0 ? 'red' : 'inherit',
-                          }}
-                        >
-                          เงินทอน: {calculateChange()} บาท
-                        </Typography>
-                      </Box>
-                    </>
-                  )}
-
-                  {/* Show PromptPay details only when payment method is 'PromptPay' */}
-                  {paymentMethod === 'PromptPay' && (
-                    <>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                        }}
-                      >
-                        <Typography variant="h6" gutterBottom>
-                          สแกน QR Code เพื่อชำระเงิน
-                        </Typography>
-                        {qrCode && <img src={qrCode} alt="QR Code" style={{ maxWidth: '100%' }} />}
-                      </Box>
-                      <form onSubmit={handleSubmit}>
-                        <TextField
-                          label="Phone Number"
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          fullWidth
-                          margin="normal"
-                        />
-
-                        <TextField
-                          label="Amount"
-                          value={totalPrice}
-                          onChange={(e) => setTotalPrice(e.target.value)}
-                          fullWidth
-                          margin="normal"
-                          disabled
-                        />
-
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          type="submit"
-                          textAlign="center"
-                        >
-                          สร้างคิวอาร์โค้ดใหม่
-                        </Button>
-                      </form>
-                    </>
-                  )}
-
-                  {/* Pagination for going back to previous page */}
-                  <Box mt={1} />
-                  <Pagination
-                    count={2}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    style={{ marginBottom: '10px' }}
-                  />
-                </>
-              )}
-
-              {currentPage === 1 && (
-                <Button
-                  variant="contained"
-                  style={{
-                    backgroundColor: '#4CAF50',
-                    marginTop: '10px',
-                    width: '150px',
-                    height: '40px',
-                    borderRadius: '0',
-                    margin: '0 auto',
-                    display: 'block',
-                  }}
-                  onClick={handleNextPage}
-                >
-                  ต่อไป
-                </Button>
-              )}
-              {currentPage === 2 && (
-                <Button
-                  variant="contained"
-                  disabled={calculateChange() < 0}
-                  style={{
-                    backgroundColor: '#4CAF50',
-                    marginTop: '10px',
-                    width: '150px',
-                    height: '40px',
-                    borderRadius: '0',
-                    margin: '0 auto',
-                    display: 'block',
-                  }}
-                  onClick={handleSubmitOrder}
-                >
-                  ชำระเงิน
-                </Button>
-              )}
-            </Box>
-          </Grid>
+                        <Icon icon="solar:cart-4-bold" style={{ fontSize: '1.5rem' }} />
+                      </IconButton>
+                    ) : (
+                      <Typography variant="body1" color="error">
+                        <StyledDiv>วัตถุดิบไม่เพียงพอ:</StyledDiv>
+                        <ul>
+                          {unavailableIngredients.map((ingredient) => (
+                            <li key={ingredient.name}>
+                              {ingredient.name} (ต้องการ {ingredient.quantityRequired}, มีอยู่{' '}
+                              {ingredient.quantityInStock})
+                            </li>
+                          ))}
+                        </ul>
+                      </Typography>
+                    )}
+                  </CardActions>
+                </Card>
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
       </Container>
 
@@ -1024,7 +723,6 @@ const CartTemplate = () => {
                   </StyledDiv>
                 </ListItem>
               </List>
-
               <Pagination
                 count={2}
                 page={currentPage}
