@@ -53,6 +53,16 @@ const navConfig = [
         path: '/manage/near-invent',
         icon: icon('stock-low'),
       },
+      {
+        title: 'โกดังวัตถุดิบ/เบิกวัตถุดิบ',
+        path: '/purchase/withdraw',
+        icon: icon('stock-svgrepo-com'),
+      },
+      {
+        title: 'รายการเบิกวัตถุดิบ',
+        path: '/purchase/withdraw-out',
+        icon: icon('withdraw-svgrepo-com'),
+      },
       // {
       //   title: 'รับวัตถุดิบเข้า',
       //   path: '/manage/invent/update-stock',

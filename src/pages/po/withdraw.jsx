@@ -1,26 +1,30 @@
 import axios from 'axios';
+import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
 import {
+  Stack,
   Table,
   Button,
   TableRow,
   TableBody,
   TableCell,
   TableHead,
+  Container,
   Typography,
   TableContainer,
 } from '@mui/material';
 
 const PendingReceipts = () => {
+  const StyledDiv = styled.div`
+    font-family: 'Prompt', sans-serif;
+  `;
   const [pendingReceipts, setPendingReceipts] = useState([]);
 
   useEffect(() => {
     const fetchPendingReceipts = async () => {
       try {
-        const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/purchaseitem/pending'
-        );
+        const response = await axios.get('http://localhost:3333/api/purchaseitem/pending');
         setPendingReceipts(response.data);
       } catch (error) {
         console.error('Error fetching pending receipts:', error);
@@ -36,13 +40,13 @@ const PendingReceipts = () => {
         `Trying to withdraw item with purchaseReceiptId ${purchaseReceiptId} and itemId ${itemId}`
       );
 
-      const received = new Date(); // สร้างข้อมูลเวลาปัจจุบัน
+      const received = new Date().toISOString(); // Get current time in ISO string format
 
       await axios.post('http://localhost:3333/api/purchaseitem/add-to-q', {
         purchaseReceiptId,
         selectedItemIds: [itemId],
         status: 'withdrawn',
-        received: received.toISOString(),
+        received, // Use current time as received
       });
 
       console.log('Item withdrawn successfully');
@@ -52,10 +56,12 @@ const PendingReceipts = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h6" style={{ marginBottom: '1rem' }}>
-        โกดังร้าน
-      </Typography>
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4" style={{ marginBottom: '1rem' }}>
+          <StyledDiv>โกดังร้าน</StyledDiv>
+        </Typography>
+      </Stack>
       <TableContainer>
         <Table>
           <TableHead>
@@ -106,7 +112,7 @@ const PendingReceipts = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Container>
   );
 };
 
