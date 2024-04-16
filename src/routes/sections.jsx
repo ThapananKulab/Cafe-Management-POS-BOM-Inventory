@@ -50,6 +50,8 @@ export const ReportCost = lazy(() => import('src/pages/report/report-cost-recipe
 export const ReportPopular = lazy(() => import('src/pages/report/report-popular-menu'));
 export const ImPurchase = lazy(() => import('src/pages/po/purchase'));
 export const ReportPurchase = lazy(() => import('src/pages/po/po-purchase'));
+export const Withdraw = lazy(() => import('src/pages/po/withdraw'));
+export const WithdrawOut = lazy(() => import('src/pages/po/withdraw-out'));
 
 // ----------------------------------------------------------------------
 
@@ -177,6 +179,14 @@ export default function Router() {
         {
           path: '/purchase/report',
           element: <ReportPurchase />,
+        },
+        {
+          path: '/purchase/withdraw',
+          element: <Withdraw />,
+        },
+        {
+          path: '/purchase/withdraw-out',
+          element: <WithdrawOut />,
         },
       ],
     },

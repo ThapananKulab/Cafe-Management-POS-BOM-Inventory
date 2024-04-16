@@ -66,7 +66,9 @@ function InventoryManager() {
 
   const fetchInventoryItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
+      const response = await axios.get(
+        'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+      );
       setInventoryItems(response.data);
     } catch (error) {
       console.error('Error fetching inventory items:', error);
@@ -133,7 +135,7 @@ function InventoryManager() {
     };
 
     try {
-      await axios.post('http://localhost:3333/api/inventoryitems/add', itemToAdd);
+      await axios.post('https://test-api-01.azurewebsites.net/api/inventoryitems/add', itemToAdd);
       toast.success(`เพิ่ม "${newItem.name}" สำเร็จ`);
       fetchInventoryItems();
       setNewItem({

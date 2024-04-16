@@ -20,30 +20,8 @@ const navConfig = [
         path: '/report/daily',
         icon: icon('report'),
       },
-      {
-        title: 'ประวัติการขายทั้งหมด',
-        path: '/order-all',
-        icon: icon('order-all'),
-      },
-      {
-        title: 'ประวัติการขายประจำวัน',
-        path: '/order',
-        icon: icon('order-today'),
-      },
     ],
   },
-
-  // {
-  //   title: 'ออเดอร์',
-  //   icon: icon('ic-order'),
-  //   subItems: [
-  //     {
-  //       title: 'ออเดอร์ทัังหมด',
-  //       path: '/order-all',
-  //       icon: icon('order-all'),
-  //     },
-  //   ],
-  // },
   {
     title: 'บริหารข้อมูลกลาง',
     icon: icon('ic_user'),
@@ -75,11 +53,11 @@ const navConfig = [
         path: '/manage/near-invent',
         icon: icon('stock-low'),
       },
-      {
-        title: 'รับวัตถุดิบเข้า',
-        path: '/manage/invent/update-stock',
-        icon: icon('ic-improduct'),
-      },
+      // {
+      //   title: 'รับวัตถุดิบเข้า',
+      //   path: '/manage/invent/update-stock',
+      //   icon: icon('ic-improduct'),
+      // },
       {
         title: 'นำเข้า PO',
         path: '/purchase/create',
@@ -108,6 +86,22 @@ const navConfig = [
         title: 'เมนู',
         path: '/menu',
         icon: icon('ic-drink-a'),
+      },
+    ],
+  },
+  {
+    title: 'ออเดอร์',
+    icon: icon('ic-order'),
+    subItems: [
+      {
+        title: 'ประวัติการขายทั้งหมด',
+        path: '/order-all',
+        icon: icon('order-all'),
+      },
+      {
+        title: 'ประวัติการขายประจำวัน',
+        path: '/order',
+        icon: icon('order-today'),
       },
     ],
   },

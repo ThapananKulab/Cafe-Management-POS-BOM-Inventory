@@ -243,7 +243,7 @@ export default function InventPage() {
                     <TableCell>ชื่อวัตถุดิบ</TableCell>
                     <TableCell>ปริมาณ</TableCell>
                     <TableCell align="center">ปริมาณใน Stock (น้ำหนัก)</TableCell>
-                    <TableCell align="center">ปริมาณที่นับได้</TableCell>
+                    {/* <TableCell align="center">ปริมาณที่นับได้</TableCell> */}
                     <TableCell align="center">ปริมาณที่ใช้ไป</TableCell>
                     <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
@@ -276,11 +276,11 @@ export default function InventPage() {
                         <TableCell align="center">
                           {renderStockStatus(raw.quantityInStock)}
                         </TableCell>
-                        <TableCell align="center">
+                        {/* <TableCell align="center">
                           {raw.quantityInStock !== 0
                             ? (raw.realquantity / raw.quantityInStock).toFixed(0)
                             : 0}
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell align="center">{raw.useInStock}</TableCell>
                         <TableCell align="center">{raw.unit}</TableCell>

@@ -43,7 +43,6 @@ const PurchaseReceiptPage = () => {
     fetchSuppliers();
   }, []);
 
-  // แก้ไขการใช้ useEffect เพื่อรับข้อมูลใหม่เมื่อมีการเปลี่ยนแปลงใน state
   useEffect(() => {
     const fetchPurchaseReceipts = async () => {
       try {

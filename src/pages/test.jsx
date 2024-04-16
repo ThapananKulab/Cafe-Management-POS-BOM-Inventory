@@ -1,253 +1,84 @@
 import axios from 'axios';
-import Swal from 'sweetalert2';
-import { Icon } from '@iconify/react';
-import styled1 from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
-  Box,
-  Chip,
-  Stack,
   Table,
-  Select,
   Button,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
-  TextField,
-  Container,
   TableHead,
   Typography,
   TableContainer,
 } from '@mui/material';
 
-const CreatePurchaseReceiptPage = () => {
-  const StyledDiv = styled1.div`
-    font-family: 'Prompt', sans-serif;
-  `;
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [purchaseItems, setPurchaseItems] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [selectedSupplier, setSelectedSupplier] = useState('');
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    const fetchSuppliers = async () => {
-      try {
-        const response = await axios.get('http://localhost:3333/api/supplier/suppliers');
-        setSuppliers(response.data);
-      } catch (error) {
-        console.error('Error fetching suppliers:', error);
-      }
-    };
-    fetchSuppliers();
-  }, []);
+const PendingReceipts = () => {
+  const [pendingReceipts, setPendingReceipts] = useState([]);
 
   useEffect(() => {
-    const fetchInventoryItems = async () => {
+    const fetchPendingReceipts = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
-        setInventoryItems(response.data);
+        const response = await axios.get('http://localhost:3333/api/purchaseitem/pending');
+        setPendingReceipts(response.data);
       } catch (error) {
-        console.error('Error fetching inventory items:', error);
+        console.error('Error fetching pending receipts:', error);
       }
     };
-    fetchInventoryItems();
+
+    fetchPendingReceipts();
   }, []);
 
-  const handleAddItem = () => {
-    const newItem = selectedItems.map((itemId) => {
-      const selectedItem = inventoryItems.find((item) => item._id === itemId);
-      return {
-        item: selectedItem,
-        quantity: 1,
-        unitPrice: selectedItem.unitPrice,
-        realquantity: selectedItem.realquantity, // เพิ่มการรับค่า realquantity จาก selectedItem
-        total: selectedItem.unitPrice,
-      };
-    });
-
-    setPurchaseItems([...purchaseItems, ...newItem]);
-    setSelectedItems([]);
-  };
-
-  const handleQuantityChange = (index, quantity) => {
-    // ตรวจสอบว่าค่าจำนวนใหม่ที่รับเข้ามามีค่าน้อยกว่าหรือเท่ากับ 0 หรือไม่
-    if (quantity <= 0) {
-      return; // ถ้ามีค่าน้อยกว่าหรือเท่ากับ 0 ให้ยกเลิกการเปลี่ยนแปลง
-    }
-
-    const newPurchaseItems = [...purchaseItems];
-    newPurchaseItems[index].quantity = quantity;
-    newPurchaseItems[index].total = quantity * newPurchaseItems[index].unitPrice;
-    setPurchaseItems(newPurchaseItems);
-  };
-
-  const handleCreatePurchaseReceipt = async () => {
+  const handleWithdraw = async (purchaseId, itemId) => {
     try {
-      const result = await Swal.fire({
-        icon: 'question',
-        title: 'ยืนยันการสร้างใบสั่งซื้อ',
-        text: 'คุณต้องการสร้างใบสั่งซื้อหรือไม่?',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-      });
-      if (result.isConfirmed) {
-        const response = await axios.post('http://localhost:3333/api/purchaseitem/add', {
-          items: purchaseItems,
-          supplier: selectedSupplier,
-        });
-
-        console.log('Purchase receipt created:', response.data);
-        setPurchaseItems([]);
-        Swal.fire({
-          icon: 'success',
-          title: 'สร้างใบสั่งซื้อสำเร็จ',
-          text: 'ใบสั่งซื้อถูกสร้างเรียบร้อยแล้ว',
-        });
-      }
+      console.log(`Withdraw button clicked for Purchase ID: ${purchaseId}, Item ID: ${itemId}`);
     } catch (error) {
-      console.error('Error creating purchase receipt:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'เกิดข้อผิดพลาด',
-        text: 'ไม่สามารถสร้างใบสั่งซื้อได้ โปรดลองอีกครั้ง',
-      });
+      console.error('Error withdrawing items:', error);
     }
   };
-
-  const handleRemoveItem = (index) => {
-    const newPurchaseItems = [...purchaseItems];
-    newPurchaseItems.splice(index, 1);
-    setPurchaseItems(newPurchaseItems);
-  };
-
-  const getTotalPrice = () => purchaseItems.reduce((total, item) => total + item.total, 0);
 
   return (
-    <Container>
-      <Box sx={{ width: '100%', overflow: 'hidden' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
-          <Typography variant="h4" gutterBottom>
-            <StyledDiv>สร้างใบสั่งซื้อ</StyledDiv>
+    <div>
+      <Typography variant="h6" style={{ marginBottom: '1rem' }}>
+        โกดังร้าน
+      </Typography>
+      {pendingReceipts.map((receipt) => (
+        <div key={receipt._id} style={{ marginBottom: '2rem' }}>
+          <Typography variant="subtitle1" style={{ marginBottom: '0.5rem' }}>
+            Purchase ID: {receipt._id}
           </Typography>
-          <StyledDiv>
-            <Button
-              variant="contained"
-              color="inherit"
-              startIcon={<Icon icon="ic:baseline-history" />}
-              onClick={() => navigate('/purchase/report')}
-            >
-              <StyledDiv>ประวัติ PO</StyledDiv>
-            </Button>
-          </StyledDiv>
-        </Stack>
-        <Select
-          value={selectedSupplier}
-          onChange={(e) => setSelectedSupplier(e.target.value)}
-          fullWidth
-          sx={{ marginBottom: 2, minWidth: 200 }}
-        >
-          <MenuItem disabled value="">
-            เลือก Supplier
-          </MenuItem>
-          {suppliers.map((supplier) => (
-            <MenuItem key={supplier._id} value={supplier._id}>
-              {supplier.name}
-            </MenuItem>
-          ))}
-        </Select>
-
-        <Select
-          multiple
-          value={selectedItems}
-          onChange={(e) => setSelectedItems(e.target.value)}
-          fullWidth
-          sx={{ marginBottom: 2, minWidth: 200 }}
-          renderValue={(selected) => (
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {selected.map((value) => (
-                <Chip
-                  key={value}
-                  label={inventoryItems.find((item) => item._id === value)?.name}
-                  style={{ margin: 2 }}
-                />
-              ))}
-            </div>
-          )}
-        >
-          <MenuItem disabled value="">
-            เพิ่มวัตถุดิบ
-          </MenuItem>
-          {inventoryItems.map((item) => (
-            <MenuItem key={item._id} value={item._id}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </Select>
-
-        <Button variant="contained" onClick={handleAddItem} sx={{ marginBottom: 2 }}>
-          <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
-        </Button>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>รหัสสินค้า</TableCell>
-                <TableCell>ชื่อวัตถุดิบ</TableCell>
-                <TableCell>จำนวน</TableCell>
-                <TableCell>ราคาต่อหน่วย</TableCell>
-                <TableCell>ยอดรวม</TableCell>
-                <TableCell align="center">จัดการ</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {purchaseItems.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{item.item._id}</TableCell>
-                  <TableCell>{item.item.name}</TableCell>
-                  <TableCell>
-                    <TextField
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
-                      fullWidth
-                      label="จำนวน"
-                    />
-                  </TableCell>{' '}
-                  <TableCell>{item.unitPrice}</TableCell>
-                  <TableCell>{item.total}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      onClick={() => handleRemoveItem(index)}
-                      sx={{ bgcolor: '#ff1744', color: '#ffffff' }}
-                    >
-                      ลบ
-                    </Button>
-                  </TableCell>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item Name</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <Container sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            variant="contained"
-            onClick={handleCreatePurchaseReceipt}
-            sx={{ bgcolor: '#4caf50', color: '#ffffff' }}
-          >
-            <StyledDiv>เพิ่มใบสั่งซื้อสินค้า (Total: {getTotalPrice()})</StyledDiv>
-          </Button>
-        </Container>
-      </Box>
-    </Container>
+              </TableHead>
+              <TableBody>
+                {receipt.items.map((item) => (
+                  <TableRow key={item._id}>
+                    <TableCell>{item.item.name}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{item.status}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleWithdraw(receipt._id, item._id)}
+                      >
+                        Withdraw
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      ))}
+    </div>
   );
 };
 
-export default CreatePurchaseReceiptPage;
+export default PendingReceipts;
