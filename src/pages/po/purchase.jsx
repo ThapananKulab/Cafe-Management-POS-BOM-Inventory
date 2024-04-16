@@ -67,7 +67,6 @@ const CreatePurchaseReceiptPage = () => {
         unitPrice: selectedItem.unitPrice,
         realquantity: selectedItem.realquantity, // เพิ่มการรับค่า realquantity จาก selectedItem
         total: selectedItem.unitPrice,
-        quantityInStock: selectedItem.quantity * selectedItem.realquantity,
       };
     });
 
@@ -201,7 +200,6 @@ const CreatePurchaseReceiptPage = () => {
                 <TableCell>รหัสสินค้า</TableCell>
                 <TableCell>ชื่อวัตถุดิบ</TableCell>
                 <TableCell>จำนวน</TableCell>
-                <TableCell>ปริมาณ</TableCell>
                 <TableCell>ราคาต่อหน่วย</TableCell>
                 <TableCell>ยอดรวม</TableCell>
                 <TableCell align="center">จัดการ</TableCell>
@@ -220,8 +218,7 @@ const CreatePurchaseReceiptPage = () => {
                       fullWidth
                       label="จำนวน"
                     />
-                  </TableCell>
-                  <TableCell>{item.realquantity}</TableCell>
+                  </TableCell>{' '}
                   <TableCell>{item.unitPrice}</TableCell>
                   <TableCell>{item.total}</TableCell>
                   <TableCell>
