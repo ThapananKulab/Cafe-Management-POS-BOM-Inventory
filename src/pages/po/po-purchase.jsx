@@ -51,7 +51,7 @@ const PurchaseReceiptPage = () => {
         );
         // เรียงลำดับข้อมูลจากเวลาล่าสุด
         const sortedReceipts = response.data.sort(
-          (a, b) => new Date(b.receivedAt) - new Date(a.receivedAt)
+          (a, b) => new Date(b.received) - new Date(a.received)
         );
         setPurchaseReceipts(sortedReceipts);
       } catch (error) {
@@ -96,10 +96,10 @@ const PurchaseReceiptPage = () => {
                 {purchaseReceipts.map((receipt) => (
                   <TableRow key={receipt._id}>
                     <TableCell>{receipt._id}</TableCell>
-                    <TableCell>{new Date(receipt.receivedAt).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(receipt.received).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <TableCell>
-                        {new Date(receipt.receivedAt).toLocaleTimeString('th-TH')}
+                        {new Date(receipt.received).toLocaleTimeString('th-TH')}
                       </TableCell>
                     </TableCell>
                     <TableCell>{receipt.total}</TableCell>
@@ -139,12 +139,9 @@ const PurchaseReceiptPage = () => {
             {selectedReceipt &&
               suppliers.find((supplier) => supplier._id === selectedReceipt.supplier)?.name}
           </p>
+          <p>วันที่ {selectedReceipt && new Date(selectedReceipt.received).toLocaleDateString()}</p>
           <p>
-            วันที่ {selectedReceipt && new Date(selectedReceipt.receivedAt).toLocaleDateString()}
-          </p>
-          <p>
-            เวลา{' '}
-            {selectedReceipt && new Date(selectedReceipt.receivedAt).toLocaleTimeString('th-TH')}
+            เวลา {selectedReceipt && new Date(selectedReceipt.received).toLocaleTimeString('th-TH')}
           </p>
           <p style={{ fontSize: '18px', fontWeight: 'bold', color: 'green' }}>
             ยอดรวม {selectedReceipt && selectedReceipt.total}
