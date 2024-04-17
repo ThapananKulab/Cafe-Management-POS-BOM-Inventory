@@ -37,7 +37,9 @@ const CreatePurchaseReceiptPage = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/supplier/suppliers');
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/supplier/suppliers'
+        );
         setSuppliers(response.data);
       } catch (error) {
         console.error('Error fetching suppliers:', error);
@@ -49,7 +51,9 @@ const CreatePurchaseReceiptPage = () => {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+        );
         setInventoryItems(response.data);
       } catch (error) {
         console.error('Error fetching inventory items:', error);
@@ -95,10 +99,13 @@ const CreatePurchaseReceiptPage = () => {
         cancelButtonText: 'No',
       });
       if (result.isConfirmed) {
-        const response = await axios.post('http://localhost:3333/api/purchaseitem/add', {
-          items: purchaseItems,
-          supplier: selectedSupplier,
-        });
+        const response = await axios.post(
+          'https://test-api-01.azurewebsites.net/api/purchaseitem/add',
+          {
+            items: purchaseItems,
+            supplier: selectedSupplier,
+          }
+        );
 
         console.log('Purchase receipt created:', response.data);
         setPurchaseItems([]);

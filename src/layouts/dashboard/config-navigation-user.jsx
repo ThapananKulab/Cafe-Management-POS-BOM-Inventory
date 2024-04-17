@@ -33,6 +33,11 @@ const navConfigUser = [
   //   ],
   // },
   {
+    title: 'ขายสินค้า',
+    path: '/sale/pos',
+    icon: icon('ic_sell'),
+  },
+  {
     title: 'สินค้า',
     // path: '/product',
     icon: icon('ic_products'),
@@ -58,14 +63,13 @@ const navConfigUser = [
   //   title: 'blog',
   //   path: '/blog',
   //   icon: icon('ic_blog'),
-  // },
   {
-    title: 'สูตรเครื่องดื่ม',
-    // path: '/raw',
-    icon: icon('ic-raw2'),
+    title: 'BOM',
+    // path: '/invent',
+    icon: icon('m_bom'),
     subItems: [
       {
-        title: 'จัดการสูตรเครื่องดื่ม',
+        title: 'ท็อปปิ้ง/สูตรเครื่องดื่ม',
         path: '/recipe',
         icon: icon('ic-rec'),
       },
@@ -82,9 +86,9 @@ const navConfigUser = [
         icon: icon('ic-manage'),
       },
       {
-        title: 'นำเข้าวัตถุดิบ',
-        path: '/manage/invent/update-stock',
-        icon: icon('ic-improduct'),
+        title: 'โกดังวัตถุดิบ/เบิกวัตถุดิบ',
+        path: '/purchase/withdraw',
+        icon: icon('stock-svgrepo-com'),
       },
     ],
   },
@@ -102,11 +106,6 @@ const navConfigUser = [
     title: 'ข้อมูลทั่วไป',
     path: '/topic',
     icon: icon('g-1'),
-  },
-  {
-    title: 'ขายสินค้า',
-    path: '/sale/pos',
-    icon: icon('ic_sell'),
   },
 
   // {

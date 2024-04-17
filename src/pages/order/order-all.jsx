@@ -124,7 +124,7 @@ function RealTimeOrderPage() {
       checkSaleRoundStatus();
       fetchOrders();
       checkSaleRoundTime();
-    }, 1500);
+    }, 5000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -308,8 +308,8 @@ function RealTimeOrderPage() {
       });
       if (response.ok) {
         setIsSaleRound(true);
-        setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
-        saveSaleRoundStatus(true); // Save the sale round status to local storage
+        setIsSaleRoundOpen(true);
+        saveSaleRoundStatus(true);
       }
     } catch (error) {
       console.error('Error opening sale round:', error);
@@ -336,14 +336,14 @@ function RealTimeOrderPage() {
         });
         if (response.ok) {
           setIsSaleRound(false);
-          setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน
-          saveSaleRoundStatus(false); // Save the sale round status to local storage
+          setIsSaleRoundOpen(false);
+          saveSaleRoundStatus(false);
         } else {
           // Handle the case where the sale round is already closed
           const data = await response.json();
           if (data.error === 'Sale round is already closed') {
             setIsSaleRound(false);
-            setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน
+            setIsSaleRoundOpen(false);
             saveSaleRoundStatus(false);
           } else {
             console.error('Error closing sale round:', data.error);
@@ -358,8 +358,8 @@ function RealTimeOrderPage() {
   // เพิ่มฟังก์ชันตรวจสอบเวลาเปิด-ปิดร้าน
   const checkSaleRoundTime = () => {
     const now = moment().tz('Asia/Bangkok');
-    const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 }); // เวลาเปิดร้าน 09:00
-    const closeTime = moment().tz('Asia/Bangkok').set({ hour: 24, minute: 0, second: 0 }); // เวลาปิดร้าน 17:00
+    const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 });
+    const closeTime = moment().tz('Asia/Bangkok').set({ hour: 24, minute: 0, second: 0 });
 
     setIsSaleRoundOpen(now.isBetween(openTime, closeTime));
   };

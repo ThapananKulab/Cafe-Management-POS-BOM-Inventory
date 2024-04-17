@@ -32,7 +32,9 @@ const App = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await axios.get('http://localhost:3333/api/supplier/suppliers');
+      const response = await axios.get(
+        'https://test-api-01.azurewebsites.net/api/supplier/suppliers'
+      );
       setSuppliers(response.data);
     } catch (error) {
       console.error('Error fetching suppliers:', error);
@@ -41,7 +43,7 @@ const App = () => {
 
   const addSupplier = async () => {
     try {
-      await axios.post('http://localhost:3333/api/supplier/suppliers', {
+      await axios.post('https://test-api-01.azurewebsites.net/api/supplier/suppliers', {
         name,
         phone,
         address,
@@ -69,9 +71,11 @@ const App = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:3333/api/supplier/suppliers/${supplierId}`);
-          fetchSuppliers(); // รีเฟรชข้อมูลหลังจากลบเสร็จ
-          // แสดง Swal แจ้งเตือนลบสำเร็จ
+          await axios.delete(
+            `https://test-api-01.azurewebsites.net/api/supplier/suppliers/${supplierId}`
+          );
+          fetchSuppliers();
+
           Swal.fire('ลบสำเร็จ!', 'Supplier ถูกลบออกแล้ว', 'success');
         } catch (error) {
           console.error('Error deleting supplier:', error);

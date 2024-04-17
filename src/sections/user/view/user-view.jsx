@@ -74,7 +74,7 @@ export default function UserPage() {
       if (result.isConfirmed) {
         try {
           await axios.delete(`https://test-api-01.azurewebsites.net/api/users/${userId}`);
-          Swal.fire('Deleted!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
+          Swal.fire('ลบสำเร็จ!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {
           console.error('There was an error deleting the user:', error);

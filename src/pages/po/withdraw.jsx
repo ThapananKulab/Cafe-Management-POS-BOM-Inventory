@@ -2,6 +2,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -22,11 +23,48 @@ const PendingReceipts = () => {
     font-family: 'Prompt', sans-serif;
   `;
   const [pendingReceipts, setPendingReceipts] = useState([]);
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/purchaseitem/pending');
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.status === 'ok') {
+          setUser(result.decoded.user);
+        } else {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'error',
+            title: 'กรุณา Login ก่อน',
+            text: result.message,
+          });
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [navigate, setUser]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/purchaseitem/pending'
+        );
         setPendingReceipts(response.data);
       } catch (error) {
         console.error('Error fetching pending receipts:', error);
@@ -35,11 +73,11 @@ const PendingReceipts = () => {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 5000); // เรียก API ทุก 5 วินาที
+    }, 5000);
 
-    fetchData(); // เรียก API ครั้งแรกเมื่อคอมโพเนนต์ถูกโหลด
+    fetchData();
 
-    return () => clearInterval(interval); // เมื่อคอมโพเนนต์ถูกถอดจาก DOM ให้เคลียร์ interval
+    return () => clearInterval(interval);
   }, []);
 
   const handleWithdraw = async (purchaseReceiptId, itemId) => {
@@ -67,8 +105,8 @@ const PendingReceipts = () => {
           selectedItemIds: [itemId],
           status: 'withdrawn',
           received,
+          withdrawner: `${user.firstname} ${user.lastname} (${user.role})`,
         });
-
         console.log('Item withdrawn successfully');
       }
     } catch (error) {
@@ -116,7 +154,7 @@ const PendingReceipts = () => {
                         <TableCell>{item.item.name}</TableCell>
                         <TableCell>{item.item.realquantity}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
-                        <TableCell>{item.status.replace('pending', 'รอดำเนินการ')}</TableCell>
+                        <TableCell>{item.status.replace('pending', 'โกดังร้าน')}</TableCell>
                         <TableCell>
                           <IconButton
                             onClick={() => handleWithdraw(purchaseId, item.item._id)}

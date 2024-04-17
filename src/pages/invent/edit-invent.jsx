@@ -139,9 +139,13 @@ const RawForm = () => {
       unitPrice: Number(unitPrice),
     };
 
-    await axios.patch(`http://localhost:3333/api/inventoryitems/update/${rawId}`, inventoryData, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    await axios.patch(
+      `https://test-api-01.azurewebsites.net/api/inventoryitems/update/${rawId}`,
+      inventoryData,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
     toast.success('แก้ไขวัตถุดิบสำเร็จ', {
       autoClose: 1000,
     });

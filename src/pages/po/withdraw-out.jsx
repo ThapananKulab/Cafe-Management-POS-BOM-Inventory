@@ -76,6 +76,7 @@ const PendingReceipts = () => {
               <TableCell>ปริมาณ</TableCell>
               <TableCell>จำนวน</TableCell>
               <TableCell>สถานะ</TableCell>
+              <TableCell>โดย</TableCell>
               <TableCell>วันที่และเวลาเบิก</TableCell>
             </TableRow>
           </TableHead>
@@ -110,7 +111,7 @@ const PendingReceipts = () => {
                           <Badge color="error" variant="dot" style={{ marginRight: '4px' }} />
                           <span>{item.status.replace('withdrawn', 'เบิกแล้ว')}</span>
                         </TableCell>
-
+                        <TableCell>{item.withdrawner}</TableCell>
                         <TableCell component="th" scope="row">
                           {moment(item.received).format(
                             `D ${thaiMonths[moment(item.received).month()]} YYYY HH:mm:ss`
