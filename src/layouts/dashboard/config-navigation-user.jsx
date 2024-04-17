@@ -38,26 +38,26 @@ const navConfigUser = [
     icon: icon('ic_sell'),
   },
   {
-    title: 'สินค้า',
-    // path: '/product',
+    title: 'เมนู',
+    path: '/menu',
     icon: icon('ic_products'),
-    subItems: [
-      {
-        title: 'จัดการเมนู',
-        path: '/menu',
-        icon: icon('ic-drink-a'),
-      },
-      // {
-      //   title: 'จัดการสินค้า',
-      //   path: '/product',
-      //   icon: icon('ic_productsM'),
-      // },
-      // {
-      //   title: 'นำเข้าสินค้า',
-      //   path: '/product/add-quantity',
-      //   icon: icon('ic-improduct'),
-      // },
-    ],
+    // subItems: [
+    //   {
+    //     title: 'จัดการเมนู',
+    //     path: '/menu',
+    //     icon: icon('ic-drink-a'),
+    //   },
+    // {
+    //   title: 'จัดการสินค้า',
+    //   path: '/product',
+    //   icon: icon('ic_productsM'),
+    // },
+    // {
+    //   title: 'นำเข้าสินค้า',
+    //   path: '/product/add-quantity',
+    //   icon: icon('ic-improduct'),
+    // },
+    // ],
   },
   // {
   //   title: 'blog',
@@ -76,19 +76,39 @@ const navConfigUser = [
     // ],
   },
   {
-    title: 'วัตถุดิบ',
-    // path: '/invent',
-    icon: icon('ic_raw'),
+    title: 'บริหารสต๊อค',
+    // path: '/raw',
+    icon: icon('material-7'),
     subItems: [
       {
-        title: 'จัดการวัตถุดิบ',
+        title: 'คลังวัตถุดิบ',
         path: '/invent',
         icon: icon('ic-manage'),
+      },
+      {
+        title: 'วัตถุดิบหมด/ใกล้หมด',
+        path: '/manage/near-invent',
+        icon: icon('stock-low'),
       },
       {
         title: 'โกดังวัตถุดิบ/เบิกวัตถุดิบ',
         path: '/purchase/withdraw',
         icon: icon('stock-svgrepo-com'),
+      },
+      {
+        title: 'รายการเบิกวัตถุดิบ',
+        path: '/purchase/withdraw-out',
+        icon: icon('withdraw-svgrepo-com'),
+      },
+      // {
+      //   title: 'รับวัตถุดิบเข้า',
+      //   path: '/manage/invent/update-stock',
+      //   icon: icon('ic-improduct'),
+      // },
+      {
+        title: 'นำเข้า PO',
+        path: '/purchase/create',
+        icon: icon('invoice'),
       },
     ],
   },

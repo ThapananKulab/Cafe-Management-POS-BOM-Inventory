@@ -118,7 +118,7 @@ const PendingReceipts = () => {
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4" style={{ marginBottom: '1rem' }}>
-          <StyledDiv>โกดังร้าน</StyledDiv>
+          <StyledDiv>โกดังร้าน/เบิกวัตถุดิบ</StyledDiv>
         </Typography>
       </Stack>
       <TableContainer>

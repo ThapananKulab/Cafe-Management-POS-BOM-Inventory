@@ -49,7 +49,7 @@ const navConfig = [
         icon: icon('ic-manage'),
       },
       {
-        title: 'วัตถุดิบใกล้หมด',
+        title: 'วัตถุดิบหมด/ใกล้หมด',
         path: '/manage/near-invent',
         icon: icon('stock-low'),
       },
