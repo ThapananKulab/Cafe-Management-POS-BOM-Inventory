@@ -218,13 +218,13 @@ export default function AppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
-            title="Current Visits"
+            title="ยอดขายรายเดือน"
             chart={{
               series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'มกราคม', value: 2000 },
+                { label: 'กุมภาพันธ์', value: 5435 },
+                { label: 'มีนาคม', value: 1500 },
+                { label: 'เมษายน', value: 4000 },
               ],
             }}
           />
