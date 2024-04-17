@@ -90,7 +90,7 @@ function RealTimeOrderPage() {
       checkSaleRoundStatus();
       fetchOrders();
       checkSaleRoundTime();
-    }, 1500);
+    }, 10000);
 
     return () => clearInterval(intervalId);
   }, []);
