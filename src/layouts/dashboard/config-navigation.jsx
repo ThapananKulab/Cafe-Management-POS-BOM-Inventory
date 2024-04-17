@@ -121,7 +121,7 @@ const navConfig = [
     icon: icon('ic-notic'),
     subItems: [
       {
-        title: 'ข้อมูลทั่วไป',
+        title: 'แจ้งเรื่อง',
         path: '/topic',
         icon: icon('g-1'),
       },

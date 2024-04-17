@@ -65,15 +65,15 @@ const navConfigUser = [
   //   icon: icon('ic_blog'),
   {
     title: 'BOM',
-    // path: '/invent',
+    path: '/recipe',
     icon: icon('m_bom'),
-    subItems: [
-      {
-        title: 'ท็อปปิ้ง/สูตรเครื่องดื่ม',
-        path: '/recipe',
-        icon: icon('ic-rec'),
-      },
-    ],
+    // subItems: [
+    //   {
+    //     title: 'ท็อปปิ้ง/สูตรเครื่องดื่ม',
+    //     path: '/recipe',
+    //     icon: icon('ic-rec'),
+    //   },
+    // ],
   },
   {
     title: 'วัตถุดิบ',
@@ -103,7 +103,7 @@ const navConfigUser = [
   //   icon: icon('ic-notic'),
   // },
   {
-    title: 'ข้อมูลทั่วไป',
+    title: 'แจ้งเรื่อง',
     path: '/topic',
     icon: icon('g-1'),
   },
