@@ -1,17 +1,19 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import { Icon } from '@iconify/react';
 import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
 import {
   Stack,
   Table,
-  Button,
   TableRow,
   TableBody,
   TableCell,
   TableHead,
   Container,
   Typography,
+  IconButton,
   TableContainer,
 } from '@mui/material';
 
@@ -22,7 +24,7 @@ const PendingReceipts = () => {
   const [pendingReceipts, setPendingReceipts] = useState([]);
 
   useEffect(() => {
-    const fetchPendingReceipts = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:3333/api/purchaseitem/pending');
         setPendingReceipts(response.data);
@@ -31,25 +33,44 @@ const PendingReceipts = () => {
       }
     };
 
-    fetchPendingReceipts();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000); // เรียก API ทุก 5 วินาที
+
+    fetchData(); // เรียก API ครั้งแรกเมื่อคอมโพเนนต์ถูกโหลด
+
+    return () => clearInterval(interval); // เมื่อคอมโพเนนต์ถูกถอดจาก DOM ให้เคลียร์ interval
   }, []);
 
   const handleWithdraw = async (purchaseReceiptId, itemId) => {
     try {
-      console.log(
-        `Trying to withdraw item with purchaseReceiptId ${purchaseReceiptId} and itemId ${itemId}`
-      );
-
-      const received = new Date().toISOString(); // Get current time in ISO string format
-
-      await axios.post('http://localhost:3333/api/purchaseitem/add-to-q', {
-        purchaseReceiptId,
-        selectedItemIds: [itemId],
-        status: 'withdrawn',
-        received, // Use current time as received
+      const result = await Swal.fire({
+        title: 'ยืนยันการเบิก',
+        text: 'คุณแน่ใจหรือไม่ที่ต้องการที่จะเบิกรายการนี้?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
       });
 
-      console.log('Item withdrawn successfully');
+      if (result.isConfirmed) {
+        console.log(
+          `Trying to withdraw item with purchaseReceiptId ${purchaseReceiptId} and itemId ${itemId}`
+        );
+
+        const received = new Date();
+
+        await axios.post('https://test-api-01.azurewebsites.net/api/purchaseitem/add-to-q', {
+          purchaseReceiptId,
+          selectedItemIds: [itemId],
+          status: 'withdrawn',
+          received,
+        });
+
+        console.log('Item withdrawn successfully');
+      }
     } catch (error) {
       console.error('Error withdrawing items:', error);
     }
@@ -66,13 +87,13 @@ const PendingReceipts = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Purchase ID</TableCell>
-              <TableCell>Item id</TableCell>
-              <TableCell>Item Name</TableCell>
+              <TableCell>ID ใบสั่งซื่อ</TableCell>
+              {/* <TableCell>ID วัตถุดิบ</TableCell> */}
+              <TableCell>ชื่อวัตถุดิบ</TableCell>
               <TableCell>ปริมาณ</TableCell>
               <TableCell>จำนวน</TableCell>
               <TableCell>สถานะ</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>จัดการ</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -91,18 +112,18 @@ const PendingReceipts = () => {
                             {purchaseId}
                           </TableCell>
                         )}
-                        <TableCell>{item._id}</TableCell>
+                        {/* <TableCell>{item._id}</TableCell> */}
                         <TableCell>{item.item.name}</TableCell>
                         <TableCell>{item.item.realquantity}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
-                        <TableCell>{item.status}</TableCell>
+                        <TableCell>{item.status.replace('pending', 'รอดำเนินการ')}</TableCell>
                         <TableCell>
-                          <Button
-                            variant="contained"
+                          <IconButton
                             onClick={() => handleWithdraw(purchaseId, item.item._id)}
+                            color="secondary"
                           >
-                            เบิก
-                          </Button>
+                            <Icon icon="ph:hand-withdraw" />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))}

@@ -65,7 +65,7 @@ const CreatePurchaseReceiptPage = () => {
         item: selectedItem,
         quantity: 1,
         unitPrice: selectedItem.unitPrice,
-        realquantity: selectedItem.realquantity, // เพิ่มการรับค่า realquantity จาก selectedItem
+        realquantity: selectedItem.realquantity,
         total: selectedItem.unitPrice,
       };
     });
@@ -75,11 +75,9 @@ const CreatePurchaseReceiptPage = () => {
   };
 
   const handleQuantityChange = (index, quantity) => {
-    // ตรวจสอบว่าค่าจำนวนใหม่ที่รับเข้ามามีค่าน้อยกว่าหรือเท่ากับ 0 หรือไม่
     if (quantity <= 0) {
-      return; // ถ้ามีค่าน้อยกว่าหรือเท่ากับ 0 ให้ยกเลิกการเปลี่ยนแปลง
+      return;
     }
-
     const newPurchaseItems = [...purchaseItems];
     newPurchaseItems[index].quantity = quantity;
     newPurchaseItems[index].total = quantity * newPurchaseItems[index].unitPrice;
@@ -211,13 +209,17 @@ const CreatePurchaseReceiptPage = () => {
                   <TableCell>{item.item._id}</TableCell>
                   <TableCell>{item.item.name}</TableCell>
                   <TableCell>
-                    <TextField
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
-                      fullWidth
-                      label="จำนวน"
-                    />
+                    <TableCell>
+                      <TextField
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
+                        fullWidth
+                        label="จำนวน"
+                        disabled
+                        InputProps={{ inputProps: { style: { textAlign: 'center' } } }}
+                      />
+                    </TableCell>
                   </TableCell>{' '}
                   <TableCell>{item.unitPrice}</TableCell>
                   <TableCell>{item.total}</TableCell>
