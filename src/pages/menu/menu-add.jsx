@@ -42,7 +42,7 @@ function AddMenuItem() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/recipes/all');
+        const response = await axios.get('https://test-api-01.azurewebsites.net/api/recipes/all');
         setRecipes(response.data);
       } catch (error) {
         console.error('Error fetching recipes:', error);
@@ -94,7 +94,7 @@ function AddMenuItem() {
     formData.append('glassSize', menuItem.glassSize); // เพิ่ม glassSize ไปยัง formData
 
     try {
-      const response = await axios.post('http://localhost:3333/api/menus/addMenu', formData, {
+      const response = await axios.post('https://test-api-01.azurewebsites.net/api/menus/addMenu', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
