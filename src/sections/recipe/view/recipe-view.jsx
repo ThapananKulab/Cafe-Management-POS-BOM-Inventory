@@ -302,7 +302,7 @@ function RecipeTable() {
                     </Typography>
 
                     <Typography variant="body2" sx={{ mt: 0.5 }}>
-                      <StyledDiv>ราคาต้นทุน: {recipe.cost} บาท</StyledDiv>
+                      <StyledDiv>ราคาต้นทุน: {recipe.cost.toFixed(2)} บาท</StyledDiv>
                     </Typography>
                   </StyledTableCell>
                   <StyledTableCell align="right">
