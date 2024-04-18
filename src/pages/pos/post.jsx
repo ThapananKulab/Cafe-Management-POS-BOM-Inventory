@@ -343,6 +343,7 @@ const CartTemplate = () => {
         }).fire();
       });
   };
+
   const calculateTotalPrice = (items) =>
     items.reduce((total, item) => total + item.price * item.quantity, 0);
 

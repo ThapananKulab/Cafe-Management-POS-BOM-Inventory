@@ -33,7 +33,7 @@ export default function AppView() {
   const [weeklySales, setWeeklySales] = useState(0);
   const [mostPurchasedMenuItems, setMostPurchasedMenuItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
-  const [setPreviousWeeklySales] = useState(0);
+  // const [setPreviousWeeklySales] = useState(0);
   const [setDailySales] = useState({});
   const [totalProfit, setTotalProfit] = useState(0);
   const [monthlySales, setMonthlySales] = useState([]);
@@ -112,20 +112,35 @@ export default function AppView() {
       }
     }
 
-    async function fetchPreviousWeeklyTotal() {
-      try {
-        const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/previousWeeklyTotal'
-        );
-        setPreviousWeeklySales(response.data.totalSales);
-      } catch (error) {
-        console.error('Error fetching previous weekly total:', error);
-      }
-    }
-
     fetchWeeklyTotal();
-    fetchPreviousWeeklyTotal();
-  }, [setPreviousWeeklySales, setDailySales]);
+  }, [setDailySales]);
+
+  // useEffect(() => {
+  //   async function fetchWeeklyTotal() {
+  //     try {
+  //       const response = await axios.get(
+  //         'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/weeklyTotal'
+  //       );
+  //       setDailySales(response.data.dailySales);
+  //     } catch (error) {
+  //       console.error('Error fetching weekly total:', error);
+  //     }
+  //   }
+
+  //   async function fetchPreviousWeeklyTotal() {
+  //     try {
+  //       const response = await axios.get(
+  //         'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/previousWeeklyTotal'
+  //       );
+  //       setPreviousWeeklySales(response.data.totalSales);
+  //     } catch (error) {
+  //       console.error('Error fetching previous weekly total:', error);
+  //     }
+  //   }
+
+  //   fetchWeeklyTotal();
+  //   fetchPreviousWeeklyTotal();
+  // }, [setPreviousWeeklySales, setDailySales]);
 
   // const chartData = {
   //   labels: Object.keys(dailySales),
@@ -321,24 +336,23 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid container spacing={3} justifyContent="center" alignItems="center">
-          <Grid item xs={6} md={1} lg={7}>
-            <SalesByTimeChart />
-          </Grid>
-
-          <Grid xs={12} md={6} lg={5}>
-            <AppConversionRates
-              title="เมนูขายดี"
-              // subheader="(+43%) than last year"
-              chart={{
-                series: mostPurchasedMenuItems.map((item) => ({
-                  label: item.name,
-                  value: item.quantity,
-                })),
-              }}
-            />
-          </Grid>
+        <Grid item xs={6} md={1} lg={7}>
+          <SalesByTimeChart />
         </Grid>
+
+        <Grid xs={12} md={6} lg={7}>
+          <AppConversionRates
+            title="เมนูขายดี"
+            // subheader="(+43%) than last year"
+            chart={{
+              series: mostPurchasedMenuItems.map((item) => ({
+                label: item.name,
+                value: item.quantity,
+              })),
+            }}
+          />
+        </Grid>
+
         {/* <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="ยอดขาย 7 วันหลังสุด"

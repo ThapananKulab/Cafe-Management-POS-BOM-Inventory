@@ -64,7 +64,6 @@ const SalesAnalysisPage = () => {
               <MenuItem value="/report/payment">รายงานการขายจำแนกตามประเภทการชำระเงิน</MenuItem>
               <MenuItem value="/report/cost">รายชื่อวัตถุดิบราคาต้นทุนสูงสุด</MenuItem>
               <MenuItem value="/report/popular-menu">ยอดขายที่ขายดีสุดตามเวลา</MenuItem>
-              <MenuItem value="/open-order">ประวัติการปิด-เปิดร้าน</MenuItem>
             </Select>
           </Paper>
         </Stack>

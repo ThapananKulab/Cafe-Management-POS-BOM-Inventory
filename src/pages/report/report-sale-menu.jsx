@@ -192,7 +192,6 @@ function RealTimeOrderPage() {
         const containsSearchTerm = (keyword) => keyword.toLowerCase().includes(searchTermLower);
 
         if (statusLower === 'cancelled') {
-          // เพิ่มเงื่อนไขนี้เพื่อกรอง order ที่มี status เป็น 'ยกเลิก' เท่านั้น
           return true;
         }
 
@@ -260,7 +259,6 @@ function RealTimeOrderPage() {
               <MenuItem value="/report/payment">รายงานการขายจำแนกตามประเภทการชำระเงิน</MenuItem>
               <MenuItem value="/report/cost">รายชื่อวัตถุดิบราคาต้นทุนสูงสุด</MenuItem>
               <MenuItem value="/report/popular-menu">ยอดขายที่ขายดีสุดตามเวลา</MenuItem>
-              <MenuItem value="/open-order">ประวัติการปิด-เปิดร้าน</MenuItem>
             </Select>
           </Paper>
         </Stack>
