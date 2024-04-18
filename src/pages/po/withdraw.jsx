@@ -57,7 +57,7 @@ const PendingReceipts = () => {
       }
     };
     fetchData();
-  }, [navigate, setUser]);
+  }, [navigate, setUser]); // เพิ่ม setUser เป็น dependency ของ useEffect
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,11 +73,11 @@ const PendingReceipts = () => {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 5000);
+    }, 5000); // เรียก API ทุก 5 วินาที
 
-    fetchData();
+    fetchData(); // เรียก API ครั้งแรกเมื่อคอมโพเนนต์ถูกโหลด
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // เมื่อคอมโพเนนต์ถูกถอดจาก DOM ให้เคลียร์ interval
   }, []);
 
   const handleWithdraw = async (purchaseReceiptId, itemId) => {
@@ -100,13 +100,14 @@ const PendingReceipts = () => {
 
         const received = new Date();
 
-        await axios.post('https://test-api-01.azurewebsites.net/api/purchaseitem/add-to-q', {
+        await axios.post('http://localhost:3333/api/purchaseitem/add-to-q', {
           purchaseReceiptId,
           selectedItemIds: [itemId],
           status: 'withdrawn',
           received,
           withdrawner: `${user.firstname} ${user.lastname} (${user.role})`,
         });
+
         console.log('Item withdrawn successfully');
       }
     } catch (error) {

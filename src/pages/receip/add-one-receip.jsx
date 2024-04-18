@@ -34,6 +34,7 @@ function AddRecipe() {
     ingredients: [],
   });
   const [ingredientUnits, setIngredientUnits] = useState(['gram']);
+  const [ingredientAdded, setIngredientAdded] = useState(false);
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
@@ -43,8 +44,8 @@ function AddRecipe() {
         );
         const updatedIngredients = data.map((item) => ({
           ...item,
-          unitPrice: item.unitPrice || 0, // Default value if unitPrice is undefined
-          realquantity: item.realquantity || 0, // Default value if realquantity is undefined
+          unitPrice: item.unitPrice || 0,
+          realquantity: item.realquantity || 0,
         }));
         setInventoryItems(updatedIngredients);
       } catch (error) {
@@ -172,19 +173,22 @@ function AddRecipe() {
     }
   };
   const addIngredient = () => {
-    const newIngredient = {
-      inventoryItemId: '',
-      quantity: 1,
-      name: '',
-      unit: 'gram',
-      unitPrice: '', // เพิ่ม unitPrice เข้าไปในข้อมูลของส่วนประกอบใหม่
-      realquantity: '', // เพิ่ม realQuantity เข้าไปในข้อมูลของส่วนประกอบใหม่
-    };
-    setRecipe((prevRecipe) => ({
-      ...prevRecipe,
-      ingredients: [...prevRecipe.ingredients, newIngredient],
-    }));
-    setIngredientUnits((prevUnits) => [...prevUnits, 'gram']);
+    if (!ingredientAdded) {
+      const newIngredient = {
+        inventoryItemId: '',
+        quantity: 1,
+        name: '',
+        unit: 'gram',
+        unitPrice: '',
+        realquantity: '',
+      };
+      setRecipe((prevRecipe) => ({
+        ...prevRecipe,
+        ingredients: [...prevRecipe.ingredients, newIngredient],
+      }));
+      setIngredientUnits((prevUnits) => [...prevUnits, 'gram']);
+      setIngredientAdded(true); // เซ็ตค่าเป็น true เมื่อมีการเพิ่มส่วนประกอบ
+    }
   };
 
   const updateIngredient = (index, field, value) => {
@@ -217,12 +221,12 @@ function AddRecipe() {
     setRecipe((prevRecipe) => ({ ...prevRecipe, ingredients: updatedIngredients }));
   };
 
-  const removeIngredient = (index) => {
-    setRecipe((prevRecipe) => ({
-      ...prevRecipe,
-      ingredients: prevRecipe.ingredients.filter((_, i) => i !== index),
-    }));
-  };
+  // const removeIngredient = (index) => {
+  //   setRecipe((prevRecipe) => ({
+  //     ...prevRecipe,
+  //     ingredients: prevRecipe.ingredients.filter((_, i) => i !== index),
+  //   }));
+  // };
 
   return (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
@@ -270,6 +274,7 @@ function AddRecipe() {
                 <TextField
                   label="จำนวน"
                   type="number"
+                  disabled
                   sx={{ mb: -5 }}
                   value={
                     ingredientUnits[index] === 'gram'
@@ -300,11 +305,11 @@ function AddRecipe() {
                 </Grid>
               )}
 
-              <Grid item xs={2}>
+              {/* <Grid item xs={2}>
                 <IconButton onClick={() => removeIngredient(index)} color="error">
                   <Icon icon="streamline:delete-1-solid" />
                 </IconButton>
-              </Grid>
+              </Grid> */}
             </Grid>
           ))}
           <Stack direction="row" spacing={2} justifyContent="center">
@@ -312,7 +317,7 @@ function AddRecipe() {
               onClick={addIngredient}
               variant="outlined"
               sx={{
-                display: 'flex',
+                display: ingredientAdded ? 'none' : 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}

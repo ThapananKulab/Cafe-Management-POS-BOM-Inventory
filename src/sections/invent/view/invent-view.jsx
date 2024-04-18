@@ -175,7 +175,7 @@ export default function InventPage() {
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => navigate('/manage/invent')}
             >
-              <StyledDiv>เพิ่มวัตถุดิบ </StyledDiv>
+              <StyledDiv>เพิ่มวัตถุดิบใหม่</StyledDiv>
             </Button>
           </StyledDiv>
         </Stack>
