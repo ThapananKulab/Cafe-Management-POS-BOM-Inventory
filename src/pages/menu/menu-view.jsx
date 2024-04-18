@@ -41,8 +41,8 @@ function MenuTable() {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [filteredMenus, setFilteredMenus] = useState([]); // State to hold filtered menus
-  const [searchQuery, setSearchQuery] = useState(''); // State to hold the search query
+  const [filteredMenus, setFilteredMenus] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [currentRecipe, setCurrentRecipe] = useState(null);
@@ -51,7 +51,7 @@ function MenuTable() {
   const [updateData, setUpdateData] = useState({ name: '', description: '', price: 0 });
   const [recipes, setRecipes] = useState([]); // This line defines 'recipes'
   const [selectedFile, setSelectedFile] = useState(null);
-  const [user, setUser] = useState(null);
+  const [setUser] = useState(null);
   const [searchSweetLevel, setSearchSweetLevel] = useState('');
   const [searchType, setSearchType] = useState('');
   const [searchGlassSize, setSearchGlassSize] = useState('');
@@ -87,7 +87,7 @@ function MenuTable() {
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, setUser]);
 
   const sweetLevels = ['ปกติ', 'หวานน้อย', 'หวานมาก', 'ทั่วไป'];
   const types = ['ร้อน', 'เย็น', 'ปั่น', 'ทั่วไป'];
@@ -173,8 +173,8 @@ function MenuTable() {
         (menu) =>
           menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          menu.price.toString().includes(searchQuery) || // ค้นหาด้วยราคา (price)
-          menu.type.toLowerCase().includes(searchQuery.toLowerCase()) || // ค้นหาด้วยประเภท (type)
+          menu.price.toString().includes(searchQuery) ||
+          menu.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
           menu.sweetLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
           menu.glassSize.toLowerCase().includes(searchQuery.toLowerCase())
       )
@@ -228,13 +228,17 @@ function MenuTable() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // ลบข้อมูลด้วยการเรียก API
           await Promise.all(
-            selected.map((id) => axios.delete(`http://localhost:3333/api/menus/${id}`))
+            selected.map((id) =>
+              axios.delete(`https://test-api-01.azurewebsites.net/api/menus/${id}`)
+            )
           );
-          toast.success(`${selected.length} item(s)ลบสำเร็จ`);
+          // toast.success(`${selected.length} item(s)ลบสำเร็จ`);
+          toast.success(`ลบสำเร็จ`);
           setSelected([]);
-          const response = await axios.get('http://localhost:3333/api/menus/allMenus');
+          const response = await axios.get(
+            'https://test-api-01.azurewebsites.net/api/menus/allMenus'
+          );
           setMenus(response.data);
         } catch (error) {
           console.error('Failed to delete selected menus:', error);
@@ -246,12 +250,14 @@ function MenuTable() {
 
   const fetchMenuItemDetails = async (menuItemId) => {
     try {
-      const response = await axios.get(`http://localhost:3333/api/menus/menu/${menuItemId}`);
+      const response = await axios.get(
+        `https://test-api-01.azurewebsites.net/api/menus/menu/${menuItemId}`
+      );
       const menuItemDetails = response.data;
 
       setUpdateData({
-        ...menuItemDetails, // Spread other properties
-        recipe: menuItemDetails.recipe._id, // Ensure this is just the ID, not the whole object
+        ...menuItemDetails,
+        recipe: menuItemDetails.recipe._id,
       });
     } catch (error) {
       console.error('Failed to fetch menu item details', error);
@@ -271,11 +277,15 @@ function MenuTable() {
     }
 
     try {
-      await axios.put(`http://localhost:3333/api/menus/${updateData._id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await axios.put(
+        `https://test-api-01.azurewebsites.net/api/menus/${updateData._id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       toast.success('แก้ไขเมนูสำเร็จ');
       setUpdateModalOpen(false);
     } catch (error) {
@@ -293,29 +303,28 @@ function MenuTable() {
           </Typography>
 
           <Stack direction="row" spacing={2}>
-            {user &&
-              user.role === 'เจ้าของร้าน' && ( // เช็คว่า userRole เป็น 'เจ้าของร้าน' หรือไม่
-                <>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    startIcon={<Iconify icon="eva:trash-2-outline" />}
-                    onClick={handleDeleteSelected}
-                    disabled={selected.length === 0}
-                  >
-                    ลบ
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Iconify icon="eva:edit-fill" />}
-                    onClick={handleUpdateSelected}
-                    disabled={selected.length !== 1} // ให้ปุ่มสามารถใช้งานได้เมื่อมีเพียงรายการเดียวที่ถูกเลือก
-                  >
-                    แก้ไข
-                  </Button>
-                </>
-              )}
+            {/* {user && user.role === 'เจ้าของร้าน' && (
+              <> */}
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<Iconify icon="eva:trash-2-outline" />}
+              onClick={handleDeleteSelected}
+              disabled={selected.length === 0}
+            >
+              ลบ
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<Iconify icon="eva:edit-fill" />}
+              onClick={handleUpdateSelected}
+              disabled={selected.length !== 1}
+            >
+              แก้ไข
+            </Button>
+            {/* </>
+            )} */}
             <Button
               variant="contained"
               color="inherit"
@@ -332,13 +341,13 @@ function MenuTable() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{
-            width: '300px', // fixed width, adjust as needed
+            width: '300px',
             mb: 2,
-            backgroundColor: 'background.paper', // adjust color based on your theme
+            backgroundColor: 'background.paper',
             borderRadius: '20px',
             '& .MuiOutlinedInput-root': {
               '&.Mui-focused fieldset': {
-                borderColor: 'primary.main', // color when the input is focused
+                borderColor: 'primary.main',
               },
             },
           }}
@@ -363,7 +372,7 @@ function MenuTable() {
               label="Sweet Level"
               onChange={(e) => setSearchSweetLevel(e.target.value)}
             >
-              <MenuItem value="">ทั้งหมด</MenuItem> {/* เพิ่มตัวเลือกว่าง */}
+              <MenuItem value="">ทั้งหมด</MenuItem>
               {sweetLevels.map((level) => (
                 <MenuItem key={level} value={level}>
                   {level}
@@ -381,7 +390,7 @@ function MenuTable() {
               label="Type"
               onChange={(e) => setSearchType(e.target.value)}
             >
-              <MenuItem value="">ทั้งหมด</MenuItem> {/* เพิ่มตัวเลือกว่าง */}
+              <MenuItem value="">ทั้งหมด</MenuItem>
               {types.map((type) => (
                 <MenuItem key={type} value={type}>
                   {type}
@@ -399,7 +408,7 @@ function MenuTable() {
               label="Glass Size"
               onChange={(e) => setSearchGlassSize(e.target.value)}
             >
-              <MenuItem value="">ทั้งหมด</MenuItem> {/* เพิ่มตัวเลือกว่าง */}
+              <MenuItem value="">ทั้งหมด</MenuItem>
               {glassSize.map((size) => (
                 <MenuItem key={size} value={size}>
                   {size}
@@ -672,7 +681,6 @@ function MenuTable() {
                     })}
                   </ul>
                 </Typography>
-                {/* If you have a method or other recipe details, you can display them here */}
               </Box>
             </Modal>
           </Table>

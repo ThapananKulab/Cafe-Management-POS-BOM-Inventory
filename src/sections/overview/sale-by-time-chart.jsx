@@ -10,7 +10,7 @@ const SalesByTimeChart = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:3333/api/saleorder/dashboard/salesByTime'
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByTime'
         );
         setSalesData(response.data);
       } catch (error) {
@@ -36,7 +36,7 @@ const SalesByTimeChart = () => {
 
   return (
     <div>
-      <h2>กราฟยอดขายตามช่วงเวลา</h2>
+      <h2>กราฟยอดขายตามช่วงเวลาของวันนี้</h2>
       <Line data={chartData} />
     </div>
   );

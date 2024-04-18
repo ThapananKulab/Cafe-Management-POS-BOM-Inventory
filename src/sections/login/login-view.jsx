@@ -2,9 +2,11 @@ import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
 import styled from 'styled-components';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -20,6 +22,7 @@ import { bgGradient } from 'src/theme/css';
 import Iconify from 'src/components/iconify';
 
 export default function LoginView() {
+  const navigate = useNavigate();
   const StyledDiv = styled.div`
     font-family: 'Prompt', sans-serif;
   `;
@@ -87,6 +90,10 @@ export default function LoginView() {
     }
   };
 
+  const handleNavigate = () => {
+    navigate('/menus');
+  };
+
   const renderForm = (
     <form>
       <Stack spacing={3}>
@@ -148,16 +155,19 @@ export default function LoginView() {
           }}
         >
           <Box mb={4}>
-            {' '}
-            {/* ใช้ Box รอบ Typography และเพิ่ม marginBottom */}
             <Typography variant="h4" component="div" textAlign="center">
-              {' '}
-              {/* เพิ่ม textAlign หากต้องการให้ข้อความอยู่ตรงกลาง */}
               <StyledDiv>เข้าสู่ระบบ</StyledDiv>
             </Typography>
           </Box>
           {renderForm}
         </Card>
+        <Box mt={2} textAlign="center">
+          <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={handleNavigate}>
+            <Link>
+              <StyledDiv>ดูเมนู</StyledDiv>
+            </Link>
+          </Typography>
+        </Box>
       </Stack>
     </Box>
   );

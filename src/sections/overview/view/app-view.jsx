@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 // import AppTasks from '../app-tasks';
 // import AppNewsUpdate from '../app-news-update';
 // import AppOrderTimeline from '../app-order-timeline';
+import SalesByTimeChart from '../sale-by-time-chart'; // ไฟล์นี้เราเพิ่มเติมขึ้นมาเพื่อแสดง Line Chart
+
 import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
@@ -34,6 +36,22 @@ export default function AppView() {
   const [setPreviousWeeklySales] = useState(0);
   const [dailySales, setDailySales] = useState({});
   const [totalProfit, setTotalProfit] = useState(0);
+  const [monthlySales, setMonthlySales] = useState([]);
+
+  useEffect(() => {
+    const fetchMonthlySales = async () => {
+      try {
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByMonth'
+        );
+        setMonthlySales(response.data);
+      } catch (error) {
+        console.error('Error fetching monthly sales:', error);
+      }
+    };
+
+    fetchMonthlySales();
+  }, []);
 
   useEffect(() => {
     const fetchTotalProfit = async () => {
@@ -162,6 +180,26 @@ export default function AppView() {
   });
   // const percentageChange = ((weeklySales - previousWeeklySales) / previousWeeklySales) * 100;
 
+  const thaiMonths = [
+    'มกราคม',
+    'กุมภาพันธ์',
+    'มีนาคม',
+    'เมษายน',
+    'พฤษภาคม',
+    'มิถุนายน',
+    'กรกฎาคม',
+    'สิงหาคม',
+    'กันยายน',
+    'ตุลาคม',
+    'พฤศจิกายน',
+    'ธันวาคม',
+  ];
+
+  // สร้าง object ที่เปลี่ยนเลขเดือนเป็นชื่อเดือนภาษาไทย
+  const thaiMonthNames = Object.fromEntries(
+    Array.from({ length: 12 }, (_, i) => [i + 1, thaiMonths[i]])
+  );
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -183,7 +221,7 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="กำไร (บาท)"
+            title="กำไร (บาท) วันนี้"
             total={totalProfit.toFixed(2)}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/profits.png" />}
@@ -208,6 +246,21 @@ export default function AppView() {
           />
         </Grid>
 
+        <Grid item xs={6} md={1} lg={8}>
+          <SalesByTimeChart />
+        </Grid>
+
+        <Grid xs={12} md={6} lg={4}>
+          <AppCurrentVisits
+            title="ยอดขายรายเดือน"
+            chart={{
+              series: monthlySales.map((month) => ({
+                label: thaiMonthNames[month._id],
+                value: month.totalSales,
+              })),
+            }}
+          />
+        </Grid>
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="ยอดขาย 7 วันหลังสุด"
@@ -216,21 +269,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
-          <AppCurrentVisits
-            title="ยอดขายรายเดือน"
-            chart={{
-              series: [
-                { label: 'มกราคม', value: 2000 },
-                { label: 'กุมภาพันธ์', value: 5435 },
-                { label: 'มีนาคม', value: 1500 },
-                { label: 'เมษายน', value: 4000 },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={12}>
+        <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="เมนูขายดี"
             // subheader="(+43%) than last year"

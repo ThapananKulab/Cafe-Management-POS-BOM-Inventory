@@ -44,7 +44,7 @@ export default function InventPage() {
   const [raws, setRaws] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [setUser] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
 
@@ -79,7 +79,7 @@ export default function InventPage() {
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, setUser]);
 
   useEffect(() => {
     const fetchRaws = async () => {
@@ -249,9 +249,9 @@ export default function InventPage() {
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
                     <TableCell align="center">สถานะ</TableCell>
-                    {user && user.role === 'เจ้าของร้าน' && (
-                      <TableCell align="left">จัดการ</TableCell>
-                    )}
+                    {/* {user && user.role === 'เจ้าของร้าน' && ( */}
+                    <TableCell align="left">จัดการ</TableCell>
+                    {/* )} */}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -294,28 +294,28 @@ export default function InventPage() {
                             justifyContent="flex-start"
                             spacing={1}
                           >
-                            {user && user.role === 'เจ้าของร้าน' && (
-                              <>
-                                <Grid item>
-                                  <IconButton
-                                    aria-label="edit"
-                                    onClick={() => editRaw(raw._id)}
-                                    color="primary" // กำหนดสีปุ่มเป็นสีน้ำเงิน
-                                  >
-                                    <Icon icon="mingcute:edit-line" style={{ fontSize: '24px' }} />
-                                  </IconButton>
-                                </Grid>
-                                <Grid item>
-                                  <IconButton
-                                    aria-label="delete"
-                                    onClick={() => confirmDelete(raw._id)}
-                                    style={{ color: '#ff1744' }} // กำหนดสีโดยตรง
-                                  >
-                                    <Icon icon="bi:trash-fill" style={{ fontSize: '24px' }} />
-                                  </IconButton>
-                                </Grid>
-                              </>
-                            )}
+                            {/* {user && user.role === 'เจ้าของร้าน' && ( */}
+                            <>
+                              <Grid item>
+                                <IconButton
+                                  aria-label="edit"
+                                  onClick={() => editRaw(raw._id)}
+                                  color="primary" // กำหนดสีปุ่มเป็นสีน้ำเงิน
+                                >
+                                  <Icon icon="mingcute:edit-line" style={{ fontSize: '24px' }} />
+                                </IconButton>
+                              </Grid>
+                              <Grid item>
+                                <IconButton
+                                  aria-label="delete"
+                                  onClick={() => confirmDelete(raw._id)}
+                                  style={{ color: '#ff1744' }} // กำหนดสีโดยตรง
+                                >
+                                  <Icon icon="bi:trash-fill" style={{ fontSize: '24px' }} />
+                                </IconButton>
+                              </Grid>
+                            </>
+                            {/* )} */}
                           </Grid>
                         </TableCell>
                       </TableRow>

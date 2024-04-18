@@ -511,10 +511,10 @@ const CartTemplate = () => {
               onClick={() => setSelectedCategory(category.name)}
               sx={{
                 m: 1,
-                padding: '10px 20px', // เพิ่มขนาดของ padding ให้มีรูปทรงที่ดูดีขึ้น
-                fontSize: '0.9rem', // ปรับขนาดตัวอักษรให้ใหญ่ขึ้นเล็กน้อย
-                minWidth: '120px', // เพิ่มความกว้างขั้นต่ำ
-                borderRadius: '20px', // เพิ่มขนาดของ borderRadius เพื่อสร้างรูปทรงมนุษย์ธรรมชาติ
+                padding: '10px 20px',
+                fontSize: '0.9rem',
+                minWidth: '120px',
+                borderRadius: '20px',
               }}
             >
               <Icon icon={category.icon} style={{ marginRight: 8, marginBottom: -2 }} />
