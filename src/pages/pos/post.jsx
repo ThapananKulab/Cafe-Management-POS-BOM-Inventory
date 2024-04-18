@@ -812,6 +812,7 @@ const CartTemplate = () => {
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           fullWidth
                           margin="normal"
+                          disabled
                         />
 
                         <TextField
@@ -1178,7 +1179,7 @@ const CartTemplate = () => {
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       fullWidth
                       margin="normal"
-                      disabled
+                      
                     />
 
                     <TextField
