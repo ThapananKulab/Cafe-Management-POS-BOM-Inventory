@@ -63,9 +63,9 @@ function AddRecipe() {
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('savedRecipe', JSON.stringify(recipe));
-  }, [recipe]);
+  // useEffect(() => {
+  //   localStorage.setItem('savedRecipe', JSON.stringify(recipe));
+  // }, [recipe]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -162,7 +162,6 @@ function AddRecipe() {
       toast.success('เพิ่มสำเร็จ', {
         autoClose: 1000,
       });
-
       navigate('/recipe');
       localStorage.removeItem('savedRecipe');
     } catch (error) {

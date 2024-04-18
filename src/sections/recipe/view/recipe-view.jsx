@@ -209,7 +209,7 @@ function RecipeTable() {
         console.log('Recipe deleted:', response.data);
         fetchRecipes();
 
-        toast.success('Recipe deleted successfully!', {
+        toast.success('สูตรถูกลบเรียบร้อย', {
           position: 'top-right',
           autoClose: 1000,
           hideProgressBar: false,
