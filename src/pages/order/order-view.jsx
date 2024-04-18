@@ -79,7 +79,7 @@ function RealTimeOrderPage() {
   const [orders, setOrders] = useState([]);
   const [showTodayOnly, setShowTodayOnly] = useState(false);
   const [isSaleRoundOpen, setIsSaleRoundOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [setUser] = useState(null);
   const [receiptInfo, setReceiptInfo] = useState(null);
   const componentRef = useRef();
   const [searchTerm, setSearchTerm] = useState('');
@@ -153,7 +153,7 @@ function RealTimeOrderPage() {
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, setUser]);
 
   const handleAcceptOrder = async (orderId) => {
     try {
@@ -282,9 +282,9 @@ function RealTimeOrderPage() {
     }
   };
 
-  const saveSaleRoundStatus = (isOpen) => {
-    localStorage.setItem('isSaleRoundOpen', isOpen);
-  };
+  // const saveSaleRoundStatus = (isOpen) => {
+  //   localStorage.setItem('isSaleRoundOpen', isOpen);
+  // };
 
   const fetchOrders = async () => {
     try {
@@ -305,61 +305,60 @@ function RealTimeOrderPage() {
     }
   };
 
-  const handleOpenSaleRound = async () => {
-    try {
-      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
-        method: 'POST',
-      });
-      if (response.ok) {
-        setIsSaleRound(true);
-        setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
-        saveSaleRoundStatus(true); // Save the sale round status to local storage
-      }
-    } catch (error) {
-      console.error('Error opening sale round:', error);
-    }
-  };
+  // const handleOpenSaleRound = async () => {
+  //   try {
+  //     const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+  //       method: 'POST',
+  //     });
+  //     if (response.ok) {
+  //       setIsSaleRound(true);
+  //       setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
+  //       saveSaleRoundStatus(true); // Save the sale round status to local storage
+  //     }
+  //   } catch (error) {
+  //     console.error('Error opening sale round:', error);
+  //   }
+  // };
 
-  const handleCloseSaleRound = async () => {
-    try {
-      const currentTime = moment().format('DD/MM/YYYY, H:mm:ss');
+  // const handleCloseSaleRound = async () => {
+  //   try {
+  //     const currentTime = moment().format('DD/MM/YYYY, H:mm:ss');
 
-      const result = await Swal.fire({
-        title: 'คุณต้องการที่จะปิดรอบขายใช่หรือไม่?',
-        text: ` ของรอบขายในเวลาใช่หรือไม่คือ ${currentTime}`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่',
-        reverseButtons: true,
-      });
+  //     const result = await Swal.fire({
+  //       title: 'คุณต้องการที่จะปิดรอบขายใช่หรือไม่?',
+  //       text: ` ของรอบขายในเวลาใช่หรือไม่คือ ${currentTime}`,
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonText: 'ใช่',
+  //       cancelButtonText: 'ไม่',
+  //       reverseButtons: true,
+  //     });
 
-      if (result.isConfirmed) {
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
-          method: 'POST',
-        });
-        if (response.ok) {
-          setIsSaleRound(false);
-          setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน
-          saveSaleRoundStatus(false); // Save the sale round status to local storage
-        } else {
-          // Handle the case where the sale round is already closed
-          const data = await response.json();
-          if (data.error === 'Sale round is already closed') {
-            setIsSaleRound(false);
-            setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน
-            saveSaleRoundStatus(false);
-          } else {
-            console.error('Error closing sale round:', data.error);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error closing sale round:', error);
-    }
-  };
+  //     if (result.isConfirmed) {
+  //       const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
+  //         method: 'POST',
+  //       });
+  //       if (response.ok) {
+  //         setIsSaleRound(false);
+  //         setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน
+  //         saveSaleRoundStatus(false); // Save the sale round status to local storage
+  //       } else {
+  //         // Handle the case where the sale round is already closed
+  //         const data = await response.json();
+  //         if (data.error === 'Sale round is already closed') {
+  //           setIsSaleRound(false);
+  //           setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน
+  //           saveSaleRoundStatus(false);
+  //         } else {
+  //           console.error('Error closing sale round:', data.error);
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error closing sale round:', error);
+  //   }
+  // };
 
-  // เพิ่มฟังก์ชันตรวจสอบเวลาเปิด-ปิดร้าน
   const checkSaleRoundTime = () => {
     const now = moment().tz('Asia/Bangkok');
     const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 }); // เวลาเปิดร้าน 09:00
@@ -402,7 +401,7 @@ function RealTimeOrderPage() {
             <StyledDiv>{isSaleRoundOpen ? 'ออเดอร์ประจำวัน' : 'ออเดอร์ประจำวัน'}</StyledDiv>
           </Typography>
           <Box sx={{ '& button': { m: 1 } }}>
-            <Button
+            {/* <Button
               variant="contained"
               color="success"
               onClick={handleOpenSaleRound}
@@ -435,7 +434,7 @@ function RealTimeOrderPage() {
               >
                 <StyledDiv>Order ทั้งหมด</StyledDiv>
               </Button>
-            )}
+            )} */}
           </Box>
         </Stack>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
@@ -473,166 +472,163 @@ function RealTimeOrderPage() {
           </Button>
         </Box>
 
-        {isSaleRound && (
-          <Paper sx={{ mt: 3 }}>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    {/* <TableCell>เลขออเดอร์</TableCell> */}
-                    <TableCell>ชื่อผู้ทำรายการ</TableCell>
-                    <TableCell align="right">รายการเมนู</TableCell>
-                    <TableCell align="right">สถานะ</TableCell>
-                    <TableCell align="right">วันที่และเวลา</TableCell>
-                    <TableCell align="right">การชำระเงิน</TableCell>
-                    <TableCell align="right">ราคารวม</TableCell>
-                    <TableCell align="right">เงินที่รับมา</TableCell>
-                    {filteredOrders.some((order) => order.status === 'Pending') && (
-                      <TableCell align="center">จัดการ</TableCell>
-                    )}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredOrdersByStatus.map((order) => (
-                    <TableRow key={order._id}>
-                      <TableCell>{order.user}</TableCell>
-                      <TableCell align="right">
-                        <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
-                          {order.items.map((item, index) => (
-                            <li key={index}>
-                              {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
-                            </li>
-                          ))}
-                        </ul>
-                      </TableCell>
-                      <TableCell align="right">
-                        <StatusBadge status={order.status} />
-                      </TableCell>
-                      <TableCell align="right">
-                        {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
-                      </TableCell>
-                      <TableCell align="right">{order.paymentMethod}</TableCell>
-                      <TableCell align="right">{formatCurrency(order.total)}</TableCell>
-                      <TableCell align="right">
-                        {(order.status === 'Completed' || order.status === 'Pending') && (
-                          <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
-                            ดูใบเสร็จ
-                          </Button>
-                        )}
-                      </TableCell>
+        <Paper sx={{ mt: 3 }}>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  {/* <TableCell>เลขออเดอร์</TableCell> */}
+                  <TableCell>ชื่อผู้ทำรายการ</TableCell>
+                  <TableCell align="right">รายการเมนู</TableCell>
+                  <TableCell align="right">สถานะ</TableCell>
+                  <TableCell align="right">วันที่และเวลา</TableCell>
+                  <TableCell align="right">การชำระเงิน</TableCell>
+                  <TableCell align="right">ราคารวม</TableCell>
+                  <TableCell align="right">เงินที่รับมา</TableCell>
+                  {filteredOrders.some((order) => order.status === 'Pending') && (
+                    <TableCell align="center">จัดการ</TableCell>
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredOrdersByStatus.map((order) => (
+                  <TableRow key={order._id}>
+                    <TableCell>{order.user}</TableCell>
+                    <TableCell align="right">
+                      <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                        {order.items.map((item, index) => (
+                          <li key={index}>
+                            {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
+                          </li>
+                        ))}
+                      </ul>
+                    </TableCell>
+                    <TableCell align="right">
+                      <StatusBadge status={order.status} />
+                    </TableCell>
+                    <TableCell align="right">
+                      {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
+                    </TableCell>
+                    <TableCell align="right">{order.paymentMethod}</TableCell>
+                    <TableCell align="right">{formatCurrency(order.total)}</TableCell>
+                    <TableCell align="right">
+                      {(order.status === 'Completed' || order.status === 'Pending') && (
+                        <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
+                          ดูใบเสร็จ
+                        </Button>
+                      )}
+                    </TableCell>
 
-                      {/* <TableCell align="right">
+                    {/* <TableCell align="right">
                         {order.total + (order.change || 0) === order.total
                           ? 'รับมาพอดี'
                           : formatCurrency(order.total + (order.change || 0))}
                       </TableCell> */}
-                      <TableCell align="right">
-                        {order.status === 'Pending' && (
-                          <Box>
-                            <IconButton onClick={() => handleAcceptOrder(order._id)}>
-                              <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
-                            </IconButton>
-                            <IconButton onClick={() => handleCancelOrder(order._id)}>
-                              <Icon icon="mdi:cancel-bold" color="#f44336" width={30} height={30} />
-                            </IconButton>
-                          </Box>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                    <TableCell align="right">
+                      {order.status === 'Pending' && (
+                        <Box>
+                          <IconButton onClick={() => handleAcceptOrder(order._id)}>
+                            <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
+                          </IconButton>
+                          <IconButton onClick={() => handleCancelOrder(order._id)}>
+                            <Icon icon="mdi:cancel-bold" color="#f44336" width={30} height={30} />
+                          </IconButton>
+                        </Box>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-            <Modal
-              open={
-                !!receiptInfo &&
-                (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending')
-              }
-              onClose={handleCloseReceiptModal}
-            >
-              <StyledDiv>
-                <Box
-                  sx={{
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 400,
-                    bgcolor: 'background.paper',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}
-                >
-                  {receiptInfo &&
-                    (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending') && (
-                      <div style={{ width: '100%' }}>
-                        <div ref={componentRef}>
-                          <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
-                          <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
+          <Modal
+            open={
+              !!receiptInfo &&
+              (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending')
+            }
+            onClose={handleCloseReceiptModal}
+          >
+            <StyledDiv>
+              <Box
+                sx={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 400,
+                  bgcolor: 'background.paper',
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                {receiptInfo &&
+                  (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending') && (
+                    <div style={{ width: '100%' }}>
+                      <div ref={componentRef}>
+                        <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
+                        <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
+                        <p>
+                          วันที่:{' '}
+                          {moment(receiptInfo.date)
+                            .tz('Asia/Bangkok')
+                            .format('DD/MM/YYYY, H:mm:ss')}
+                        </p>
+                        <p>รายการสินค้า:</p>
+                        <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                          {receiptInfo.items.map((item, index) => (
+                            <li key={index} style={{ textAlign: 'left' }}>
+                              {item.quantity} x {item.name}
+                              <span style={{ float: 'right' }}>
+                                {formatCurrency(item.price * item.quantity)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                           <p>
-                            วันที่:{' '}
-                            {moment(receiptInfo.date)
-                              .tz('Asia/Bangkok')
-                              .format('DD/MM/YYYY, H:mm:ss')}
+                            เงินที่รับมา:
+                            {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
                           </p>
-                          <p>รายการสินค้า:</p>
-                          <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
-                            {receiptInfo.items.map((item, index) => (
-                              <li key={index} style={{ textAlign: 'left' }}>
-                                {item.quantity} x {item.name}
-                                <span style={{ float: 'right' }}>
-                                  {formatCurrency(item.price * item.quantity)}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
-
-                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <p>
-                              เงินที่รับมา:
-                              {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
-                            </p>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
-                          </div>
-                          <hr style={{ marginLeft: '8px', flex: '1' }} />
-                          <div
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'flex-end',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <p
-                              style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}
-                            >
-                              ยอดรวม:
-                            </p>
-                            <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-                              {formatCurrency(receiptInfo.total)}
-                            </p>
-                          </div>
-                          <hr style={{ marginLeft: '8px', flex: '1' }} />
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
+                        </div>
+                        <hr style={{ marginLeft: '8px', flex: '1' }} />
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}>
+                            ยอดรวม:
+                          </p>
+                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                            {formatCurrency(receiptInfo.total)}
+                          </p>
+                        </div>
+                        <hr style={{ marginLeft: '8px', flex: '1' }} />
+                      </div>
 
-                        <ReactToPrint
-                          trigger={() => (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              style={{ marginLeft: 'auto', marginTop: '1rem' }}
-                            >
-                              <StyledDiv>พิมพ์รายการ</StyledDiv>
-                            </Button>
-                          )}
-                          content={() => componentRef.current}
-                          pageStyle={`
+                      <ReactToPrint
+                        trigger={() => (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ marginLeft: 'auto', marginTop: '1rem' }}
+                          >
+                            <StyledDiv>พิมพ์รายการ</StyledDiv>
+                          </Button>
+                        )}
+                        content={() => componentRef.current}
+                        pageStyle={`
                             @page {
                               size: A4;
                               margin: 0;
@@ -643,36 +639,35 @@ function RealTimeOrderPage() {
                               }
                             }
                           `}
-                        />
-                        {/* <Button
+                      />
+                      {/* <Button
                           variant="contained"
                           onClick={handleCloseReceiptModal}
                           style={{ marginLeft: 'auto', marginTop: '1rem' }}
                         >
                           ปิด
                         </Button> */}
-                      </div>
-                    )}
-                </Box>
-              </StyledDiv>
-            </Modal>
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Box
-                sx={{
-                  p: 2,
-                  backgroundColor: 'success.main',
-                  color: 'white',
-                  borderRadius: '4px',
-                }}
-              >
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
-                  <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
-                </Typography>
+                    </div>
+                  )}
               </Box>
+            </StyledDiv>
+          </Modal>
+
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor: 'success.main',
+                color: 'white',
+                borderRadius: '4px',
+              }}
+            >
+              <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
+                <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
+              </Typography>
             </Box>
-          </Paper>
-        )}
+          </Box>
+        </Paper>
       </Box>
     </Container>
   );

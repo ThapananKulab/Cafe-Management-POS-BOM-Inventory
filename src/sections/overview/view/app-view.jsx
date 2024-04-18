@@ -17,7 +17,7 @@ import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
 // import AppTrafficBySite from '../app-traffic-by-site';
-import AppCurrentSubject from '../app-current-subject';
+// import AppCurrentSubject from '../app-current-subject';
 import AppConversionRates from '../app-conversion-rates';
 
 // ----------------------------------------------------------------------
@@ -31,7 +31,7 @@ export default function AppView() {
   const [weeklySales, setWeeklySales] = useState(0);
   const [mostPurchasedMenuItems, setMostPurchasedMenuItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
-  const [previousWeeklySales, setPreviousWeeklySales] = useState(0);
+  const [setPreviousWeeklySales] = useState(0);
   const [dailySales, setDailySales] = useState({});
   const [totalProfit, setTotalProfit] = useState(0);
 
@@ -75,7 +75,7 @@ export default function AppView() {
 
     fetchWeeklyTotal();
     fetchPreviousWeeklyTotal();
-  }, []);
+  }, [setPreviousWeeklySales]);
 
   const chartData = {
     labels: Object.keys(dailySales),
@@ -160,7 +160,7 @@ export default function AppView() {
   const timeString = currentTime.toLocaleTimeString('th-TH', {
     hour12: false,
   });
-  const percentageChange = ((weeklySales - previousWeeklySales) / previousWeeklySales) * 100;
+  // const percentageChange = ((weeklySales - previousWeeklySales) / previousWeeklySales) * 100;
 
   return (
     <Container maxWidth="xl">
@@ -211,7 +211,7 @@ export default function AppView() {
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="ยอดขาย 7 วันหลังสุด"
-            subheader={`(${percentageChange.toFixed(2)}%) ในสัปดาห์นี้`}
+            // subheader={`(${percentageChange.toFixed(2)}%) ในสัปดาห์นี้`}
             chart={chartData}
           />
         </Grid>
@@ -243,7 +243,7 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="Conversion Rates"
             subheader="(+43%) than last year"
@@ -276,7 +276,7 @@ export default function AppView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
         {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate

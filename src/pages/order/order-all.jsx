@@ -83,7 +83,7 @@ function RealTimeOrderPage() {
   const [orders, setOrders] = useState([]);
   const [showTodayOnly, setShowTodayOnly] = useState(false);
   const [isSaleRoundOpen, setIsSaleRoundOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [setUser] = useState(null);
   const [receiptInfo, setReceiptInfo] = useState(null);
   const componentRef = useRef();
   const [searchTerm, setSearchTerm] = useState('');
@@ -107,8 +107,6 @@ function RealTimeOrderPage() {
       setReceiptInfo(foundOrder);
     }
   };
-
-  // เมื่อปิด Modal
   const handleCloseReceiptModal = () => {
     setReceiptInfo(null);
   };
@@ -164,7 +162,7 @@ function RealTimeOrderPage() {
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, setUser]);
 
   const handleAcceptOrder = async (orderId) => {
     try {
@@ -245,12 +243,11 @@ function RealTimeOrderPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ orderId }), // Corrected to use property shorthand
+            body: JSON.stringify({ orderId }),
           }
         );
 
         if (response.ok) {
-          // Refresh the list of orders after canceling the order
           fetchOrders();
         } else {
           const data = await response.json();
@@ -278,9 +275,9 @@ function RealTimeOrderPage() {
     }
   };
 
-  const saveSaleRoundStatus = (isOpen) => {
-    localStorage.setItem('isSaleRoundOpen', isOpen);
-  };
+  // const saveSaleRoundStatus = (isOpen) => {
+  //   localStorage.setItem('isSaleRoundOpen', isOpen);
+  // };
 
   const fetchOrders = async () => {
     try {
@@ -301,61 +298,59 @@ function RealTimeOrderPage() {
     }
   };
 
-  const handleOpenSaleRound = async () => {
-    try {
-      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
-        method: 'POST',
-      });
-      if (response.ok) {
-        setIsSaleRound(true);
-        setIsSaleRoundOpen(true);
-        saveSaleRoundStatus(true);
-      }
-    } catch (error) {
-      console.error('Error opening sale round:', error);
-    }
-  };
+  // const handleOpenSaleRound = async () => {
+  //   try {
+  //     const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+  //       method: 'POST',
+  //     });
+  //     if (response.ok) {
+  //       setIsSaleRound(true);
+  //       setIsSaleRoundOpen(true);
+  //       saveSaleRoundStatus(true);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error opening sale round:', error);
+  //   }
+  // };
 
-  const handleCloseSaleRound = async () => {
-    try {
-      const currentTime = moment().format('DD/MM/YYYY, H:mm:ss');
+  // const handleCloseSaleRound = async () => {
+  //   try {
+  //     const currentTime = moment().format('DD/MM/YYYY, H:mm:ss');
 
-      const result = await Swal.fire({
-        title: 'คุณต้องการที่จะปิดรอบขายใช่หรือไม่?',
-        text: ` ของรอบขายในเวลาใช่หรือไม่คือ ${currentTime}`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่',
-        reverseButtons: true,
-      });
+  //     const result = await Swal.fire({
+  //       title: 'คุณต้องการที่จะปิดรอบขายใช่หรือไม่?',
+  //       text: ` ของรอบขายในเวลาใช่หรือไม่คือ ${currentTime}`,
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonText: 'ใช่',
+  //       cancelButtonText: 'ไม่',
+  //       reverseButtons: true,
+  //     });
 
-      if (result.isConfirmed) {
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
-          method: 'POST',
-        });
-        if (response.ok) {
-          setIsSaleRound(false);
-          setIsSaleRoundOpen(false);
-          saveSaleRoundStatus(false);
-        } else {
-          // Handle the case where the sale round is already closed
-          const data = await response.json();
-          if (data.error === 'Sale round is already closed') {
-            setIsSaleRound(false);
-            setIsSaleRoundOpen(false);
-            saveSaleRoundStatus(false);
-          } else {
-            console.error('Error closing sale round:', data.error);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error closing sale round:', error);
-    }
-  };
+  //     if (result.isConfirmed) {
+  //       const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
+  //         method: 'POST',
+  //       });
+  //       if (response.ok) {
+  //         setIsSaleRound(false);
+  //         setIsSaleRoundOpen(false);
+  //         saveSaleRoundStatus(false);
+  //       } else {
+  //         const data = await response.json();
+  //         if (data.error === 'Sale round is already closed') {
+  //           setIsSaleRound(false);
+  //           setIsSaleRoundOpen(false);
+  //           saveSaleRoundStatus(false);
+  //         } else {
+  //           console.error('Error closing sale round:', data.error);
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error closing sale round:', error);
+  //   }
+  // };
 
-  // เพิ่มฟังก์ชันตรวจสอบเวลาเปิด-ปิดร้าน
   const checkSaleRoundTime = () => {
     const now = moment().tz('Asia/Bangkok');
     const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 });
@@ -406,12 +401,10 @@ function RealTimeOrderPage() {
           return true;
         }
 
-        // Check if the search term is similar to 'ยกเลิก' or 'cancelled'
         if (searchTermLower.includes('ยก') && statusLower === 'cancelled') {
           return true;
         }
 
-        // Check if the search term is similar to 'เสร็จสิ้น' or 'completed'
         if (
           (searchTermLower === 'เสร็จสิ้น' || searchTermLower === 'completed') &&
           statusLower === 'completed'
@@ -441,7 +434,7 @@ function RealTimeOrderPage() {
             <StyledDiv>{isSaleRoundOpen ? 'Order ทั้งหมด' : 'Orderทั้งหมด'}</StyledDiv>
           </Typography>
           <Box sx={{ '& button': { m: 1 } }}>
-            <Button
+            {/* <Button
               variant="contained"
               color="success"
               onClick={handleOpenSaleRound}
@@ -456,25 +449,22 @@ function RealTimeOrderPage() {
               disabled={!isSaleRound}
             >
               <StyledDiv>ปิดรอบขาย</StyledDiv>
+            </Button> */}
+            {/* <Button
+              variant="contained"
+              sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
+              onClick={() => navigate('/open-order')}
+            >
+              <StyledDiv>ระยะเวลาการเปิด-ร้าน</StyledDiv>
+            </Button> */}
+
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#333333', '&:hover': { backgroundColor: '#555555' } }}
+              onClick={() => navigate('/order')}
+            >
+              <StyledDiv>Order ประจำวัน</StyledDiv>
             </Button>
-            {user && user.role === 'เจ้าของร้าน' && (
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
-                onClick={() => navigate('/open-order')}
-              >
-                <StyledDiv>ระยะเวลาการเปิด-ร้าน</StyledDiv>
-              </Button>
-            )}
-            {user && user.role === 'เจ้าของร้าน' && (
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: '#333333', '&:hover': { backgroundColor: '#555555' } }}
-                onClick={() => navigate('/order')}
-              >
-                <StyledDiv>Order ประจำวัน</StyledDiv>
-              </Button>
-            )}
           </Box>
         </Stack>
         <Box sx={{ '& button': { m: 1 } }}>
@@ -517,7 +507,7 @@ function RealTimeOrderPage() {
               <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                    {/* <TableCell>เลขออเดอร์</TableCell> */}
+                    <TableCell>เลขออเดอร์</TableCell>
                     <TableCell>ชื่อผู้ทำรายการ</TableCell>
                     <TableCell align="right">รายการเมนู</TableCell>
                     <TableCell align="right">สถานะ</TableCell>
@@ -535,6 +525,7 @@ function RealTimeOrderPage() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((order) => (
                       <TableRow key={order._id}>
+                        <TableCell>{order._id}</TableCell>
                         <TableCell>{order.user}</TableCell>
                         <TableCell align="right">
                           <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
@@ -693,13 +684,6 @@ function RealTimeOrderPage() {
                             }
                           `}
                         />
-                        {/* <Button
-                          variant="contained"
-                          onClick={handleCloseReceiptModal}
-                          style={{ marginLeft: 'auto', marginTop: '1rem' }}
-                        >
-                          ปิด
-                        </Button> */}
                       </div>
                     )}
                 </Box>

@@ -27,7 +27,7 @@ const SaleRoundsTable = () => {
   `;
   const [saleRounds, setSaleRounds] = useState([]);
 
-  const navigate = useNavigate(); // สร้าง instance ของ useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDailySales = async () => {
