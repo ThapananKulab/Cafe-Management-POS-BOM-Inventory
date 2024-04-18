@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import SalesByTimeChart from '../sale-by-time-chart'; // ไฟล์นี้เราเพิ่มเติมขึ้นมาเพื่อแสดง Line Chart
 
 import AppCurrentVisits from '../app-current-visits';
-import AppWebsiteVisits from '../app-website-visits';
+// import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
 // import AppTrafficBySite from '../app-traffic-by-site';
 // import AppCurrentSubject from '../app-current-subject';
@@ -34,9 +34,41 @@ export default function AppView() {
   const [mostPurchasedMenuItems, setMostPurchasedMenuItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
   const [setPreviousWeeklySales] = useState(0);
-  const [dailySales, setDailySales] = useState({});
+  const [setDailySales] = useState({});
   const [totalProfit, setTotalProfit] = useState(0);
   const [monthlySales, setMonthlySales] = useState([]);
+  const [weekSales, setWeekSales] = useState([]);
+  const [yearlySales, setYearlySales] = useState([]);
+
+  useEffect(() => {
+    const fetchYearlySales = async () => {
+      try {
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByYear'
+        );
+        setYearlySales(response.data);
+      } catch (error) {
+        console.error('Error fetching yearly sales:', error);
+      }
+    };
+
+    fetchYearlySales();
+  }, []);
+
+  useEffect(() => {
+    const fetchWeekSales = async () => {
+      try {
+        const response = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByWeek'
+        );
+        setWeekSales(response.data);
+      } catch (error) {
+        console.error('Error fetching weekly sales:', error);
+      }
+    };
+
+    fetchWeekSales();
+  }, []);
 
   useEffect(() => {
     const fetchMonthlySales = async () => {
@@ -93,19 +125,19 @@ export default function AppView() {
 
     fetchWeeklyTotal();
     fetchPreviousWeeklyTotal();
-  }, [setPreviousWeeklySales]);
+  }, [setPreviousWeeklySales, setDailySales]);
 
-  const chartData = {
-    labels: Object.keys(dailySales),
-    series: [
-      {
-        name: 'ยอดขาย',
-        type: 'line',
-        fill: 'solid',
-        data: Object.values(dailySales),
-      },
-    ],
-  };
+  // const chartData = {
+  //   labels: Object.keys(dailySales),
+  //   series: [
+  //     {
+  //       name: 'ยอดขาย',
+  //       type: 'line',
+  //       fill: 'solid',
+  //       data: Object.values(dailySales),
+  //     },
+  //   ],
+  // };
 
   useEffect(() => {
     async function fetchData() {
@@ -179,6 +211,15 @@ export default function AppView() {
     hour12: false,
   });
   // const percentageChange = ((weeklySales - previousWeeklySales) / previousWeeklySales) * 100;
+  // const thaiWeekNames = [
+  //   'วันจันทร์',
+  //   'วันอังคาร',
+  //   'วันพุธ',
+  //   'วันพฤหัสบดี',
+  //   'วันศุกร์',
+  //   'วันเสาร์',
+  //   'วันอาทิตย์',
+  // ];
 
   const thaiMonths = [
     'มกราคม',
@@ -245,11 +286,17 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/inventory.png" />}
           />
         </Grid>
-
-        <Grid item xs={6} md={1} lg={8}>
-          <SalesByTimeChart />
+        <Grid xs={12} md={6} lg={4}>
+          <AppCurrentVisits
+            title="ยอดขายรายสัปดาห์"
+            chart={{
+              series: weekSales.map((week) => ({
+                label: `สัปดาห์ที่ ${week._id}`,
+                value: week.totalSales,
+              })),
+            }}
+          />
         </Grid>
-
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="ยอดขายรายเดือน"
@@ -261,26 +308,44 @@ export default function AppView() {
             }}
           />
         </Grid>
-        <Grid xs={12} md={6} lg={8}>
+
+        <Grid xs={12} md={6} lg={4}>
+          <AppCurrentVisits
+            title="ยอดขายรายปี"
+            chart={{
+              series: yearlySales.map((year) => ({
+                label: year._id.year,
+                value: year.totalSales,
+              })),
+            }}
+          />
+        </Grid>
+
+        <Grid container spacing={3} justifyContent="center" alignItems="center">
+          <Grid item xs={6} md={1} lg={7}>
+            <SalesByTimeChart />
+          </Grid>
+
+          <Grid xs={12} md={6} lg={5}>
+            <AppConversionRates
+              title="เมนูขายดี"
+              // subheader="(+43%) than last year"
+              chart={{
+                series: mostPurchasedMenuItems.map((item) => ({
+                  label: item.name,
+                  value: item.quantity,
+                })),
+              }}
+            />
+          </Grid>
+        </Grid>
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="ยอดขาย 7 วันหลังสุด"
             // subheader={`(${percentageChange.toFixed(2)}%) ในสัปดาห์นี้`}
             chart={chartData}
           />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={8}>
-          <AppConversionRates
-            title="เมนูขายดี"
-            // subheader="(+43%) than last year"
-            chart={{
-              series: mostPurchasedMenuItems.map((item) => ({
-                label: item.name,
-                value: item.quantity,
-              })),
-            }}
-          />
-        </Grid>
+        </Grid> */}
 
         {/* <Grid xs={12} md={6} lg={8}>
           <AppConversionRates

@@ -1,9 +1,15 @@
 import 'chart.js/auto';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
+import styled1 from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
+import { Typography } from '@mui/material';
+
 const SalesByTimeChart = () => {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [salesData, setSalesData] = useState([]);
 
   useEffect(() => {
@@ -36,7 +42,9 @@ const SalesByTimeChart = () => {
 
   return (
     <div>
-      <h2>กราฟยอดขายตามช่วงเวลาของวันนี้</h2>
+      <Typography variant="h6" gutterBottom>
+        <StyledDiv>ยอดขายตามช่วงเวลาของวันนี้</StyledDiv>
+      </Typography>
       <Line data={chartData} />
     </div>
   );
