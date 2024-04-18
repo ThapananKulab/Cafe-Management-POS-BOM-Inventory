@@ -30,17 +30,21 @@ function CreateProductForm() {
 
     const formData = new FormData();
     formData.append('productname', productData.productname);
-    formData.append('type', productData.type); // เพิ่ม type
+    formData.append('type', productData.type);
     formData.append('price', productData.price);
-    formData.append('quantity', productData.quantity); // เพิ่ม quantity
+    formData.append('quantity', productData.quantity);
     formData.append('image', productData.image);
 
     try {
-      const response = await axios.post('http://localhost:3333/api/test/createProduct', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        'https://test-api-01.azurewebsites.net/api/test/createProduct',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       console.log(response.data);
       // Handle success (e.g., showing a success message, redirecting, etc.)
     } catch (error) {

@@ -41,7 +41,9 @@ function AddRecipe() {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3333/api/inventoryitems/all');
+        const { data } = await axios.get(
+          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+        );
         const updatedIngredients = data.map((item) => ({
           ...item,
           unitPrice: item.unitPrice || 0, // Default value if unitPrice is undefined
@@ -129,7 +131,9 @@ function AddRecipe() {
       return;
     }
     try {
-      const recipesResponse = await axios.get('http://localhost:3333/api/recipes/all');
+      const recipesResponse = await axios.get(
+        'https://test-api-01.azurewebsites.net/api/recipes/all'
+      );
       const recipes = recipesResponse.data;
       const isDuplicate = recipes.some(
         (existingRecipe) => existingRecipe.name.toLowerCase() === recipe.title.toLowerCase()
@@ -142,7 +146,7 @@ function AddRecipe() {
         return;
       }
 
-      const response = await axios.post('http://localhost:3333/api/recipes/add', {
+      const response = await axios.post('https://test-api-01.azurewebsites.net/api/recipes/add', {
         name: recipe.title,
         ingredients: ingredients.map((ingredient) => ({
           inventoryItemId: ingredient.inventoryItemId,
@@ -171,8 +175,8 @@ function AddRecipe() {
       quantity: 1,
       name: '',
       unit: 'gram',
-      unitPrice: '', // เพิ่ม unitPrice เข้าไปในข้อมูลของส่วนประกอบใหม่
-      realquantity: '', // เพิ่ม realQuantity เข้าไปในข้อมูลของส่วนประกอบใหม่
+      unitPrice: '',
+      realquantity: '',
     };
     setRecipe((prevRecipe) => ({
       ...prevRecipe,

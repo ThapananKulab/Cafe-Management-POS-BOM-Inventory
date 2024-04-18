@@ -100,7 +100,7 @@ const PendingReceipts = () => {
 
         const received = new Date();
 
-        await axios.post('http://localhost:3333/api/purchaseitem/add-to-q', {
+        await axios.post('https://test-api-01.azurewebsites.net/api/purchaseitem/add-to-q', {
           purchaseReceiptId,
           selectedItemIds: [itemId],
           status: 'withdrawn',

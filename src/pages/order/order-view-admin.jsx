@@ -92,7 +92,7 @@ function RealTimeOrderPage() {
 
   const checkSaleRoundStatus = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/status');
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/status');
       if (response.ok) {
         const data = await response.json();
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
@@ -113,7 +113,9 @@ function RealTimeOrderPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/saleorder/saleOrders/currentdate');
+      const response = await fetch(
+        'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders/currentdate'
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }
@@ -132,7 +134,9 @@ function RealTimeOrderPage() {
 
   const handleOpenSaleRound = async () => {
     try {
-      const response = await fetch('http://localhost:3333/api/salerounds/open', { method: 'POST' });
+      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+        method: 'POST',
+      });
       if (response.ok) {
         setIsSaleRound(true);
         setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
@@ -158,7 +162,7 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch('http://localhost:3333/api/salerounds/close', {
+        const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
           method: 'POST',
         });
         if (response.ok) {
