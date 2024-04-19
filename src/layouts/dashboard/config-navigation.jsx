@@ -85,13 +85,6 @@ const navConfig = [
         path: '/recipe',
         icon: icon('ic-rec'),
       },
-    ],
-  },
-  {
-    title: 'สินค้า',
-    // path: '/product',
-    icon: icon('cafe-8'),
-    subItems: [
       {
         title: 'เมนู',
         path: '/menu',
@@ -99,6 +92,12 @@ const navConfig = [
       },
     ],
   },
+  // {
+  //   title: 'สินค้า',
+  //   path: '/product',
+  //   icon: icon('cafe-8'),
+  //   subItems: [],
+  // },
   {
     title: 'ออเดอร์',
     icon: icon('ic-order'),

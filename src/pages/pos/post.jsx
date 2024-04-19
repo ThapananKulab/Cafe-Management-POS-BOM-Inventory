@@ -216,6 +216,7 @@ const CartTemplate = () => {
     { name: 'ปั่น', icon: 'mdi:blender' },
     { name: 'ทั่วไป', icon: 'ic:baseline-category' },
   ];
+
   useEffect(() => {
     const timer = setInterval(() => {
       const options = { hour12: false };

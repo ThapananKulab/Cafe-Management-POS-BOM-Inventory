@@ -205,6 +205,7 @@ const CreatePurchaseReceiptPage = () => {
                 <TableCell>รหัสสินค้า</TableCell>
                 <TableCell>ชื่อวัตถุดิบ</TableCell>
                 <TableCell>จำนวน</TableCell>
+                <TableCell>ปริมาณ</TableCell>
                 <TableCell>ราคาต่อหน่วย</TableCell>
                 <TableCell>ยอดรวม</TableCell>
                 <TableCell align="center">จัดการ</TableCell>
@@ -228,6 +229,7 @@ const CreatePurchaseReceiptPage = () => {
                       />
                     </TableCell>
                   </TableCell>{' '}
+                  <TableCell>{item.realquantity}</TableCell>
                   <TableCell>{item.unitPrice}</TableCell>
                   <TableCell>{item.total}</TableCell>
                   <TableCell>

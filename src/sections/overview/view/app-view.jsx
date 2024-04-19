@@ -301,6 +301,11 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/inventory.png" />}
           />
         </Grid>
+
+        <Grid item xs={6} md={1} lg={12}>
+          <SalesByTimeChart />
+        </Grid>
+
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="ยอดขายรายสัปดาห์"
@@ -334,10 +339,6 @@ export default function AppView() {
               })),
             }}
           />
-        </Grid>
-
-        <Grid item xs={6} md={1} lg={7}>
-          <SalesByTimeChart />
         </Grid>
 
         <Grid xs={12} md={6} lg={7}>

@@ -56,12 +56,12 @@ function AddRecipe() {
     fetchInventoryItems();
   }, []);
 
-  useEffect(() => {
-    const savedRecipe = localStorage.getItem('savedRecipe');
-    if (savedRecipe) {
-      setRecipe(JSON.parse(savedRecipe));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedRecipe = localStorage.getItem('savedRecipe');
+  //   if (savedRecipe) {
+  //     setRecipe(JSON.parse(savedRecipe));
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   localStorage.setItem('savedRecipe', JSON.stringify(recipe));
@@ -205,7 +205,7 @@ function AddRecipe() {
           const inventoryItem = inventoryItems.find(
             (item) => item._id === ingredient.inventoryItemId
           );
-          const { unitPrice } = inventoryItem || { unitPrice: 0 }; // Destructure with default value for unitPrice only
+          const { unitPrice } = inventoryItem || { unitPrice: 0 };
           newValue = {
             ...ingredient,
             [field]: calculateQuantity(value, unit, targetUnit),

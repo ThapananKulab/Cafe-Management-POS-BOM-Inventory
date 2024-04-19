@@ -273,11 +273,6 @@ function RealTimeOrderPage() {
       console.error('Error checking sale round status:', error);
     }
   };
-
-  // const saveSaleRoundStatus = (isOpen) => {
-  //   localStorage.setItem('isSaleRoundOpen', isOpen);
-  // };
-
   const fetchOrders = async () => {
     try {
       const response = await fetch(
@@ -370,11 +365,18 @@ function RealTimeOrderPage() {
         const searchTermLower = searchTerm.toLowerCase();
         const statusLower = order.status.toLowerCase();
         const containsSearchTerm = (keyword) => keyword.toLowerCase().includes(searchTermLower);
-
+        const isOrderOnSearchDate = moment(order.date)
+          .tz('Asia/Bangkok')
+          .format('DD/MM/YYYY')
+          .includes(searchTermLower);
+        const itemNames = order.items.map((item) => item.name.toLowerCase());
+        const hasItemName = itemNames.some((name) => name.includes(searchTermLower));
         if (
-          containsSearchTerm(order.user) ||
-          containsSearchTerm(order.paymentMethod) ||
-          containsSearchTerm(statusLower)
+          (containsSearchTerm(order.user) ||
+            containsSearchTerm(order.paymentMethod) ||
+            containsSearchTerm(statusLower) ||
+            isOrderOnSearchDate,
+          hasItemName)
         ) {
           return true;
         }
