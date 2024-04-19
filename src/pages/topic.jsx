@@ -2,6 +2,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -135,110 +136,116 @@ function App() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>
-        <StyledDiv>แจ้งเรื่อง</StyledDiv>
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleModalOpen}
-        style={{
-          display: 'block',
-          margin: 'auto',
-          fontSize: '1rem', // Adjust the font size as needed
-          padding: '5px 20px', // Adjust the padding as needed
-        }}
-      >
-        <StyledDiv>โพสต์</StyledDiv>
-      </Button>
+    <>
+      <Helmet>
+        <title>แจ้งเรื่อง</title>
+      </Helmet>
 
-      <Modal
-        open={isModalOpen}
-        onClose={handleModalClose}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Box
-          sx={{
-            width: 400,
-            bgcolor: 'background.paper',
-            p: 3,
-            borderRadius: '8px',
-            outline: 'none',
+      <Container maxWidth="md">
+        <Typography variant="h4" gutterBottom>
+          <StyledDiv>แจ้งเรื่อง</StyledDiv>
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleModalOpen}
+          style={{
+            display: 'block',
+            margin: 'auto',
+            fontSize: '1rem', // Adjust the font size as needed
+            padding: '5px 20px', // Adjust the padding as needed
           }}
         >
-          <Typography variant="h5" gutterBottom>
-            <StyledDiv>เพิ่มโพสต์ใหม่</StyledDiv>
-          </Typography>
-          <Stack spacing={2}>
-            <TextField
-              name="title"
-              label="Title"
-              variant="outlined"
-              fullWidth
-              value={formData.title}
-              onChange={handleChange}
-            />
-            <TextField
-              name="content"
-              label="Content"
-              variant="outlined"
-              multiline
-              rows={4}
-              fullWidth
-              value={formData.content}
-              onChange={handleChange}
-            />
-            <TextField
-              label="Author"
-              variant="outlined"
-              fullWidth
-              value={`${user?.firstname} ${user?.lastname} ${user?.role}`}
-              disabled
-            />
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Post
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Box mt={3}>
-        <Typography variant="h5" gutterBottom>
-          <StyledDiv>โพสต์ทั้งหมด</StyledDiv>
-        </Typography>
-        {posts
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .map((post) => (
-            <Card key={post._id} sx={{ mb: 2 }}>
-              <CardHeader
-                title={`${post.author}`}
-                subheader={new Date(post.createdAt).toLocaleString()}
+          <StyledDiv>โพสต์</StyledDiv>
+        </Button>
+
+        <Modal
+          open={isModalOpen}
+          onClose={handleModalClose}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              width: 400,
+              bgcolor: 'background.paper',
+              p: 3,
+              borderRadius: '8px',
+              outline: 'none',
+            }}
+          >
+            <Typography variant="h5" gutterBottom>
+              <StyledDiv>เพิ่มโพสต์ใหม่</StyledDiv>
+            </Typography>
+            <Stack spacing={2}>
+              <TextField
+                name="title"
+                label="Title"
+                variant="outlined"
+                fullWidth
+                value={formData.title}
+                onChange={handleChange}
               />
-              <CardContent>
-                <Typography variant="h3" component="div">
-                  <StyledDiv> {post.title}</StyledDiv>
-                </Typography>
-                <Typography>
-                  <StyledDiv>{post.content}</StyledDiv>
-                </Typography>
-              </CardContent>
-              <CardActions>
-                {user && user.role === 'เจ้าของร้าน' ? (
-                  <IconButton color="error" onClick={() => handleDelete(post._id)}>
-                    <Icon icon="material-symbols:delete-sharp" />
-                  </IconButton>
-                ) : null}
-              </CardActions>
-              <Divider />
-              {/* Add comments here */}
-            </Card>
-          ))}
-      </Box>
-    </Container>
+              <TextField
+                name="content"
+                label="Content"
+                variant="outlined"
+                multiline
+                rows={4}
+                fullWidth
+                value={formData.content}
+                onChange={handleChange}
+              />
+              <TextField
+                label="Author"
+                variant="outlined"
+                fullWidth
+                value={`${user?.firstname} ${user?.lastname} ${user?.role}`}
+                disabled
+              />
+              <Button variant="contained" color="primary" onClick={handleSubmit}>
+                Post
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+        <Box mt={3}>
+          <Typography variant="h5" gutterBottom>
+            <StyledDiv>โพสต์ทั้งหมด</StyledDiv>
+          </Typography>
+          {posts
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .map((post) => (
+              <Card key={post._id} sx={{ mb: 2 }}>
+                <CardHeader
+                  title={`${post.author}`}
+                  subheader={new Date(post.createdAt).toLocaleString()}
+                />
+                <CardContent>
+                  <Typography variant="h3" component="div">
+                    <StyledDiv> {post.title}</StyledDiv>
+                  </Typography>
+                  <Typography>
+                    <StyledDiv>{post.content}</StyledDiv>
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  {user && user.role === 'เจ้าของร้าน' ? (
+                    <IconButton color="error" onClick={() => handleDelete(post._id)}>
+                      <Icon icon="material-symbols:delete-sharp" />
+                    </IconButton>
+                  ) : null}
+                </CardActions>
+                <Divider />
+                {/* Add comments here */}
+              </Card>
+            ))}
+        </Box>
+      </Container>
+    </>
   );
 }
 

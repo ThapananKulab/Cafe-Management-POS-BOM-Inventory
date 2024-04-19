@@ -54,11 +54,9 @@ const SalesReportPage = () => {
   useEffect(() => {
     const fetchWeeklySales = async () => {
       try {
-        const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/report/weeklySales'
-        );
+        const response = await axios.get('http://localhost:3333/api/saleorder/report/weeklySales');
         setWeeklySales(response.data.weeklySales);
-        setTotalSales(response.data.totalSales); // Set total sales for the week
+        setTotalSales(response.data.totalSales);
       } catch (error) {
         console.error('Error fetching weekly sales:', error);
       }
@@ -85,12 +83,12 @@ const SalesReportPage = () => {
               defaultValue="/report/daily"
               inputProps={{ 'aria-label': 'select' }}
             >
-              <MenuItem value="/report/daily">รายงานยอดขาย 7 วันย้อนหลัง</MenuItem>
+              {/* <MenuItem value="/report/daily">รายงานยอดขาย 7 วันย้อนหลัง</MenuItem> */}
               <MenuItem value="/report/cancelbill">รายงานการยกเลิกบิล</MenuItem>
               <MenuItem value="/report/salemenu">ประวัติการขายสินค้า</MenuItem>
               <MenuItem value="/report/payment">รายงานการขายจำแนกตามประเภทการชำระเงิน</MenuItem>
               <MenuItem value="/report/cost">รายชื่อวัตถุดิบราคาต้นทุนสูงสุด</MenuItem>
-              <MenuItem value="/report/popular-menu">ยอดขายที่ขายดีสุดตามเวลา</MenuItem>
+              {/* <MenuItem value="/report/popular-menu">ยอดขายที่ขายดีสุดตามเวลา</MenuItem> */}
             </Select>
           </Paper>
         </Stack>

@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 import { Icon } from '@iconify/react';
 import styled1 from 'styled-components';
 import ReactToPrint from 'react-to-print';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import React, { useRef, useState, useEffect } from 'react';
 
@@ -393,15 +394,19 @@ function RealTimeOrderPage() {
     .reduce((acc, order) => acc + order.total, 0);
 
   return (
-    <Container>
-      <Box sx={{ width: '100%', overflow: 'hidden' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
-          <Typography variant="h4" sx={{ mb: 5 }}>
-            {/* <StyledDiv>{isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}</StyledDiv> */}
-            <StyledDiv>{isSaleRoundOpen ? 'ออเดอร์ประจำวัน' : 'ออเดอร์ประจำวัน'}</StyledDiv>
-          </Typography>
-          <Box sx={{ '& button': { m: 1 } }}>
-            {/* <Button
+    <>
+      <Helmet>
+        <title>ออเดอร์ประจำวัน</title>
+      </Helmet>
+      <Container>
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
+            <Typography variant="h4" sx={{ mb: 5 }}>
+              {/* <StyledDiv>{isSaleRoundOpen ? 'รอบขายเปิดอยู่' : 'รอบขายปิดแล้ว'}</StyledDiv> */}
+              <StyledDiv>{isSaleRoundOpen ? 'ออเดอร์ประจำวัน' : 'ออเดอร์ประจำวัน'}</StyledDiv>
+            </Typography>
+            <Box sx={{ '& button': { m: 1 } }}>
+              {/* <Button
               variant="contained"
               color="success"
               onClick={handleOpenSaleRound}
@@ -435,200 +440,202 @@ function RealTimeOrderPage() {
                 <StyledDiv>Order ทั้งหมด</StyledDiv>
               </Button>
             )} */}
+            </Box>
+          </Stack>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: '#78909C', color: '#fff' }} // Show All
+              onClick={() => handleSearch('All')}
+              disabled={searchTerm === 'All'}
+            >
+              <StyledDiv>ทั้งหมด</StyledDiv>
+            </Button>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: '#66BB6A', color: '#fff' }} // Completed
+              onClick={() => handleSearch('Completed')}
+              disabled={searchTerm === 'Completed'}
+            >
+              <StyledDiv>เสร็จสิ้น</StyledDiv>
+            </Button>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: '#FFA726', color: '#fff' }} // Pending
+              onClick={() => handleSearch('Pending')}
+              disabled={searchTerm === 'Pending'}
+            >
+              <StyledDiv>กำลังรอ</StyledDiv>
+            </Button>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: '#EF5350', color: '#fff' }} // Cancelled
+              onClick={() => handleSearch('Cancelled')}
+              disabled={searchTerm === 'Cancelled'}
+            >
+              <StyledDiv>ยกเลิก</StyledDiv>
+            </Button>
           </Box>
-        </Stack>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-          <Button
-            variant="contained"
-            style={{ backgroundColor: '#78909C', color: '#fff' }} // Show All
-            onClick={() => handleSearch('All')}
-            disabled={searchTerm === 'All'}
-          >
-            <StyledDiv>ทั้งหมด</StyledDiv>
-          </Button>
-          <Button
-            variant="contained"
-            style={{ backgroundColor: '#66BB6A', color: '#fff' }} // Completed
-            onClick={() => handleSearch('Completed')}
-            disabled={searchTerm === 'Completed'}
-          >
-            <StyledDiv>เสร็จสิ้น</StyledDiv>
-          </Button>
-          <Button
-            variant="contained"
-            style={{ backgroundColor: '#FFA726', color: '#fff' }} // Pending
-            onClick={() => handleSearch('Pending')}
-            disabled={searchTerm === 'Pending'}
-          >
-            <StyledDiv>กำลังรอ</StyledDiv>
-          </Button>
-          <Button
-            variant="contained"
-            style={{ backgroundColor: '#EF5350', color: '#fff' }} // Cancelled
-            onClick={() => handleSearch('Cancelled')}
-            disabled={searchTerm === 'Cancelled'}
-          >
-            <StyledDiv>ยกเลิก</StyledDiv>
-          </Button>
-        </Box>
 
-        <Paper sx={{ mt: 3 }}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  {/* <TableCell>เลขออเดอร์</TableCell> */}
-                  <TableCell>ชื่อผู้ทำรายการ</TableCell>
-                  <TableCell align="right">รายการเมนู</TableCell>
-                  <TableCell align="right">สถานะ</TableCell>
-                  <TableCell align="right">วันที่และเวลา</TableCell>
-                  <TableCell align="right">การชำระเงิน</TableCell>
-                  <TableCell align="right">ราคารวม</TableCell>
-                  <TableCell align="right">เงินที่รับมา</TableCell>
-                  {filteredOrders.some((order) => order.status === 'Pending') && (
-                    <TableCell align="center">จัดการ</TableCell>
-                  )}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredOrdersByStatus.map((order) => (
-                  <TableRow key={order._id}>
-                    <TableCell>{order.user}</TableCell>
-                    <TableCell align="right">
-                      <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
-                        {order.items.map((item, index) => (
-                          <li key={index}>
-                            {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
-                          </li>
-                        ))}
-                      </ul>
-                    </TableCell>
-                    <TableCell align="right">
-                      <StatusBadge status={order.status} />
-                    </TableCell>
-                    <TableCell align="right">
-                      {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
-                    </TableCell>
-                    <TableCell align="right">{order.paymentMethod}</TableCell>
-                    <TableCell align="right">{formatCurrency(order.total)}</TableCell>
-                    <TableCell align="right">
-                      {(order.status === 'Completed' || order.status === 'Pending') && (
-                        <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
-                          ดูใบเสร็จ
-                        </Button>
-                      )}
-                    </TableCell>
+          <Paper sx={{ mt: 3 }}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    {/* <TableCell>เลขออเดอร์</TableCell> */}
+                    <TableCell>ชื่อผู้ทำรายการ</TableCell>
+                    <TableCell align="right">รายการเมนู</TableCell>
+                    <TableCell align="right">สถานะ</TableCell>
+                    <TableCell align="right">วันที่และเวลา</TableCell>
+                    <TableCell align="right">การชำระเงิน</TableCell>
+                    <TableCell align="right">ราคารวม</TableCell>
+                    <TableCell align="right">เงินที่รับมา</TableCell>
+                    {filteredOrders.some((order) => order.status === 'Pending') && (
+                      <TableCell align="center">จัดการ</TableCell>
+                    )}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredOrdersByStatus.map((order) => (
+                    <TableRow key={order._id}>
+                      <TableCell>{order.user}</TableCell>
+                      <TableCell align="right">
+                        <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                          {order.items.map((item, index) => (
+                            <li key={index}>
+                              {`${item.quantity} x ${item.name} - ${formatCurrency(item.price)}`}
+                            </li>
+                          ))}
+                        </ul>
+                      </TableCell>
+                      <TableCell align="right">
+                        <StatusBadge status={order.status} />
+                      </TableCell>
+                      <TableCell align="right">
+                        {moment(order.date).tz('Asia/Bangkok').format('DD/MM/YYYY, H:mm:ss')}
+                      </TableCell>
+                      <TableCell align="right">{order.paymentMethod}</TableCell>
+                      <TableCell align="right">{formatCurrency(order.total)}</TableCell>
+                      <TableCell align="right">
+                        {(order.status === 'Completed' || order.status === 'Pending') && (
+                          <Button variant="outlined" onClick={() => handleViewReceipt(order._id)}>
+                            ดูใบเสร็จ
+                          </Button>
+                        )}
+                      </TableCell>
 
-                    {/* <TableCell align="right">
+                      {/* <TableCell align="right">
                         {order.total + (order.change || 0) === order.total
                           ? 'รับมาพอดี'
                           : formatCurrency(order.total + (order.change || 0))}
                       </TableCell> */}
-                    <TableCell align="right">
-                      {order.status === 'Pending' && (
-                        <Box>
-                          <IconButton onClick={() => handleAcceptOrder(order._id)}>
-                            <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
-                          </IconButton>
-                          <IconButton onClick={() => handleCancelOrder(order._id)}>
-                            <Icon icon="mdi:cancel-bold" color="#f44336" width={30} height={30} />
-                          </IconButton>
-                        </Box>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <Modal
-            open={
-              !!receiptInfo &&
-              (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending')
-            }
-            onClose={handleCloseReceiptModal}
-          >
-            <StyledDiv>
-              <Box
-                sx={{
-                  position: 'fixed',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: 400,
-                  bgcolor: 'background.paper',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                {receiptInfo &&
-                  (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending') && (
-                    <div style={{ width: '100%' }}>
-                      <div ref={componentRef}>
-                        <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
-                        <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
-                        <p>
-                          วันที่:{' '}
-                          {moment(receiptInfo.date)
-                            .tz('Asia/Bangkok')
-                            .format('DD/MM/YYYY, H:mm:ss')}
-                        </p>
-                        <p>รายการสินค้า:</p>
-                        <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
-                          {receiptInfo.items.map((item, index) => (
-                            <li key={index} style={{ textAlign: 'left' }}>
-                              {item.quantity} x {item.name}
-                              <span style={{ float: 'right' }}>
-                                {formatCurrency(item.price * item.quantity)}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-
-                        <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
-
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                          <p>
-                            เงินที่รับมา:
-                            {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
-                          </p>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                          <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
-                        </div>
-                        <hr style={{ marginLeft: '8px', flex: '1' }} />
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}>
-                            ยอดรวม:
-                          </p>
-                          <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-                            {formatCurrency(receiptInfo.total)}
-                          </p>
-                        </div>
-                        <hr style={{ marginLeft: '8px', flex: '1' }} />
-                      </div>
-
-                      <ReactToPrint
-                        trigger={() => (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            style={{ marginLeft: 'auto', marginTop: '1rem' }}
-                          >
-                            <StyledDiv>พิมพ์รายการ</StyledDiv>
-                          </Button>
+                      <TableCell align="right">
+                        {order.status === 'Pending' && (
+                          <Box>
+                            <IconButton onClick={() => handleAcceptOrder(order._id)}>
+                              <Icon icon="fa:check" color="#4caf50" width={24} height={24} />
+                            </IconButton>
+                            <IconButton onClick={() => handleCancelOrder(order._id)}>
+                              <Icon icon="mdi:cancel-bold" color="#f44336" width={30} height={30} />
+                            </IconButton>
+                          </Box>
                         )}
-                        content={() => componentRef.current}
-                        pageStyle={`
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <Modal
+              open={
+                !!receiptInfo &&
+                (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending')
+              }
+              onClose={handleCloseReceiptModal}
+            >
+              <StyledDiv>
+                <Box
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  {receiptInfo &&
+                    (receiptInfo.status === 'Completed' || receiptInfo.status === 'Pending') && (
+                      <div style={{ width: '100%' }}>
+                        <div ref={componentRef}>
+                          <h2 style={{ textAlign: 'center', margin: '0' }}>ใบเสร็จ</h2>
+                          <p>เลขที่ออเดอร์: {receiptInfo._id}</p>
+                          <p>
+                            วันที่:{' '}
+                            {moment(receiptInfo.date)
+                              .tz('Asia/Bangkok')
+                              .format('DD/MM/YYYY, H:mm:ss')}
+                          </p>
+                          <p>รายการสินค้า:</p>
+                          <ul style={{ listStyleType: 'none', paddingInlineStart: 0 }}>
+                            {receiptInfo.items.map((item, index) => (
+                              <li key={index} style={{ textAlign: 'left' }}>
+                                {item.quantity} x {item.name}
+                                <span style={{ float: 'right' }}>
+                                  {formatCurrency(item.price * item.quantity)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <p>วิธีการชำระเงิน: {receiptInfo.paymentMethod}</p>
+
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <p>
+                              เงินที่รับมา:
+                              {formatCurrency(receiptInfo.total + (receiptInfo.change || 0))}
+                            </p>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <p>เงินทอน: {formatCurrency(receiptInfo.change || 0)}</p>
+                          </div>
+                          <hr style={{ marginLeft: '8px', flex: '1' }} />
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'flex-end',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <p
+                              style={{ fontWeight: 'bold', fontSize: '1.2rem', marginRight: '8px' }}
+                            >
+                              ยอดรวม:
+                            </p>
+                            <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                              {formatCurrency(receiptInfo.total)}
+                            </p>
+                          </div>
+                          <hr style={{ marginLeft: '8px', flex: '1' }} />
+                        </div>
+
+                        <ReactToPrint
+                          trigger={() => (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              style={{ marginLeft: 'auto', marginTop: '1rem' }}
+                            >
+                              <StyledDiv>พิมพ์รายการ</StyledDiv>
+                            </Button>
+                          )}
+                          content={() => componentRef.current}
+                          pageStyle={`
                             @page {
                               size: A4;
                               margin: 0;
@@ -639,37 +646,38 @@ function RealTimeOrderPage() {
                               }
                             }
                           `}
-                      />
-                      {/* <Button
+                        />
+                        {/* <Button
                           variant="contained"
                           onClick={handleCloseReceiptModal}
                           style={{ marginLeft: 'auto', marginTop: '1rem' }}
                         >
                           ปิด
                         </Button> */}
-                    </div>
-                  )}
-              </Box>
-            </StyledDiv>
-          </Modal>
+                      </div>
+                    )}
+                </Box>
+              </StyledDiv>
+            </Modal>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Box
-              sx={{
-                p: 2,
-                backgroundColor: 'success.main',
-                color: 'white',
-                borderRadius: '4px',
-              }}
-            >
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
-                <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
-              </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  backgroundColor: 'success.main',
+                  color: 'white',
+                  borderRadius: '4px',
+                }}
+              >
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }} align="right">
+                  <StyledDiv>ยอดรวมทั้งหมด: {formatCurrency(totalAmount)}</StyledDiv>
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+          </Paper>
+        </Box>
+      </Container>
+    </>
   );
 }
 

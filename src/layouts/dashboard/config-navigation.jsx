@@ -17,7 +17,7 @@ const navConfig = [
       },
       {
         title: 'รายงาน',
-        path: '/report/daily',
+        path: '/report/salemenu',
         icon: icon('report'),
       },
     ],

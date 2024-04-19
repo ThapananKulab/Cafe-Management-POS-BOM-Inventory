@@ -200,7 +200,6 @@ function RealTimeOrderPage() {
     }
   };
 
-  // ฟังก์ชันสำหรับหักล้างสต็อก
   const deductStock = async (orderId) => {
     try {
       const response = await fetch(
