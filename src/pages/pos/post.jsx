@@ -318,8 +318,8 @@ const CartTemplate = () => {
           const unavailableIngredientsFromResponse =
             error.response.data.unavailableIngredients || [];
 
-          console.log('errorMessageFromResponse:', errorMessageFromResponse);
-          console.log('unavailableIngredientsFromResponse:', unavailableIngredientsFromResponse);
+          // console.log('errorMessageFromResponse:', errorMessageFromResponse);
+          // console.log('unavailableIngredientsFromResponse:', unavailableIngredientsFromResponse);
 
           if (unavailableIngredientsFromResponse.length > 0) {
             fullErrorMessage = unavailableIngredientsFromResponse.reduce(

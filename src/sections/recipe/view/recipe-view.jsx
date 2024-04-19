@@ -220,9 +220,9 @@ function RecipeTable() {
         });
       }
     } catch (error) {
-      console.error('Failed to delete recipe:', error);
+      console.error('มีเมนูอยู่แล้ว ลบเมนูก่อน', error);
 
-      toast.error('Failed to delete recipe.', {
+      toast.error('มีเมนูอยู่แล้ว ลบเมนูก่อน', {
         position: 'top-right',
         autoClose: 1000,
         hideProgressBar: false,

@@ -145,7 +145,6 @@ function AddRecipe() {
         });
         return;
       }
-
       const response = await axios.post('https://test-api-01.azurewebsites.net/api/recipes/add', {
         name: recipe.title,
         ingredients: ingredients.map((ingredient) => ({
@@ -293,15 +292,15 @@ function AddRecipe() {
                       const newUnit = e.target.value;
                       setIngredientUnits((prevUnits) => {
                         const updatedUnits = [...prevUnits];
-                        updatedUnits[index] = newUnit; // ปรับค่าหน่วยใหม่สำหรับส่วนประกอบนี้
+                        updatedUnits[index] = newUnit;
                         return updatedUnits;
                       });
-                      handleUnitChange(e); // เรียกใช้งานฟังก์ชัน handleUnitChange เพื่อเปลี่ยนค่าหน่วยสำหรับทุกส่วนประกอบ
+                      handleUnitChange(e);
                     }}
                   >
                     <MenuItem value="gram">กรัม</MenuItem>
-                    {/* <MenuItem value="teaspoon">ช้อนชา</MenuItem>
-                    <MenuItem value="tablespoon">ช้อนโต๊ะ</MenuItem> */}
+                    <MenuItem value="grams">ชิ้น</MenuItem>
+                    <MenuItem value="grams1">ML</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
