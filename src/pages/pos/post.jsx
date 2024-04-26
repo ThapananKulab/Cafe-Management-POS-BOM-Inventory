@@ -60,9 +60,41 @@ const CartTemplate = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [recipes, setRecipes] = useState([]);
-  const [inventoryItems, setInventoryItems] = useState([]); // เพิ่ม state สำหรับเก็บ inventory items
+  const [inventoryItems, setInventoryItems] = useState([]);
   const [qrCode, setQrCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('0819139936');
+  // const [phoneNumber, setPhoneNumber] = useState('0819139936');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  useEffect(() => {
+    const fetchPhoneNumber = async () => {
+      try {
+        const response = await axios.get('https://test-api-01.azurewebsites.net/api/promptpay/all');
+        setPhoneNumber(response.data);
+      } catch (error) {
+        console.error('Error fetching phone number:', error);
+      }
+    };
+
+    fetchPhoneNumber();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('https://test-api-01.azurewebsites.net/generateQR', {
+        phoneNumber,
+        amount: totalPrice,
+      });
+      if (response.data.RespCode === 200) {
+        setQrCode(response.data.Result);
+      } else {
+        alert(response.data.RespMessage);
+      }
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      alert('Failed to generate QR code');
+    }
+  };
 
   const countItemsInCart = (id) =>
     cartItems.reduce((total, item) => {
@@ -84,24 +116,6 @@ const CartTemplate = () => {
   // ฟังก์ชันเมื่อเลือกเงินสด 1000
   const handleCash1000 = () => {
     setReceivedAmount(1000);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('https://test-api-01.azurewebsites.net/generateQR', {
-        phoneNumber,
-        amount: totalPrice, // ให้ใช้ totalPrice แทนค่า amount
-      });
-      if (response.data.RespCode === 200) {
-        setQrCode(response.data.Result);
-      } else {
-        alert(response.data.RespMessage);
-      }
-    } catch (error) {
-      console.error('Error generating QR code:', error);
-      alert('Failed to generate QR code');
-    }
   };
 
   useEffect(() => {

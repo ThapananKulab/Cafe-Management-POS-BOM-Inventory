@@ -32,6 +32,7 @@ export const NearInvent = lazy(() => import('src/pages/invent/near-invent'));
 export const MenuShow = lazy(() => import('src/pages/menu/menu-view'));
 export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/pos/post'));
+export const PromptPay = lazy(() => import('src/pages/pos/changepromptpay'));
 export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
 export const TestR = lazy(() => import('src/pages/test-r'));
 export const TestM = lazy(() => import('src/pages/test-m'));
@@ -187,6 +188,10 @@ export default function Router() {
         {
           path: '/purchase/withdraw-out',
           element: <WithdrawOut />,
+        },
+        {
+          path: '/manage/changepromptpay',
+          element: <PromptPay />,
         },
       ],
     },

@@ -127,6 +127,11 @@ const navConfig = [
     ],
   },
   {
+    title: 'การตั้งค่า',
+    path: '/manage/changepromptpay',
+    icon: icon('setting'),
+  },
+  {
     title: 'POS',
     path: '/sale/pos',
     icon: icon('ic_sell'),
