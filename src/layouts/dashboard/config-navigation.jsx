@@ -128,8 +128,14 @@ const navConfig = [
   },
   {
     title: 'การตั้งค่า',
-    path: '/manage/changepromptpay',
     icon: icon('setting'),
+    subItems: [
+      {
+        title: 'การชำระเงิน Promtpay',
+        path: '/manage/changepromptpay',
+        icon: icon('PromptPay-logo'),
+      },
+    ],
   },
   {
     title: 'POS',

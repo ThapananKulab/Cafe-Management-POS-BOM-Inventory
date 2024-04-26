@@ -169,7 +169,8 @@ const AddPhonePage = () => {
           gutterBottom
           style={{ fontWeight: 'bold', textAlign: 'center' }}
         >
-          <StyledDiv>เลข PromptPay ปัจจุบัน: {promptPayNumbers.join(', ')} </StyledDiv>
+          <StyledDiv>เลข PromptPay ปัจจุบัน: </StyledDiv>
+          <StyledDiv style={{ color: 'red' }}>{promptPayNumbers.join(', ')}</StyledDiv>
         </Typography>
 
         <Box marginTop={4}>
@@ -179,22 +180,30 @@ const AddPhonePage = () => {
           <table>
             <thead>
               <tr>
-                <th>ลำดับ</th>
-                <th>หมายเลขโทรศัพท์</th>
+                <th>
+                  <StyledDiv>ลำดับ</StyledDiv>
+                </th>
+                <th>
+                  <StyledDiv>หมายเลขโทรศัพท์</StyledDiv>
+                </th>
               </tr>
             </thead>
             <tbody>
               {phoneNumbers.map((phone, index) => (
                 <tr key={phone._id}>
-                  <td>{index + 1}</td>
-                  <td>{phone.phoneNumber}</td>
+                  <td>
+                    <StyledDiv>{index + 1}</StyledDiv>
+                  </td>
+                  <td>
+                    <StyledDiv>{phone.phoneNumber}</StyledDiv>
+                  </td>
                   <td>
                     <Button
                       variant="outlined"
                       color="secondary"
                       onClick={() => handleDeletePhoneNumber(phone._id)}
                     >
-                      ลบ
+                      <StyledDiv>ลบ</StyledDiv>
                     </Button>
                   </td>
                 </tr>
