@@ -1,6 +1,9 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import styled1 from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Box,
@@ -42,6 +45,7 @@ const AddPhonePage = () => {
       setSuccess(true);
       setAddError(null);
       fetchPhoneNumbers();
+      toast.success('เพิ่มหมายเลขโทรศัพท์สำเร็จแล้ว');
     } catch (err) {
       setAddError(err.response?.data?.error || 'เพิ่มไม่สำเร็จ');
       setSuccess(false);
@@ -66,6 +70,7 @@ const AddPhonePage = () => {
       });
       setSuccess(true);
       setAddError(null);
+      toast.success('เปลี่ยนเบอร์สำเร็จแล้ว');
     } catch (error) {
       console.error('Error adding PromptPay:', error);
       setSuccess(false);
@@ -87,16 +92,31 @@ const AddPhonePage = () => {
 
   const handleDeletePhoneNumber = async (id) => {
     try {
-      await axios.delete(`https://test-api-01.azurewebsites.net/api/phonenumber/delete/${id}`);
-      // หลังจากลบข้อมูลสำเร็จ ให้เรียกฟังก์ชัน fetchPhoneNumbers() เพื่อโหลดข้อมูลโทรศัพท์ใหม่
-      fetchPhoneNumbers();
+      const result = await Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: 'คุณต้องการลบหมายเลขโทรศัพท์นี้หรือไม่?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ยกเลิก',
+      });
+
+      if (result.isConfirmed) {
+        await axios.delete(`https://test-api-01.azurewebsites.net/api/phonenumber/delete/${id}`);
+        fetchPhoneNumbers();
+        Swal.fire('ลบแล้ว!', 'หมายเลขโทรศัพท์ถูกลบแล้ว', 'success');
+      }
     } catch (error) {
       console.error('Error deleting phone number:', error);
+      Swal.fire('เกิดข้อผิดพลาด!', 'มีข้อผิดพลาดเกิดขึ้นในขณะที่พยายามลบหมายเลขโทรศัพท์', 'error');
     }
   };
 
   return (
     <Container>
+      <ToastContainer />
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>

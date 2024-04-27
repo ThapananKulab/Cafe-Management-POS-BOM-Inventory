@@ -7,9 +7,6 @@ import ReactToPrint from 'react-to-print';
 import { useNavigate } from 'react-router-dom';
 import React, { useRef, useState, useEffect } from 'react';
 
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
   Box,
   Modal,
@@ -90,8 +87,6 @@ function RealTimeOrderPage() {
   const [receiptInfo, setReceiptInfo] = useState(null);
   const componentRef = useRef();
   const [searchTerm, setSearchTerm] = useState('');
-  const [startDate, setStartDate] = useState(moment());
-  const [endDate, setEndDate] = useState(moment());
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -102,9 +97,9 @@ function RealTimeOrderPage() {
     setPage(0);
   };
 
-  // const handleSearchChange = (event) => {
-  //   setSearchTerm(event.target.value);
-  // };
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   const handleViewReceipt = (orderId) => {
     const foundOrder = orders.find((orderItem) => orderItem._id === orderId);
@@ -297,6 +292,59 @@ function RealTimeOrderPage() {
     }
   };
 
+  // const handleOpenSaleRound = async () => {
+  //   try {
+  //     const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+  //       method: 'POST',
+  //     });
+  //     if (response.ok) {
+  //       setIsSaleRound(true);
+  //       setIsSaleRoundOpen(true);
+  //       saveSaleRoundStatus(true);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error opening sale round:', error);
+  //   }
+  // };
+
+  // const handleCloseSaleRound = async () => {
+  //   try {
+  //     const currentTime = moment().format('DD/MM/YYYY, H:mm:ss');
+
+  //     const result = await Swal.fire({
+  //       title: 'คุณต้องการที่จะปิดรอบขายใช่หรือไม่?',
+  //       text: ` ของรอบขายในเวลาใช่หรือไม่คือ ${currentTime}`,
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonText: 'ใช่',
+  //       cancelButtonText: 'ไม่',
+  //       reverseButtons: true,
+  //     });
+
+  //     if (result.isConfirmed) {
+  //       const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
+  //         method: 'POST',
+  //       });
+  //       if (response.ok) {
+  //         setIsSaleRound(false);
+  //         setIsSaleRoundOpen(false);
+  //         saveSaleRoundStatus(false);
+  //       } else {
+  //         const data = await response.json();
+  //         if (data.error === 'Sale round is already closed') {
+  //           setIsSaleRound(false);
+  //           setIsSaleRoundOpen(false);
+  //           saveSaleRoundStatus(false);
+  //         } else {
+  //           console.error('Error closing sale round:', data.error);
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error closing sale round:', error);
+  //   }
+  // };
+
   const checkSaleRoundTime = () => {
     const now = moment().tz('Asia/Bangkok');
     const openTime = moment().tz('Asia/Bangkok').set({ hour: 0, minute: 0, second: 0 });
@@ -314,13 +362,59 @@ function RealTimeOrderPage() {
   const filteredOrders = showTodayOnly
     ? orders.filter((order) => isOrderFromToday(order.date))
     : orders.filter((order) => {
-        const orderDate = moment(order.date).tz('Asia/Bangkok');
-        return orderDate.isBetween(startDate, endDate, 'day', '[]'); // '[]' includes both start and end dates
-      });
+        const searchTermLower = searchTerm.toLowerCase();
+        const statusLower = order.status.toLowerCase();
+        const containsSearchTerm = (keyword) => keyword.toLowerCase().includes(searchTermLower);
+        const isOrderOnSearchDate = moment(order.date)
+          .tz('Asia/Bangkok')
+          .format('DD/MM/YYYY')
+          .includes(searchTermLower);
+        const itemNames = order.items.map((item) => item.name.toLowerCase());
+        const hasItemName = itemNames.some((name) => name.includes(searchTermLower));
+        if (
+          (containsSearchTerm(order.user) ||
+            containsSearchTerm(order.paymentMethod) ||
+            containsSearchTerm(statusLower) ||
+            isOrderOnSearchDate,
+          hasItemName)
+        ) {
+          return true;
+        }
 
-  const filteredOrdersByStatus = searchTerm
-    ? filteredOrders.filter((order) => order.status === searchTerm)
-    : filteredOrders;
+        if (
+          (searchTermLower === 'completed' || searchTermLower === 'เสร็จสิ้น') &&
+          statusLower === 'completed'
+        ) {
+          return true;
+        }
+
+        if (
+          (searchTermLower.includes('รอ') || searchTermLower === 'pending') &&
+          statusLower === 'pending'
+        ) {
+          return true;
+        }
+
+        if (
+          (searchTermLower === 'ยกเลิก' || searchTermLower === 'cancelled') &&
+          statusLower === 'cancelled'
+        ) {
+          return true;
+        }
+
+        if (searchTermLower.includes('ยก') && statusLower === 'cancelled') {
+          return true;
+        }
+
+        if (
+          (searchTermLower === 'เสร็จสิ้น' || searchTermLower === 'completed') &&
+          statusLower === 'completed'
+        ) {
+          return true;
+        }
+
+        return false;
+      });
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat('th-TH', {
@@ -333,42 +427,55 @@ function RealTimeOrderPage() {
     .filter((order) => order.status === 'Completed') // Filter only completed orders
     .reduce((acc, order) => acc + order.total, 0);
 
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
-
   return (
     <Container>
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            <StyledDiv>{isSaleRoundOpen ? 'ออเดอร์ทั้งหมด' : 'ออเดอร์ทั้งหมด'}</StyledDiv>
+            <StyledDiv>{isSaleRoundOpen ? 'Order ทั้งหมด' : 'Orderทั้งหมด'}</StyledDiv>
           </Typography>
           <Box sx={{ '& button': { m: 1 } }}>
+            {/* <Button
+              variant="contained"
+              color="success"
+              onClick={handleOpenSaleRound}
+              disabled={isSaleRound || !isSaleRoundOpen} // ปุ่มจะถูก disable ถ้าเปิดร้านอยู่แล้ว หรือไม่ได้อยู่ในช่วงเวลาเปิดร้าน
+            >
+              <StyledDiv>เปิดรอบขาย</StyledDiv>
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleCloseSaleRound}
+              disabled={!isSaleRound}
+            >
+              <StyledDiv>ปิดรอบขาย</StyledDiv>
+            </Button> */}
+            {/* <Button
+              variant="contained"
+              sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
+              onClick={() => navigate('/open-order')}
+            >
+              <StyledDiv>ระยะเวลาการเปิด-ร้าน</StyledDiv>
+            </Button> */}
+
             <Button
               variant="contained"
               sx={{ backgroundColor: '#333333', '&:hover': { backgroundColor: '#555555' } }}
               onClick={() => navigate('/order')}
             >
-              <StyledDiv>ออเดอร์ประจำวัน</StyledDiv>
+              <StyledDiv>Order ประจำวัน</StyledDiv>
             </Button>
           </Box>
         </Stack>
-        <Box sx={{ '& button': { m: 1 }, display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-          <Button
-            variant="contained"
-            // style={{ backgroundColor: '#2196F3', color: '#fff' }} // Show All
-            style={{ backgroundColor: '#78909C', color: '#fff' }} // Show All
-            onClick={() => setSearchTerm('')}
-            disabled={!searchTerm}
-          >
-            <StyledDiv>ทั้งหมด</StyledDiv>
-          </Button>
-
+        <Box sx={{ '& button': { m: 1 } }}>
+          <TextField
+            id="search"
+            label="ค้นหา"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
           <Button
             variant="contained"
             style={{ backgroundColor: '#66BB6A', color: '#fff' }} // Completed
@@ -394,22 +501,6 @@ function RealTimeOrderPage() {
             <StyledDiv>ยกเลิก</StyledDiv>
           </Button>
         </Box>
-        <br />
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <DesktopDatePicker
-            label="วันที่เริ่มต้น"
-            value={startDate}
-            onChange={handleStartDateChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-          &nbsp;
-          <DesktopDatePicker
-            label="วันที่สิ้นสุด"
-            value={endDate}
-            onChange={handleEndDateChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
 
         {isSaleRound && (
           <Paper sx={{ mt: 3 }}>
@@ -431,7 +522,7 @@ function RealTimeOrderPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredOrdersByStatus
+                  {filteredOrders
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((order) => (
                       <TableRow key={order._id}>

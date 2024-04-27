@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Grid,
+  Badge,
   Paper,
   Table,
   Stack,
@@ -131,15 +132,34 @@ export default function InventPage() {
 
   const renderStatus = (quantity) => {
     if (quantity === 0) {
-      return <Iconify icon="emojione:cross-mark" style={{ fontSize: '24px', color: '#ff1744' }} />;
+      return (
+        <Badge
+          badgeContent=" "
+          color="error"
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          overlap="circle"
+        />
+      );
     }
 
     if (quantity <= 5) {
-      return <Iconify icon="emojione-v1:warning" sx={{ color: 'orange', fontWeight: 'bold' }} />;
+      return (
+        <Badge
+          badgeContent=" "
+          color="warning"
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          overlap="circle"
+        />
+      );
     }
 
     return (
-      <Iconify icon="twemoji:check-mark-button" style={{ fontSize: '24px', color: '#4caf50' }} />
+      <Badge
+        badgeContent=" "
+        color="success"
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        overlap="circle"
+      />
     );
   };
 
@@ -300,7 +320,7 @@ export default function InventPage() {
                                 <IconButton
                                   aria-label="edit"
                                   onClick={() => editRaw(raw._id)}
-                                  color="primary" // กำหนดสีปุ่มเป็นสีน้ำเงิน
+                                  color="primary"
                                 >
                                   <Icon icon="mingcute:edit-line" style={{ fontSize: '24px' }} />
                                 </IconButton>
