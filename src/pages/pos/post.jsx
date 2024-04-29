@@ -309,7 +309,7 @@ const CartTemplate = () => {
 
           console.log('Error Message:', errorMessage);
 
-          Swal.mixin({
+          Swal.err({
             icon: 'error',
             title: 'วัตถุดิบไม่พร้อมใช้งาน',
             html: errorMessage,
@@ -805,7 +805,6 @@ const CartTemplate = () => {
                     </>
                   )}
 
-                  {/* Show PromptPay details only when payment method is 'PromptPay' */}
                   {paymentMethod === 'PromptPay' && (
                     <>
                       <Box
