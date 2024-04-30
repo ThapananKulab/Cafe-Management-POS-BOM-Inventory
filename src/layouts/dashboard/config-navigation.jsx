@@ -116,7 +116,6 @@ const navConfig = [
   },
   {
     title: 'แจ้งเตือน',
-    // path: '/notification',
     icon: icon('ic-notic'),
     subItems: [
       {
