@@ -151,7 +151,7 @@ function AddRecipe() {
           inventoryItemId: ingredient.inventoryItemId,
           quantity: ingredient.quantity,
         })),
-        cost: totalCost, // เพิ่มค่า cost ที่คำนวณได้จาก totalCost ไปยังฐานข้อมูล
+        cost: totalCost,
       });
 
       console.log(response.data);

@@ -126,7 +126,7 @@ function InventoryManager() {
       totalQuantity = newItem.numberOfUnits * newItem.piecesPerUnit;
     } else if (['ถุง', 'ซอง'].includes(newItem.unit)) {
       toast.error('กรุณาตรวจสอบจำนวนหน่วยและชิ้นต่อหน่วย');
-      return; // หยุดการทำงานถัดไปหากมีค่าไม่ถูกต้อง
+      return; 
     }
 
     const itemToAdd = {

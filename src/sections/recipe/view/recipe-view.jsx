@@ -220,7 +220,7 @@ function RecipeTable() {
         });
       }
     } catch (error) {
-      console.error('มีเมนูอยู่แล้ว ลบเมนูก่อน', error);
+      console.error('มีเมนูที่ขายอยู่ ลบเมนูก่อน', error);
 
       toast.error('มีเมนูอยู่แล้ว ลบเมนูก่อน', {
         position: 'top-right',
