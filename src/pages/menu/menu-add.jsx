@@ -94,11 +94,15 @@ function AddMenuItem() {
     formData.append('glassSize', menuItem.glassSize); // เพิ่ม glassSize ไปยัง formData
 
     try {
-      const response = await axios.post('https://test-api-01.azurewebsites.net/api/menus/addMenu', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        'https://test-api-01.azurewebsites.net/api/menus/addMenu',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       console.log(response.data);
       toast.success('เพิ่มเมนูสำเร็จ');
     } catch (error) {
