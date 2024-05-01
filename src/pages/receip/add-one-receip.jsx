@@ -162,7 +162,7 @@ function AddRecipe() {
       toast.success('เพิ่มสำเร็จ', {
         autoClose: 1000,
       });
-      navigate('/recipe');
+      // navigate('/recipe');
       localStorage.removeItem('savedRecipe');
     } catch (error) {
       console.error('Error adding recipe:', error);
