@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
-// import { styled } from '@mui/styles';
 import {
   Box,
   Grid,
@@ -31,16 +30,6 @@ function InventoryManager() {
   font-family: 'Prompt', sans-serif;
 `;
   const navigate = useNavigate();
-
-  // const MyButton = styled(Button)({
-  //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-  //   border: 0,
-  //   borderRadius: 3,
-  //   boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-  //   color: 'white',
-  //   height: 48,
-  //   padding: '0 30px',
-  // });
 
   const goBack = () => navigate(-1);
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -113,11 +102,10 @@ function InventoryManager() {
 
     if (itemExists) {
       toast.error(`มี "${newItem.name}" อยู่แล้ว`);
-      return; // Stop the function from proceeding further
+      return;
     }
-    let totalQuantity = parseInt(newItem.quantityInStock, 10); // แปลงเป็นตัวเลขฐานสิบ
+    let totalQuantity = parseInt(newItem.quantityInStock, 10);
 
-    // ตรวจสอบถ้า 'numberOfUnits' หรือ 'piecesPerUnit' เป็น 0 หรือเป็นค่าที่ไม่ถูกต้อง
     if (
       ['ถุง', 'ซอง'].includes(newItem.unit) &&
       newItem.numberOfUnits > 0 &&
@@ -126,7 +114,7 @@ function InventoryManager() {
       totalQuantity = newItem.numberOfUnits * newItem.piecesPerUnit;
     } else if (['ถุง', 'ซอง'].includes(newItem.unit)) {
       toast.error('กรุณาตรวจสอบจำนวนหน่วยและชิ้นต่อหน่วย');
-      return; 
+      return;
     }
 
     const itemToAdd = {
@@ -135,7 +123,7 @@ function InventoryManager() {
     };
 
     try {
-      await axios.post('https://test-api-01.azurewebsites.net/api/inventoryitems/add', itemToAdd);
+      await axios.post('http://localhost:3333/api/inventoryitems/add', itemToAdd);
       toast.success(`เพิ่ม "${newItem.name}" สำเร็จ`);
       fetchInventoryItems();
       setNewItem({
@@ -144,6 +132,7 @@ function InventoryManager() {
         unit: '',
         realquantity: '',
         quantityInStock: '',
+        islower: '',
         unitPrice: '',
         piecesPerUnit: '',
         numberOfUnits: '',
@@ -330,9 +319,16 @@ function InventoryManager() {
                   margin="normal"
                   required
                 />
-                {/* <MyButton type="submit" sx={{ mt: 3 }}>
-                  <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
-                </MyButton> */}
+                <TextField
+                  type="number"
+                  label="ปริมาณขั้นต่ำ (กรณีแจ้งเตือนใกล้หมด)"
+                  name="islower"
+                  value={newItem.islower}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
                 <Button variant="contained" type="submit" sx={{ mt: 3 }}>
                   <StyledDiv>เพิ่มวัตถุดิบ</StyledDiv>
                 </Button>

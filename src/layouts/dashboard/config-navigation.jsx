@@ -63,15 +63,15 @@ const navConfig = [
         path: '/purchase/withdraw-out',
         icon: icon('withdraw-svgrepo-com'),
       },
-      // {
-      //   title: 'รับวัตถุดิบเข้า',
-      //   path: '/manage/invent/update-stock',
-      //   icon: icon('ic-improduct'),
-      // },
       {
         title: 'นำเข้า PO',
         path: '/purchase/create',
         icon: icon('invoice'),
+      },
+      {
+        title: 'ปรับปรุงวัตถุดิบ',
+        path: '/manage/invent/update-stock',
+        icon: icon('in-warning'),
       },
     ],
   },
