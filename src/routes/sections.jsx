@@ -53,6 +53,7 @@ export const ImPurchase = lazy(() => import('src/pages/po/purchase'));
 export const ReportPurchase = lazy(() => import('src/pages/po/po-purchase'));
 export const Withdraw = lazy(() => import('src/pages/po/withdraw'));
 export const WithdrawOut = lazy(() => import('src/pages/po/withdraw-out'));
+export const Expenses = lazy(() => import('src/pages/expenses/expenses'));
 
 // ----------------------------------------------------------------------
 
@@ -192,6 +193,10 @@ export default function Router() {
         {
           path: '/manage/changepromptpay',
           element: <PromptPay />,
+        },
+        {
+          path: '/manage/expenses',
+          element: <Expenses />,
         },
       ],
     },

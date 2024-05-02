@@ -137,6 +137,11 @@ const navConfig = [
     ],
   },
   {
+    title: 'ค่าใช้จ่าย',
+    icon: icon('write'),
+    path: '/manage/expenses',
+  },
+  {
     title: 'POS',
     path: '/sale/pos',
     icon: icon('ic_sell'),
