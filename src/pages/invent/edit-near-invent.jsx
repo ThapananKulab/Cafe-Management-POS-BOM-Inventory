@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import styled1 from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -23,13 +24,19 @@ const InventoryList = () => {
   const [selectedItemIsLower, setSelectedItemIsLower] = useState('');
   const [setOriginalItemIsLower] = useState('');
 
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
+
   useEffect(() => {
     fetchItems();
   }, [isLowerMap]);
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
+      const response = await axios.get(
+        'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+      );
       setItems(response.data);
       setIsLowerMap(
         response.data.reduce((acc, item) => {
@@ -44,9 +51,12 @@ const InventoryList = () => {
 
   const handleUpdate = async () => {
     try {
-      await axios.put(`http://localhost:3333/api/inventoryitems/islower/${selectedItemId}`, {
-        islower: selectedItemIsLower,
-      });
+      await axios.put(
+        `https://test-api-01.azurewebsites.net/api/inventoryitems/islower/${selectedItemId}`,
+        {
+          islower: selectedItemIsLower,
+        }
+      );
       alert('Data updated successfully!');
       fetchItems();
       setSelectedItemId(null); // รีเซ็ตการเลือกแถวที่ถูกเลือก
@@ -70,23 +80,27 @@ const InventoryList = () => {
     setSelectedItemIsLower(value);
   };
 
+  const GreenText = styled1.span`
+    color: green;
+  `;
+
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4" gutterBottom>
-          ปริมาณที่ต้องการให้แจ้งเตือน
+          <StyledDiv>ปริมาณที่ต้องการให้แจ้งเตือน</StyledDiv>
         </Typography>
       </Stack>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
+              <TableCell>ชื่อวัตถุดิบ</TableCell>
               <TableCell>ปริมาณจริง</TableCell>
               <TableCell>ปริมาณใน Stock</TableCell>
               <TableCell>หน่วย</TableCell>
               <TableCell>ปริมาณที่ต้องการให้แจ้งเตือน</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>จัดการ</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -96,7 +110,7 @@ const InventoryList = () => {
                 <TableCell>{item.realquantity}</TableCell>
                 <TableCell>{item.quantityInStock}</TableCell>
                 <TableCell>{item.unit}</TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {selectedItemId === item._id ? (
                     <TextField
                       fullWidth
@@ -106,16 +120,16 @@ const InventoryList = () => {
                       onChange={(e) => handleChangeIsLower(e.target.value)}
                     />
                   ) : (
-                    item.islower
+                    <GreenText>{item.islower}</GreenText>
                   )}
                 </TableCell>
                 <TableCell>
                   {selectedItemId === item._id ? (
                     <>
-                      <IconButton onClick={handleUpdate} color="primary">
+                      <IconButton onClick={() => handleUpdate()} color="primary">
                         <Icon icon="heroicons-outline:save" style={{ fontSize: '32px' }} />
                       </IconButton>
-                      <IconButton onClick={handleCancel} style={{ color: '#ff1744' }}>
+                      <IconButton onClick={() => handleCancel()} style={{ color: '#ff1744' }}>
                         <Icon icon="mdi:cancel-bold" style={{ fontSize: '32px' }} />
                       </IconButton>
                     </>

@@ -34,6 +34,7 @@ export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/pos/post'));
 export const PromptPay = lazy(() => import('src/pages/pos/changepromptpay'));
 export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
+export const EditNearInventPage = lazy(() => import('src/pages/invent/edit-near-invent'));
 export const TestR = lazy(() => import('src/pages/test-r'));
 export const TestM = lazy(() => import('src/pages/test-m'));
 export const OrderPage = lazy(() => import('src/pages/order/order-view'));
@@ -197,6 +198,10 @@ export default function Router() {
         {
           path: '/manage/expenses',
           element: <Expenses />,
+        },
+        {
+          path: '/edit/edit-near-invent',
+          element: <EditNearInventPage />,
         },
       ],
     },
