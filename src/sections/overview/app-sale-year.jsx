@@ -19,7 +19,7 @@ const SalesChart = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3333/api/saleorder/dashboard/salesdata?year=${selectedYear}`
+          `https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesdata?year=${selectedYear}`
         );
         setSalesData(response.data);
       } catch (error) {
