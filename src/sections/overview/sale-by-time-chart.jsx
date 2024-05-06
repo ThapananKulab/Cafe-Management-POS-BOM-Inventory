@@ -49,7 +49,7 @@ const SalesByTimeChart = () => {
   return (
     <div>
       <Typography variant="h6" gutterBottom>
-        <StyledDiv>ยอดขายวันนี้</StyledDiv>
+        <StyledDiv>ยอดขายตามวันเวลา</StyledDiv>
       </Typography>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
