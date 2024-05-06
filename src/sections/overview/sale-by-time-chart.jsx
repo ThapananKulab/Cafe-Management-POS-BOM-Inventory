@@ -4,7 +4,9 @@ import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
-import { Typography } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
 const SalesByTimeChart = () => {
   const StyledDiv = styled.div`
@@ -12,12 +14,13 @@ const SalesByTimeChart = () => {
   `;
 
   const [salesData, setSalesData] = useState([]);
+  const [selectedDateTime, setSelectedDateTime] = useState(new Date());
 
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByTime'
+          `https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByTime?date=${selectedDateTime.toISOString()}`
         );
         setSalesData(response.data);
       } catch (error) {
@@ -25,7 +28,7 @@ const SalesByTimeChart = () => {
       }
     };
     fetchSalesData();
-  }, []);
+  }, [selectedDateTime]);
 
   const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`),
@@ -37,7 +40,7 @@ const SalesByTimeChart = () => {
           return foundData ? foundData.totalSales : 0;
         }),
         fill: false,
-        borderColor: 'rgb(75, 191, 192)', // ใช้รหัสสี RGB สีฟ้า
+        borderColor: 'rgb(75, 191, 192)', // Use RGB color code for a nice shade of blue
         tension: 0.4,
       },
     ],
@@ -46,8 +49,17 @@ const SalesByTimeChart = () => {
   return (
     <div>
       <Typography variant="h6" gutterBottom>
-        <StyledDiv>กราฟยอดขายตามช่วงเวลาของวันนี้</StyledDiv>
+        <StyledDiv>ยอดขายวันนี้</StyledDiv>
       </Typography>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
+          label="เลือกวันที่"
+          value={selectedDateTime}
+          onChange={(newDate) => setSelectedDateTime(newDate)}
+          renderInput={(params) => <TextField {...params} />}
+          inputFormat="dd/MM/yyyy" // Specify the date format here
+        />
+      </LocalizationProvider>
       <Line data={chartData} />
     </div>
   );
