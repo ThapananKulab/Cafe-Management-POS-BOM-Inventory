@@ -1,13 +1,17 @@
 import 'chart.js/auto';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2'; // เปลี่ยนจาก Line เป็น Bar
+import styled1 from 'styled-components';
 import React, { useState, useEffect } from 'react';
 
-import { TextField } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
 const SalesChart = () => {
+  const StyledDiv = styled1.div`
+  font-family: 'Prompt', sans-serif;
+`;
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [salesData, setSalesData] = useState([]);
 
@@ -51,6 +55,9 @@ const SalesChart = () => {
 
   return (
     <div>
+      <Typography variant="h6" gutterBottom>
+        <StyledDiv>กราฟยอดขายตามรายปี</StyledDiv>
+      </Typography>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
           views={['year']}

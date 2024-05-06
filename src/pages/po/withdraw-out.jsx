@@ -97,8 +97,8 @@ const PendingReceipts = () => {
                           </TableCell>
                         )}
                         {/* <TableCell>{item._id}</TableCell> */}
-                        <TableCell>{item.item.name}</TableCell>
-                        <TableCell>{item.item.realquantity}</TableCell>
+                        <TableCell>{item.item && item.item.name}</TableCell>
+                        <TableCell>{item.item && item.item.realquantity}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
                         <TableCell
                           style={{

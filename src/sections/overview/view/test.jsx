@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 // import AppTasks from '../app-tasks';
 // import AppNewsUpdate from '../app-news-update';
 // import AppOrderTimeline from '../app-order-timeline';
-import AppSaleYear from '../app-sale-year';
 import SalesByTimeChart from '../sale-by-time-chart'; // ไฟล์นี้เราเพิ่มเติมขึ้นมาเพื่อแสดง Line Chart
 
 import AppCurrentVisits from '../app-current-visits';
@@ -275,6 +274,7 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/shopping-bag.png" />}
           />
         </Grid>
+
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="กำไร (บาท) วันนี้"
@@ -283,6 +283,7 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/profits.png" />}
           />
         </Grid>
+
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="จำนวนออเดอร์ทั้งหมด (รายการ)"
@@ -291,6 +292,7 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/order.png" />}
           />
         </Grid>
+
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="จำนวนวัตถุดิบทั้งหมด"
@@ -299,50 +301,14 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/inventory.png" />}
           />
         </Grid>
-        {/* <Grid xs={12}>
-          <AppWebsiteVisits
-            title="ยอดขาย 7 วันหลังสุด"
-            chart={{
-              labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
-              colors: [], // Add your colors here if needed
-              series: [{ name: 'Sales', data: [100, 200, 150, 300, 250, 180, 220] }],
-              options: {}, // Add any additional options here
-            }}
-          />
-        </Grid> */}
-        <Grid xs={12}>
+
+        <Grid item xs={6} md={1} lg={12}>
           <SalesByTimeChart />
-        </Grid>
-        <Grid xs={12}>
-          <AppSaleYear />
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
-            title="สินค้าขายดีสุด"
-            chart={{
-              series: mostPurchasedMenuItems.map((item) => ({
-                label: item.name,
-                value: item.quantity,
-              })),
-            }}
-          />
-        </Grid>
-        <Grid xs={12} md={6} lg={7}>
-          <AppConversionRates
-            title="ยอดขายรายเดือน"
-            // subheader="(+43%) than last year"
-            chart={{
-              series: monthlySales.map((month) => ({
-                label: thaiMonthNames[month._id],
-                value: month.totalSales,
-              })),
-            }}
-          />
-        </Grid>
-        <Grid xs={12} md={6} lg={4}>
-          <AppCurrentVisits
-            title="ยอดขายตามสัปดาห์"
+            title="ยอดขายรายสัปดาห์"
             chart={{
               series: weekSales.map((week) => ({
                 label: `สัปดาห์ที่ ${week._id}`,
@@ -351,21 +317,6 @@ export default function AppView() {
             }}
           />
         </Grid>
-        <Grid xs={12} md={6} lg={7}>
-          <AppConversionRates
-            title="ยอดขายตามปี"
-            // subheader="(+43%) than last year"
-            chart={{
-              series: yearlySales.map((year) => ({
-                label: year._id.year,
-                value: year.totalSales,
-              })),
-            }}
-          />
-        </Grid>
-        {/* 
-        
-        
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="ยอดขายรายเดือน"
@@ -389,9 +340,29 @@ export default function AppView() {
             }}
           />
         </Grid>
-        
-        
-        <Grid xs={12} md={6} lg={8}>
+
+        <Grid xs={12} md={6} lg={7}>
+          <AppConversionRates
+            title="เมนูขายดี"
+            // subheader="(+43%) than last year"
+            chart={{
+              series: mostPurchasedMenuItems.map((item) => ({
+                label: item.name,
+                value: item.quantity,
+              })),
+            }}
+          />
+        </Grid>
+
+        {/* <Grid xs={12} md={6} lg={8}>
+          <AppWebsiteVisits
+            title="ยอดขาย 7 วันหลังสุด"
+            // subheader={`(${percentageChange.toFixed(2)}%) ในสัปดาห์นี้`}
+            chart={chartData}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="Conversion Rates"
             subheader="(+43%) than last year"
@@ -412,7 +383,19 @@ export default function AppView() {
           />
         </Grid>
 
-
+        <Grid xs={12} md={6} lg={4}>
+          <AppCurrentSubject
+            title="Current Subject"
+            chart={{
+              categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
+              series: [
+                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
+                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
+                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
+              ],
+            }}
+          />
+        </Grid> */}
 
         {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate

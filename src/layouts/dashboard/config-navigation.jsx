@@ -98,22 +98,22 @@ const navConfig = [
   //   icon: icon('cafe-8'),
   //   subItems: [],
   // },
-  {
-    title: 'ออเดอร์',
-    icon: icon('ic-order'),
-    subItems: [
-      {
-        title: 'ประวัติการขายทั้งหมด',
-        path: '/order-all',
-        icon: icon('order-all'),
-      },
-      {
-        title: 'ประวัติการขายประจำวัน',
-        path: '/order',
-        icon: icon('order-today'),
-      },
-    ],
-  },
+  // {
+  //   title: 'ออเดอร์',
+  //   icon: icon('ic-order'),
+  //   subItems: [
+  //     {
+  //       title: 'ประวัติการขายทั้งหมด',
+  //       path: '/order-all',
+  //       icon: icon('order-all'),
+  //     },
+  //     {
+  //       title: 'ประวัติการขายประจำวัน',
+  //       path: '/order',
+  //       icon: icon('order-today'),
+  //     },
+  //   ],
+  // },
   {
     title: 'แจ้งเตือน',
     icon: icon('ic-notic'),
@@ -135,6 +135,11 @@ const navConfig = [
         icon: icon('PromptPay-logo'),
       },
     ],
+  },
+  {
+    title: 'ออเดอร์',
+    icon: icon('ic-order'),
+    path: '/order',
   },
   {
     title: 'ค่าใช้จ่าย',
