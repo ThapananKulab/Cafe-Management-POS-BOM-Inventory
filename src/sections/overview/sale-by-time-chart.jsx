@@ -37,8 +37,8 @@ const SalesByTimeChart = () => {
           return foundData ? foundData.totalSales : 0;
         }),
         fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
+        borderColor: 'rgb(75, 191, 192)', // ใช้รหัสสี RGB สีฟ้า
+        tension: 0.4,
       },
     ],
   };
