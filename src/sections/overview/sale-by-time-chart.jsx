@@ -40,7 +40,7 @@ const SalesByTimeChart = () => {
           return foundData ? foundData.totalSales : 0;
         }),
         fill: false,
-        borderColor: 'rgb(75, 191, 192)', // Use RGB color code for a nice shade of blue
+        borderColor: 'rgb(75, 191, 192)',
         tension: 0.4,
       },
     ],

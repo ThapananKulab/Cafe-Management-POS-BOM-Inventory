@@ -30,7 +30,20 @@ const SalesChart = () => {
   }, [selectedYear]);
 
   const chartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    labels: [
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ย.',
+      'พ.ค.',
+      'ธ.ค.',
+    ],
     datasets: [
       {
         label: 'ยอดขาย',
