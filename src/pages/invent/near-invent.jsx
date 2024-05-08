@@ -79,9 +79,9 @@ export default function InventoryItemsTable() {
                 <TableRow>
                   <TableCell>ชื่อวัตถุดิบ</TableCell>
                   <TableCell>ปริมาณใน Stock</TableCell>
-                  <TableCell>สถานะ</TableCell> {/* เพิ่มส่วนของสถานะ */}
                   <TableCell>หน่วยนับ</TableCell>
                   <TableCell>ประเภท</TableCell>
+                  <TableCell>สถานะ</TableCell> {/* เพิ่มส่วนของสถานะ */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -91,14 +91,14 @@ export default function InventoryItemsTable() {
                     <StyledTableCell isLower={item.quantityInStock < item.isLower}>
                       {item.quantityInStock}
                     </StyledTableCell>
+                    <TableCell>{item.unit}</TableCell>
+                    <TableCell>{item.type}</TableCell>
                     <TableCell>
                       <Badge
                         badgeContent={item.quantityInStock === 0 ? 'หมด' : 'ใกล้'}
                         color={item.quantityInStock === 0 ? 'error' : 'warning'}
                       />
                     </TableCell>
-                    <TableCell>{item.unit}</TableCell>
-                    <TableCell>{item.type}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

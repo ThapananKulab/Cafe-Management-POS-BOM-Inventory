@@ -438,7 +438,7 @@ function MenuTable() {
                 <TableCell>รายละเอียด</TableCell>
                 <TableCell>ต้นทุน</TableCell>
                 <TableCell>ราคา</TableCell>
-                {/* <TableCell>กำไรขั้นต้น</TableCell> */}
+                <TableCell>กำไรขั้นต้น</TableCell>
                 <TableCell>ใบสูตร</TableCell>
               </TableRow>
             </TableHead>
@@ -471,11 +471,14 @@ function MenuTable() {
                       <TableCell>{menu.description}</TableCell>
                       <TableCell>{`${menu.cost.toFixed(2)} บาท`}</TableCell>
                       <TableCell>{`${menu.price.toFixed(2)} บาท`}</TableCell>
-                      {/* <TableCell>
+                      <TableCell>
                         {`${
-                          menu.price !== 0 ? ((menu.price - menu.cost) / menu.price).toFixed(2) : 0
-                        } บาท`}
-                      </TableCell> */}
+                          menu.price !== 0
+                            ? (((menu.price - menu.cost) / menu.price) * 100).toFixed(2)
+                            : 0
+                        }% บาท`}
+                      </TableCell>
+
                       <TableCell
                         onClick={() => handleOpenModal(menu.recipe)}
                         style={{ cursor: 'pointer' }}

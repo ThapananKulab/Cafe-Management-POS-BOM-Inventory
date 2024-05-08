@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Grid,
+  Card,
   // Badge,
   Paper,
   Table,
@@ -22,6 +23,7 @@ import {
   TextField,
   IconButton,
   Typography,
+  CardContent,
   TableContainer,
 } from '@mui/material';
 
@@ -181,6 +183,15 @@ export default function InventPage() {
   //   return quantityInStock;
   // };
 
+  let totalCost = 0;
+  filteredRaws.forEach((raw) => {
+    const cost = parseFloat((raw.unitPrice / raw.realquantity) * raw.quantityInStock);
+    totalCost += cost;
+  });
+
+  const count = filteredRaws.filter((raw) => raw._id).length;
+  console.log(`จำนวนอ็อบเจ็กต์ที่มี _id: ${count}`);
+
   return (
     <div>
       <Container>
@@ -199,9 +210,29 @@ export default function InventPage() {
             </Button>
           </StyledDiv>
         </Stack>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <StyledDiv>ต้นทุนวัตถุดิบทั้งหมด:</StyledDiv>
+        <Stack direction="row" spacing={2} mb={5}>
+          <Card sx={{ width: 275 }}>
+            <CardContent>
+              <Typography variant="h6" component="div">
+                ต้นทุนรวม
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {totalCost.toFixed(2)} {/* Round totalCost to 2 decimal places */}
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ width: 275 }}>
+            <CardContent>
+              <Typography variant="h6" component="div">
+                จำนวน
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {count} {/* Round totalCost to 2 decimal places */}
+              </Typography>
+            </CardContent>
+          </Card>
         </Stack>
+
         <Box
           sx={{
             display: 'flex',
@@ -270,7 +301,7 @@ export default function InventPage() {
                     <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
-                    <TableCell align="center">ต้นทุนรวม (ต่อหน่วย)</TableCell>
+                    <TableCell align="center">ต้นทุน</TableCell>
                     {/* <TableCell align="center">สถานะ</TableCell> */}
                     {/* {user && user.role === 'เจ้าของร้าน' && ( */}
                     <TableCell align="left">จัดการ</TableCell>
@@ -311,8 +342,12 @@ export default function InventPage() {
                         <TableCell align="center">{raw.type}</TableCell>
                         <TableCell align="center">{raw.unitPrice} ฿</TableCell>
                         <TableCell align="center">
-                          {(raw.unitPrice / raw.realquantity) * raw.quantityInStock} ฿
+                          {parseFloat(
+                            (raw.unitPrice / raw.realquantity) * raw.quantityInStock
+                          ).toFixed(2)}{' '}
+                          ฿
                         </TableCell>
+
                         {/* <TableCell align="center">{renderStatus(raw.quantityInStock)}</TableCell> */}
                         <TableCell>
                           <Grid
