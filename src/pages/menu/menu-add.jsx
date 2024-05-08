@@ -61,7 +61,7 @@ function AddMenuItem() {
         ...prevState,
         recipe: value,
         name: selectedRecipe ? selectedRecipe.name : '',
-        cost: selectedRecipe ? selectedRecipe.cost : '', // เพิ่มการกำหนดค่า cost จาก recipe
+        cost: selectedRecipe ? selectedRecipe.cost : '',
       }));
     } else {
       setMenuItem((prevState) => ({

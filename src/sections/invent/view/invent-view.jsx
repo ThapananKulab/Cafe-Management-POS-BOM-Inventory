@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Grid,
-  Badge,
+  // Badge,
   Paper,
   Table,
   Stack,
@@ -130,56 +130,56 @@ export default function InventPage() {
         raw.unitPrice.toString().toLowerCase().includes(search.toLowerCase()))
   );
 
-  const renderStatus = (quantity) => {
-    if (quantity === 0) {
-      return (
-        <Badge
-          badgeContent=" "
-          color="error"
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          overlap="circle"
-        />
-      );
-    }
+  // const renderStatus = (quantity) => {
+  //   if (quantity === 0) {
+  //     return (
+  //       <Badge
+  //         badgeContent=" "
+  //         color="error"
+  //         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+  //         overlap="circle"
+  //       />
+  //     );
+  //   }
 
-    if (quantity <= 5) {
-      return (
-        <Badge
-          badgeContent=" "
-          color="warning"
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          overlap="circle"
-        />
-      );
-    }
+  //   if (quantity <= 5) {
+  //     return (
+  //       <Badge
+  //         badgeContent=" "
+  //         color="warning"
+  //         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+  //         overlap="circle"
+  //       />
+  //     );
+  //   }
 
-    return (
-      <Badge
-        badgeContent=" "
-        color="success"
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        overlap="circle"
-      />
-    );
-  };
+  //   return (
+  //     <Badge
+  //       badgeContent=" "
+  //       color="success"
+  //       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+  //       overlap="circle"
+  //     />
+  //   );
+  // };
 
-  const renderStockStatus = (quantityInStock) => {
-    if (quantityInStock === 0) {
-      return (
-        <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
-          0
-        </Typography>
-      );
-    }
-    if (quantityInStock < 10) {
-      return (
-        <Typography component="span" sx={{ color: '#ff9800', fontWeight: 'bold' }}>
-          {quantityInStock}
-        </Typography>
-      );
-    }
-    return quantityInStock;
-  };
+  // const renderStockStatus = (quantityInStock) => {
+  //   if (quantityInStock === 0) {
+  //     return (
+  //       <Typography component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
+  //         0
+  //       </Typography>
+  //     );
+  //   }
+  //   if (quantityInStock < 10) {
+  //     return (
+  //       <Typography component="span" sx={{ color: '#ff9800', fontWeight: 'bold' }}>
+  //         {quantityInStock}
+  //       </Typography>
+  //     );
+  //   }
+  //   return quantityInStock;
+  // };
 
   return (
     <div>
@@ -198,6 +198,9 @@ export default function InventPage() {
               <StyledDiv>เพิ่มวัตถุดิบใหม่</StyledDiv>
             </Button>
           </StyledDiv>
+        </Stack>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <StyledDiv>ต้นทุนวัตถุดิบทั้งหมด:</StyledDiv>
         </Stack>
         <Box
           sx={{
@@ -251,7 +254,6 @@ export default function InventPage() {
             <MenuItem value="ลิตร">ลิตร</MenuItem>
           </TextField>
         </Box>
-
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TableContainer component={Paper}>
@@ -268,7 +270,8 @@ export default function InventPage() {
                     <TableCell align="center">ประเภท</TableCell>
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
-                    <TableCell align="center">สถานะ</TableCell>
+                    <TableCell align="center">ต้นทุนรวม (ต่อหน่วย)</TableCell>
+                    {/* <TableCell align="center">สถานะ</TableCell> */}
                     {/* {user && user.role === 'เจ้าของร้าน' && ( */}
                     <TableCell align="left">จัดการ</TableCell>
                     {/* )} */}
@@ -294,7 +297,8 @@ export default function InventPage() {
 
                         <TableCell align="center">{raw.realquantity}</TableCell>
                         <TableCell align="center">
-                          {renderStockStatus(raw.quantityInStock)}
+                          {raw.quantityInStock}
+                          {/* {renderStockStatus(raw.quantityInStock)} */}
                         </TableCell>
                         {/* <TableCell align="center">
                           {raw.quantityInStock !== 0
@@ -306,7 +310,10 @@ export default function InventPage() {
                         <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.type}</TableCell>
                         <TableCell align="center">{raw.unitPrice} ฿</TableCell>
-                        <TableCell align="center">{renderStatus(raw.quantityInStock)}</TableCell>
+                        <TableCell align="center">
+                          {(raw.unitPrice / raw.realquantity) * raw.quantityInStock} ฿
+                        </TableCell>
+                        {/* <TableCell align="center">{renderStatus(raw.quantityInStock)}</TableCell> */}
                         <TableCell>
                           <Grid
                             container
