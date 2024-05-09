@@ -372,6 +372,8 @@ function RealTimeOrderPage() {
               <MenuItem value="/report/salemenu">ประวัติการขายสินค้า</MenuItem>
               <MenuItem value="/report/payment">รายงานการขายจำแนกตามประเภทการชำระเงิน</MenuItem>
               <MenuItem value="/report/cost">รายชื่อวัตถุดิบราคาต้นทุนสูงสุด</MenuItem>
+              <MenuItem value="/purchase/withdraw-out">รายงานเบิกวัตถุดิบ</MenuItem>
+              <MenuItem value="/purchase/report">ประวัติใบสั่งซื้อ</MenuItem>
               {/* <MenuItem value="/report/popular-menu">ยอดขายที่ขายดีสุดตามเวลา</MenuItem> */}
             </Select>
           </Paper>

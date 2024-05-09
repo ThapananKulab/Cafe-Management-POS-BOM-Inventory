@@ -658,7 +658,7 @@ const CartTemplate = () => {
                         <ListItemText
                           primary={
                             <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                              รวมสุทธิ
+                              <StyledDiv>รวมสุทธิ</StyledDiv>
                             </Typography>
                           }
                           secondary={
@@ -764,7 +764,7 @@ const CartTemplate = () => {
                           style={{ marginRight: '10px' }}
                           className="custom-button" // เพิ่มคลาส CSS เพื่อปรับสไตล์ปุ่ม
                         >
-                          รับมาพอดี
+                          <StyledDiv>รับมาพอดี</StyledDiv>
                         </Button>
                         <Button
                           variant="contained"
@@ -773,7 +773,7 @@ const CartTemplate = () => {
                           style={{ marginRight: '10px' }}
                           className="custom-button" // เพิ่มคลาส CSS เพื่อปรับสไตล์ปุ่ม
                         >
-                          เงินสด 100
+                          <StyledDiv>เงินสด 100</StyledDiv>
                         </Button>
                         <Button
                           variant="contained"
@@ -781,7 +781,7 @@ const CartTemplate = () => {
                           onClick={handleCash1000}
                           className="custom-button"
                         >
-                          เงินสด 1000
+                          <StyledDiv>เงินสด 1000</StyledDiv>
                         </Button>
                       </Box>
                       <Box
@@ -799,7 +799,7 @@ const CartTemplate = () => {
                             color: calculateChange() <= 0 ? 'red' : 'inherit',
                           }}
                         >
-                          เงินทอน: {calculateChange()} บาท
+                          <StyledDiv>เงินทอน: {calculateChange()} บาท</StyledDiv>
                         </Typography>
                       </Box>
                     </>
@@ -816,7 +816,7 @@ const CartTemplate = () => {
                         }}
                       >
                         <Typography variant="h6" gutterBottom>
-                          สแกน QR Code เพื่อชำระเงิน
+                          <StyledDiv>สแกน QR Code เพื่อชำระเงิน</StyledDiv>
                         </Typography>
                         {qrCode && <img src={qrCode} alt="QR Code" style={{ maxWidth: '100%' }} />}
                       </Box>
@@ -876,7 +876,7 @@ const CartTemplate = () => {
                   }}
                   onClick={handleNextPage}
                 >
-                  ต่อไป
+                  <StyledDiv>ต่อไป</StyledDiv>
                 </Button>
               )}
               {currentPage === 2 && (
@@ -894,7 +894,7 @@ const CartTemplate = () => {
                   }}
                   onClick={handleSubmitOrder}
                 >
-                  ชำระเงิน
+                  <StyledDiv>ชำระเงิน</StyledDiv>
                 </Button>
               )}
             </Box>
@@ -1165,7 +1165,7 @@ const CartTemplate = () => {
                         color: calculateChange() <= 0 ? 'red' : 'inherit',
                       }}
                     >
-                      เงินทอน: {calculateChange()} บาท
+                      <StyledDiv>เงินทอน: {calculateChange()} บาท</StyledDiv>
                     </Typography>
                   </Box>
                 </>

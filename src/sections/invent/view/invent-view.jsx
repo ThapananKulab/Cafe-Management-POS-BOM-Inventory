@@ -214,17 +214,17 @@ export default function InventPage() {
           <Card sx={{ width: 275 }}>
             <CardContent>
               <Typography variant="h6" component="div">
-                ต้นทุนรวม
+                <StyledDiv>ต้นทุนรวม</StyledDiv>
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {totalCost.toFixed(2)} {/* Round totalCost to 2 decimal places */}
+                {totalCost.toFixed(2)}
               </Typography>
             </CardContent>
           </Card>
           <Card sx={{ width: 275 }}>
             <CardContent>
               <Typography variant="h6" component="div">
-                จำนวน
+                <StyledDiv>จำนวนวัตถุดิบในคลัง</StyledDiv>
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {count} {/* Round totalCost to 2 decimal places */}
@@ -302,6 +302,7 @@ export default function InventPage() {
                     <TableCell align="center">หน่วยนับ</TableCell>
                     <TableCell align="center">ราคาต่อหน่วย</TableCell>
                     <TableCell align="center">ต้นทุน</TableCell>
+                    <TableCell align="center">ต่อหน่วย</TableCell>
                     {/* <TableCell align="center">สถานะ</TableCell> */}
                     {/* {user && user.role === 'เจ้าของร้าน' && ( */}
                     <TableCell align="left">จัดการ</TableCell>
@@ -346,6 +347,9 @@ export default function InventPage() {
                             (raw.unitPrice / raw.realquantity) * raw.quantityInStock
                           ).toFixed(2)}{' '}
                           ฿
+                        </TableCell>
+                        <TableCell align="center">
+                          {parseFloat(raw.unitPrice / raw.realquantity).toFixed(2)} ฿
                         </TableCell>
 
                         {/* <TableCell align="center">{renderStatus(raw.quantityInStock)}</TableCell> */}
