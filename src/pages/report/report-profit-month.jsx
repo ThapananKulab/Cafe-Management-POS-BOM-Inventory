@@ -36,7 +36,7 @@ const MyComponent = () => {
   const [expensesData, setExpensesData] = useState([]);
   const [purchaseReceiptData, setPurchaseReceiptData] = useState([]);
   const [saleOrderData, setSaleOrderData] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(dayjs().startOf('month').format('MMMM YYYY')); // เริ่มต้นที่เดือนและปีปัจจุบัน
+  const [selectedDate, setSelectedDate] = useState(null); // เริ่มต้นที่เดือนและปีปัจจุบัน
   const [filteredProfitData, setFilteredProfitData] = useState([]);
 
   const calculateProfit = useCallback(() => {
@@ -186,7 +186,7 @@ const MyComponent = () => {
         <LocalizationProvider dateAdapter={AdapterDateFns} locale="th">
           <DatePicker
             views={['year', 'month']}
-            label="Select Month and Year"
+            label="เลือก เดือน และ ปี"
             value={selectedDate}
             onChange={handleDateChange}
             renderInput={(props) => <TextField {...props} />}

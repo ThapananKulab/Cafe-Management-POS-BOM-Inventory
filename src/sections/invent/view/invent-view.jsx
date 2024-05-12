@@ -383,7 +383,7 @@ export default function InventPage() {
 
                         <TableCell align="center">
                           {raw.quantityInStock !== 0
-                            ? `${parseFloat(raw.unitPrice / raw.quantityInStock).toFixed(2)} ฿`
+                            ? `${parseFloat(raw.unitPrice / raw.realquantity).toFixed(2)} ฿`
                             : '0 ฿'}
                         </TableCell>
                         <TableCell align="center">{raw.useInStock}</TableCell>
