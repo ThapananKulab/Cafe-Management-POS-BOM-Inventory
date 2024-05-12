@@ -49,6 +49,7 @@ export const ReportCancelBill = lazy(() => import('src/pages/report/report-cance
 export const ReportSaleMenu = lazy(() => import('src/pages/report/report-sale-menu'));
 export const ReportPayment = lazy(() => import('src/pages/report/report-payment'));
 export const ReportCost = lazy(() => import('src/pages/report/report-cost-recipe'));
+export const ReportProfitMonth = lazy(() => import('src/pages/report/report-profit-month'));
 export const ReportPopular = lazy(() => import('src/pages/report/report-popular-menu'));
 export const ImPurchase = lazy(() => import('src/pages/po/purchase'));
 export const ReportPurchase = lazy(() => import('src/pages/po/po-purchase'));
@@ -202,6 +203,10 @@ export default function Router() {
         {
           path: '/edit/edit-near-invent',
           element: <EditNearInventPage />,
+        },
+        {
+          path: '/report/profit-month',
+          element: <ReportProfitMonth />,
         },
       ],
     },

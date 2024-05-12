@@ -539,7 +539,7 @@ function MenuTable() {
                   </Select>
                 </FormControl>
                 <TextField
-                  label="Name"
+                  label="ชื่อเมนู"
                   value={updateData.name}
                   onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
                   fullWidth

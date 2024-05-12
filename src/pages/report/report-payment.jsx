@@ -61,6 +61,7 @@ function PaymentMethodReport() {
             >
               {/* <MenuItem value="/report/daily">รายงานยอดขาย 7 วันย้อนหลัง</MenuItem> */}
               {/* <MenuItem value="/report/cancelbill">รายงานการยกเลิกบิล</MenuItem> */}
+              <MenuItem value="/report/profit-month">รายงานขายรายเดือน</MenuItem>
               <MenuItem value="/report/salemenu">ประวัติการขายสินค้า</MenuItem>
               <MenuItem value="/report/payment">รายงานการขายจำแนกตามประเภทการชำระเงิน</MenuItem>
               <MenuItem value="/report/cost">รายชื่อวัตถุดิบราคาต้นทุนสูงสุด</MenuItem>

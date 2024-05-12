@@ -85,7 +85,7 @@ export default function InventPage() {
   }, [navigate, setUser]);
 
   useEffect(() => {
-    const fetchRaws = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get(
           'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
@@ -95,8 +95,9 @@ export default function InventPage() {
         console.error('Error fetching data:', error);
       }
     };
-
-    fetchRaws();
+    fetchData();
+    const intervalId = setInterval(fetchData, 5000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const confirmDelete = (rawId) => {
@@ -185,8 +186,11 @@ export default function InventPage() {
 
   let totalCost = 0;
   filteredRaws.forEach((raw) => {
-    const cost = parseFloat((raw.unitPrice / raw.realquantity) * raw.quantityInStock);
-    totalCost += cost;
+    if (raw.quantityInStock !== 0) {
+      // ตรวจสอบว่า quantityInStock ไม่เป็นศูนย์
+      const cost = parseFloat((raw.unitPrice / raw.quantityInStock) * raw.quantityInStock);
+      totalCost += cost;
+    }
   });
 
   const count = filteredRaws.filter((raw) => raw._id).length;
@@ -197,24 +201,14 @@ export default function InventPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">
-            <StyledDiv>วัตถุดิบ</StyledDiv>
+            <StyledDiv>คลังวัตถุดิบ</StyledDiv>
           </Typography>
-          <StyledDiv>
-            <Button
-              variant="contained"
-              color="inherit"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => navigate('/manage/invent')}
-            >
-              <StyledDiv>เพิ่มวัตถุดิบใหม่</StyledDiv>
-            </Button>
-          </StyledDiv>
         </Stack>
         <Stack direction="row" spacing={2} mb={5}>
           <Card sx={{ width: 275 }}>
             <CardContent>
               <Typography variant="h6" component="div">
-                <StyledDiv>ต้นทุนรวม</StyledDiv>
+                <StyledDiv>ต้นทุนรวมในคลังสินค้า</StyledDiv>
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {totalCost.toFixed(2)}
@@ -231,6 +225,41 @@ export default function InventPage() {
               </Typography>
             </CardContent>
           </Card>
+        </Stack>
+        <Stack direction="row" spacing={2} justifyContent="center" mb={5}>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<Iconify icon="fluent-emoji-high-contrast:wastebasket" />}
+            onClick={() => navigate('/manage/invent/update-stock')}
+          >
+            <StyledDiv>ปรับปรุงวัตถุดิบ</StyledDiv>
+          </Button>
+
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mdi:paper-text-outline" />}
+            onClick={() => navigate('/purchase/report')}
+          >
+            <StyledDiv>ประวัติ PO</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mdi:paper-text-outline" />}
+            onClick={() => navigate('/purchase/create')}
+          >
+            <StyledDiv>นำเข้า PO</StyledDiv>
+          </Button>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={() => navigate('/manage/invent')}
+          >
+            <StyledDiv>เพิ่มวัตถุดิบใหม่</StyledDiv>
+          </Button>
         </Stack>
 
         <Box
@@ -295,14 +324,14 @@ export default function InventPage() {
                     {/* <TableCell align="center">ID</TableCell> */}
                     <TableCell>ชื่อวัตถุดิบ</TableCell>
                     <TableCell>ปริมาณ</TableCell>
-                    <TableCell align="center">ปริมาณใน Stock (น้ำหนัก)</TableCell>
+                    <TableCell align="center">ปริมาณในสต๊อก (น้ำหนัก)</TableCell>
                     {/* <TableCell align="center">ปริมาณที่นับได้</TableCell> */}
+                    <TableCell align="center">หน่วยนับสต๊อก</TableCell>
+                    <TableCell align="center">หน่วยนับที่ซื้อ</TableCell>
+                    <TableCell align="center">มูลค่า</TableCell>
+                    {/* <TableCell align="center">ต้นทุน</TableCell> */}
+                    <TableCell align="center">ต้นทุนต่อหน่วย</TableCell>{' '}
                     <TableCell align="center">ปริมาณที่ใช้ไป</TableCell>
-                    <TableCell align="center">ประเภท</TableCell>
-                    <TableCell align="center">หน่วยนับ</TableCell>
-                    <TableCell align="center">ราคาต่อหน่วย</TableCell>
-                    <TableCell align="center">ต้นทุน</TableCell>
-                    <TableCell align="center">ต่อหน่วย</TableCell>
                     {/* <TableCell align="center">สถานะ</TableCell> */}
                     {/* {user && user.role === 'เจ้าของร้าน' && ( */}
                     <TableCell align="left">จัดการ</TableCell>
@@ -328,6 +357,7 @@ export default function InventPage() {
                         <TableCell>{raw.name}</TableCell>
 
                         <TableCell align="center">{raw.realquantity}</TableCell>
+
                         <TableCell align="center">
                           {raw.quantityInStock}
                           {/* {renderStockStatus(raw.quantityInStock)} */}
@@ -338,19 +368,25 @@ export default function InventPage() {
                             : 0}
                         </TableCell> */}
 
-                        <TableCell align="center">{raw.useInStock}</TableCell>
                         <TableCell align="center">{raw.unit}</TableCell>
                         <TableCell align="center">{raw.type}</TableCell>
                         <TableCell align="center">{raw.unitPrice} ฿</TableCell>
-                        <TableCell align="center">
-                          {parseFloat(
-                            (raw.unitPrice / raw.realquantity) * raw.quantityInStock
-                          ).toFixed(2)}{' '}
+                        {/* <TableCell align="center">
+                          {Number.isNaN(parseFloat(raw.unitPrice / raw.quantityInStock))
+                            ? '0'
+                            : (
+                                parseFloat(raw.unitPrice / raw.quantityInStock) *
+                                raw.quantityInStock
+                              ).toFixed(2)}{' '}
                           ฿
-                        </TableCell>
+                        </TableCell> */}
+
                         <TableCell align="center">
-                          {parseFloat(raw.unitPrice / raw.realquantity).toFixed(2)} ฿
+                          {raw.quantityInStock !== 0
+                            ? `${parseFloat(raw.unitPrice / raw.quantityInStock).toFixed(2)} ฿`
+                            : '0 ฿'}
                         </TableCell>
+                        <TableCell align="center">{raw.useInStock}</TableCell>
 
                         {/* <TableCell align="center">{renderStatus(raw.quantityInStock)}</TableCell> */}
                         <TableCell>

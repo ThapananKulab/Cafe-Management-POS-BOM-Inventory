@@ -28,6 +28,8 @@ const SalesByTimeChart = () => {
       }
     };
     fetchSalesData();
+    const intervalId = setInterval(fetchSalesData, 5000);
+    return () => clearInterval(intervalId);
   }, [selectedDateTime]);
 
   const chartData = {
@@ -57,7 +59,7 @@ const SalesByTimeChart = () => {
           value={selectedDateTime}
           onChange={(newDate) => setSelectedDateTime(newDate)}
           renderInput={(params) => <TextField {...params} />}
-          inputFormat="dd/MM/yyyy" // Specify the date format here
+          inputFormat="dd/MM/yyyy"
         />
       </LocalizationProvider>
       <Line data={chartData} />
