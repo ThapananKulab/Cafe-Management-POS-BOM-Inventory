@@ -18,6 +18,8 @@ import {
   TableContainer,
 } from '@mui/material';
 
+import CostChart from './graph-cost';
+
 function HighestCostRecipeReport() {
   const navigate = useNavigate();
   const [highestCostRecipes, setHighestCostRecipes] = useState([]);
@@ -71,8 +73,11 @@ function HighestCostRecipeReport() {
             </Select>
           </Paper>
         </Stack>
+
+        <CostChart highestCostRecipes={highestCostRecipes} />
+
         <TableContainer component={Paper}>
-          <Table>
+          <Table mb={2}>
             <TableHead>
               <TableRow>
                 <TableCell>รายชื่อสูตร</TableCell>
