@@ -18,6 +18,8 @@ import {
   TableContainer,
 } from '@mui/material';
 
+import PaymentMethodPieChart from './graph-pie-payment';
+
 function PaymentMethodReport() {
   const StyledDiv = styled1.div`
     font-family: 'Prompt', sans-serif;
@@ -71,6 +73,8 @@ function PaymentMethodReport() {
             </Select>
           </Paper>
         </Stack>
+
+        <PaymentMethodPieChart data={reportData} />
 
         <TableContainer component={Paper}>
           <Table>

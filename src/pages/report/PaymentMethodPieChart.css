@@ -1,0 +1,11 @@
+.wrapper {
+  display: flex; /* Enable flexbox for the wrapper */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  height: 50vh; /* Optional: Set the wrapper height to 100vh for full viewport */
+}
+
+.PaymentMethodPieChart {
+  width: 200px; /* Adjust width as needed */
+  height: 200px; /* Adjust height as needed */
+}

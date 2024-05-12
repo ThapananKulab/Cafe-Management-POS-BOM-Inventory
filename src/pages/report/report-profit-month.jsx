@@ -24,6 +24,9 @@ import {
   TableContainer,
 } from '@mui/material';
 
+import Graph from './graph-profit';
+import GraphAll from './graph-all-profit';
+
 const MyComponent = () => {
   const StyledDiv = styled1.div`
     font-family: 'Prompt', sans-serif;
@@ -105,22 +108,22 @@ const MyComponent = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3333/api/income/income')
+      .get('https://test-api-01.azurewebsites.net/api/income/income')
       .then((response) => setIncomeData(response.data))
       .catch((error) => console.error('Error fetching income data:', error));
 
     axios
-      .get('http://localhost:3333/api/income/expenses')
+      .get('https://test-api-01.azurewebsites.net/api/income/expenses')
       .then((response) => setExpensesData(response.data))
       .catch((error) => console.error('Error fetching expenses data:', error));
 
     axios
-      .get('http://localhost:3333/api/income/purchase-receipts')
+      .get('https://test-api-01.azurewebsites.net/api/income/purchase-receipts')
       .then((response) => setPurchaseReceiptData(response.data))
       .catch((error) => console.error('Error fetching purchase receipt data:', error));
 
     axios
-      .get('http://localhost:3333/api/income/sale-orders')
+      .get('https://test-api-01.azurewebsites.net/api/income/sale-orders')
       .then((response) => setSaleOrderData(response.data))
       .catch((error) => console.error('Error fetching sale order data:', error));
   }, []);
@@ -160,7 +163,7 @@ const MyComponent = () => {
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">
-            <StyledDiv>ยอดขายที่ขายดีสุดตามเวลา</StyledDiv>
+            <StyledDiv>รายงานขายรายเดือน</StyledDiv>
           </Typography>
         </Stack>
         <Stack direction="row" spacing={2} justifyContent="center" marginBottom={4}>
@@ -189,7 +192,8 @@ const MyComponent = () => {
             renderInput={(props) => <TextField {...props} />}
           />
         </LocalizationProvider>
-
+        <Graph data={filteredProfitData} />
+        <GraphAll data={filteredProfitData} /> {/* แสดงกราฟหลายเส้น */}
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
