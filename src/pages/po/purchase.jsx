@@ -126,10 +126,13 @@ const CreatePurchaseReceiptPage = () => {
           realquantity: item.realquantity,
         }));
 
-        const response = await axios.post('http://localhost:3333/api/purchaseitem/add', {
-          items: itemsWithRealQuantity,
-          supplier: selectedSupplier,
-        });
+        const response = await axios.post(
+          'https://test-api-01.azurewebsites.net/api/purchaseitem/add',
+          {
+            items: itemsWithRealQuantity,
+            supplier: selectedSupplier,
+          }
+        );
 
         console.log('Purchase receipt created:', response.data);
         setPurchaseItems([]);
@@ -158,7 +161,7 @@ const CreatePurchaseReceiptPage = () => {
   const getTotalPrice = () => purchaseItems.reduce((total, item) => total + item.total, 0);
 
   return (
-    <Container>
+    <Container maxWidth="sm">
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h4" gutterBottom>

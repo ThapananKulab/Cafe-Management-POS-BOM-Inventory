@@ -34,6 +34,8 @@ export const TestPromtpay = lazy(() => import('src/pages/test-promtpay'));
 export const Post = lazy(() => import('src/pages/pos/post'));
 export const PromptPay = lazy(() => import('src/pages/pos/changepromptpay'));
 export const InventUpdateStock = lazy(() => import('src/pages/invent/update-stock'));
+export const AdjustStock = lazy(() => import('src/pages/invent/adjust-invent'));
+export const HistoryAdjustStock = lazy(() => import('src/pages/invent/history-adjust-invent'));
 export const EditNearInventPage = lazy(() => import('src/pages/invent/edit-near-invent'));
 export const TestR = lazy(() => import('src/pages/test-r'));
 export const TestM = lazy(() => import('src/pages/test-m'));
@@ -207,6 +209,14 @@ export default function Router() {
         {
           path: '/report/profit-month',
           element: <ReportProfitMonth />,
+        },
+        {
+          path: '/manage/invent/adjust-stock',
+          element: <AdjustStock />,
+        },
+        {
+          path: '/manage/invent/history-adjust-stock',
+          element: <HistoryAdjustStock />,
         },
       ],
     },

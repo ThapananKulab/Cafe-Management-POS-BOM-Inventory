@@ -70,7 +70,7 @@ const navConfig = [
       },
       {
         title: 'ปรับปรุงวัตถุดิบ',
-        path: '/manage/invent/update-stock',
+        path: '/manage/invent/adjust-stock',
         icon: icon('in-warning'),
       },
     ],

@@ -67,7 +67,7 @@ export default function InventoryItemsTable() {
               startIcon={<Icon icon="carbon:settings-adjust" />}
               onClick={() => navigate('/edit/edit-near-invent')}
             >
-              <StyledDiv>ปรับวัตถุดิบเมื่อใกล้หมด</StyledDiv>
+              <StyledDiv>ปริมาณที่ต้องการให้แจ้งเตือน</StyledDiv>
             </Button>
           </Stack>
         </Stack>
