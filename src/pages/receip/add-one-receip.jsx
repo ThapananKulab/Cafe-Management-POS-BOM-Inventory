@@ -197,19 +197,22 @@ function AddRecipe() {
         if (field === 'inventoryItemId') {
           const selectedItem = inventoryItems.find((inventoryItem) => inventoryItem._id === value);
           const newName = selectedItem ? selectedItem.name : '';
-          const newUnitPrice = selectedItem ? selectedItem.unitPrice : 0; // เพิ่มการรับค่า unitPrice จาก selectedItem
-          newValue = { ...ingredient, [field]: value, name: newName, unitPrice: newUnitPrice }; // เพิ่ม unitPrice เข้าไปในข้อมูลใหม่
+          const newUnitPrice = selectedItem
+            ? selectedItem.unitPrice / selectedItem.realquantity
+            : 0;
+          newValue = { ...ingredient, [field]: value, name: newName, unitPrice: newUnitPrice };
         } else if (field === 'quantity') {
           const unit = ingredientUnits[index];
           const targetUnit = 'gram';
           const inventoryItem = inventoryItems.find(
             (item) => item._id === ingredient.inventoryItemId
           );
-          const { unitPrice } = inventoryItem || { unitPrice: 0 };
+          const { unitPrice, realquantity } = inventoryItem || { unitPrice: 0, realquantity: 0 };
+          const adjustedUnitPrice = realquantity > 0 ? unitPrice / realquantity : 0;
           newValue = {
             ...ingredient,
             [field]: calculateQuantity(value, unit, targetUnit),
-            unitPrice,
+            unitPrice: adjustedUnitPrice,
           };
         }
         return newValue;

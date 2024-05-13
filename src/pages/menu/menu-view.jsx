@@ -510,10 +510,10 @@ function MenuTable() {
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: 400, // คุณสามารถปรับค่านี้ตามที่ต้องการ
+                  width: 600, // ปรับค่า maxWidth ตามที่ต้องการ
                   maxWidth: '90%', // กำหนดค่าสูงสุดของความกว้างไม่ให้เกิน 90% ของ viewport
-                  maxHeight: '90vh', // กำหนดค่าสูงสุดของความสูงไม่ให้เกิน 90vh
-                  overflowY: 'auto', // เพิ่ม scrollbar ในกรณีที่เนื้อหาภายในมีความสูงเกินกว่ากำหนด
+                  maxHeight: '90vh',
+                  overflowY: 'auto',
                   bgcolor: 'background.paper',
                   boxShadow: 24,
                   p: 4,
@@ -545,6 +545,15 @@ function MenuTable() {
                   fullWidth
                   margin="normal"
                 />
+                <TextField
+                  label="ต้นทุน"
+                  value={recipes.find((recipe) => recipe._id === updateData.recipe)?.cost || ''}
+                  disabled
+                  fullWidth
+                  margin="normal"
+                  type="number"
+                />
+
                 <TextField
                   label="Price"
                   type="number"

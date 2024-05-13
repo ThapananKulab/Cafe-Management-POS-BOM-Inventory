@@ -188,6 +188,7 @@ export default function InventPage() {
   filteredRaws.forEach((raw) => {
     if (raw.quantityInStock !== 0) {
       // ตรวจสอบว่า quantityInStock ไม่เป็นศูนย์
+      // const cost = parseFloat((raw.unitPrice / raw.quantityInStock) * raw.quantityInStock);
       const cost = parseFloat((raw.unitPrice / raw.quantityInStock) * raw.quantityInStock);
       totalCost += cost;
     }
@@ -331,6 +332,7 @@ export default function InventPage() {
                     <TableCell align="center">มูลค่า</TableCell>
                     {/* <TableCell align="center">ต้นทุน</TableCell> */}
                     <TableCell align="center">ต้นทุนต่อหน่วย</TableCell>{' '}
+                    <TableCell align="center">COGS</TableCell>{' '}
                     <TableCell align="center">ปริมาณที่ใช้ไป</TableCell>
                     {/* <TableCell align="center">สถานะ</TableCell> */}
                     {/* {user && user.role === 'เจ้าของร้าน' && ( */}
@@ -381,6 +383,11 @@ export default function InventPage() {
                           ฿
                         </TableCell> */}
 
+                        <TableCell align="center">
+                          {raw.quantityInStock !== 0
+                            ? `${parseFloat(raw.unitPrice / raw.quantityInStock).toFixed(2)} ฿`
+                            : '0 ฿'}
+                        </TableCell>
                         <TableCell align="center">
                           {raw.quantityInStock !== 0
                             ? `${parseFloat(raw.unitPrice / raw.realquantity).toFixed(2)} ฿`

@@ -234,15 +234,15 @@ function RecipeTable() {
   const calculateTotalCost = () => {
     let totalCost = 0;
     editableRecipe.ingredients.forEach((ingredient) => {
-      const { unitPrice, quantityInStock } =
+      const { unitPrice, realquantity } =
         inventoryItems.find((item) => {
           console.log('Ingredient ID:', ingredient.inventoryItemId?._id);
           console.log('Item ID:', item._id);
           return item._id === ingredient.inventoryItemId?._id;
         }) || {};
-      if (unitPrice !== undefined && quantityInStock !== undefined) {
+      if (unitPrice !== undefined && realquantity !== undefined) {
         const quantity = parseFloat(ingredient.quantity) || 0;
-        const cost = (unitPrice * quantity) / quantityInStock;
+        const cost = (unitPrice / realquantity) * quantity;
         totalCost += parseFloat(cost.toFixed(2));
       }
     });
@@ -485,7 +485,7 @@ function RecipeTable() {
                 <Box sx={{ textAlign: 'center' }}>
                   <TextField
                     fullWidth
-                    label="Total"
+                    label="ราคาต้นทุน"
                     variant="outlined"
                     value={calculateTotalCost().toFixed(2)}
                     disabled

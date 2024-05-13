@@ -161,6 +161,18 @@ function AddMenuItem() {
           margin="normal"
           required
           fullWidth
+          id="cost"
+          label="ราคาต้นทุน"
+          name="cost"
+          type="number"
+          value={menuItem.cost}
+          onChange={handleChange}
+        />
+
+        <TextField
+          margin="normal"
+          required
+          fullWidth
           id="price"
           label="ราคา"
           name="price"

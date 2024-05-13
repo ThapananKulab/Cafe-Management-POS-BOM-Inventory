@@ -53,12 +53,11 @@ function UpdateStock() {
   }, []);
 
   useEffect(() => {
-    // This effect is used to update the details of the selected item
     const selectedItem = inventoryItems.find((item) => item._id === selectedItemId);
     if (selectedItem) {
-      setCurrentStock(selectedItem.quantityInStock); // Assuming this is the current stock level from your inventory
-      setUnit(selectedItem.unit); // Ensure this reflects the unit of measurement
-      setAdjustment(selectedItem.realquantity); // Assuming this reflects some base quantity for calculations
+      setCurrentStock(selectedItem.quantityInStock);
+      setUnit(selectedItem.unit);
+      setAdjustment(selectedItem.realquantity);
     }
   }, [selectedItemId, inventoryItems]);
 
@@ -138,7 +137,7 @@ function UpdateStock() {
           <Typography variant="h4" sx={{ mt: 2, mb: 3, textAlign: 'center' }}>
             <StyledDiv>ปรับปรุงวัตถุดิบ</StyledDiv>
           </Typography>
-          <StyledDiv>
+          {/* <StyledDiv>
             <Button
               variant="contained"
               color="error"
@@ -147,7 +146,7 @@ function UpdateStock() {
             >
               <StyledDiv>ประวัติการปรับปรุงวัตถุดิบ</StyledDiv>
             </Button>
-          </StyledDiv>
+          </StyledDiv> */}
         </Stack>
 
         <Card sx={{ mb: 2 }}>
