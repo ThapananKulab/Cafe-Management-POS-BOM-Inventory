@@ -99,6 +99,7 @@ const PendingReceipts = () => {
               <TableCell>ชื่อวัตถุดิบ</TableCell>
               <TableCell>ปริมาณ</TableCell>
               <TableCell>จำนวน</TableCell>
+              <TableCell>ราคา</TableCell>
               <TableCell>สถานะ</TableCell>
               <TableCell>โดย</TableCell>
               <TableCell>วันที่และเวลาเบิก</TableCell>
@@ -122,8 +123,9 @@ const PendingReceipts = () => {
                         )}
                         {/* <TableCell>{item._id}</TableCell> */}
                         <TableCell>{item.item && item.item.name}</TableCell>
-                        <TableCell>{item.item && item.item.realquantity}</TableCell>
+                        <TableCell>{item.item && item.realquantity}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{item.item && item.unitPrice}</TableCell>
                         <TableCell
                           style={{
                             position: 'relative',

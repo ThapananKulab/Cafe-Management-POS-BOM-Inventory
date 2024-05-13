@@ -254,7 +254,7 @@ export default function InventPage() {
           </Button>
           <Button
             variant="contained"
-            color="inherit"
+            color="success"
             startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={() => navigate('/manage/invent')}
           >

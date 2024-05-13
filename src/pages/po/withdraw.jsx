@@ -73,14 +73,14 @@ const PendingReceipts = () => {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 5000); // เรียก API ทุก 5 วินาที
+    }, 5000);
 
-    fetchData(); // เรียก API ครั้งแรกเมื่อคอมโพเนนต์ถูกโหลด
+    fetchData();
 
-    return () => clearInterval(interval); // เมื่อคอมโพเนนต์ถูกถอดจาก DOM ให้เคลียร์ interval
+    return () => clearInterval(interval);
   }, []);
 
-  const handleWithdraw = async (purchaseReceiptId, itemId) => {
+  const handleWithdraw = async (purchaseReceiptId, itemId, unitPrice) => {
     try {
       const result = await Swal.fire({
         title: 'ยืนยันการเบิก',
@@ -106,6 +106,7 @@ const PendingReceipts = () => {
           status: 'withdrawn',
           received,
           withdrawner: `${user.firstname} ${user.lastname} (${user.role})`,
+          unitPrice,
         });
 
         console.log('Item withdrawn successfully');
@@ -131,6 +132,7 @@ const PendingReceipts = () => {
               <TableCell>ชื่อวัตถุดิบ</TableCell>
               <TableCell>ปริมาณ</TableCell>
               <TableCell>จำนวน</TableCell>
+              <TableCell>ราคา</TableCell>
               <TableCell>สถานะ</TableCell>
               <TableCell>จัดการ</TableCell>
             </TableRow>
@@ -153,12 +155,15 @@ const PendingReceipts = () => {
                         )}
                         {/* <TableCell>{item._id}</TableCell> */}
                         <TableCell>{item.item.name}</TableCell>
-                        <TableCell>{item.item.realquantity}</TableCell>
+                        <TableCell>{item.realquantity}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{item.unitPrice}฿</TableCell>
                         <TableCell>{item.status.replace('pending', 'โกดังร้าน')}</TableCell>
                         <TableCell>
                           <IconButton
-                            onClick={() => handleWithdraw(purchaseId, item.item._id)}
+                            onClick={() =>
+                              handleWithdraw(purchaseId, item.item._id, item.unitPrice)
+                            }
                             color="secondary"
                           >
                             <Icon icon="ph:hand-withdraw" />

@@ -84,7 +84,28 @@ const CreatePurchaseReceiptPage = () => {
     }
     const newPurchaseItems = [...purchaseItems];
     newPurchaseItems[index].quantity = quantity;
+    newPurchaseItems[index].realquantity = quantity; // อัปเดตค่า realquantity เป็นจำนวนที่ผู้ใช้กรอก
     newPurchaseItems[index].total = quantity * newPurchaseItems[index].unitPrice;
+    setPurchaseItems(newPurchaseItems);
+  };
+
+  const handleUnitPriceChange = (index, unitPrice) => {
+    if (unitPrice <= 0) {
+      return;
+    }
+    const newPurchaseItems = [...purchaseItems];
+    newPurchaseItems[index].unitPrice = unitPrice;
+    newPurchaseItems[index].total = unitPrice * newPurchaseItems[index].quantity;
+    setPurchaseItems(newPurchaseItems);
+  };
+
+  const handleRealQuantityChange = (index, realquantity) => {
+    if (realquantity <= 0) {
+      return;
+    }
+    const newPurchaseItems = [...purchaseItems];
+    newPurchaseItems[index].realquantity = realquantity;
+    newPurchaseItems[index].total = realquantity * newPurchaseItems[index].unitPrice;
     setPurchaseItems(newPurchaseItems);
   };
 
@@ -99,13 +120,16 @@ const CreatePurchaseReceiptPage = () => {
         cancelButtonText: 'No',
       });
       if (result.isConfirmed) {
-        const response = await axios.post(
-          'https://test-api-01.azurewebsites.net/api/purchaseitem/add',
-          {
-            items: purchaseItems,
-            supplier: selectedSupplier,
-          }
-        );
+        // แก้ไข items โดยเพิ่ม realquantity ด้วย
+        const itemsWithRealQuantity = purchaseItems.map((item) => ({
+          ...item,
+          realquantity: item.realquantity,
+        }));
+
+        const response = await axios.post('http://localhost:3333/api/purchaseitem/add', {
+          items: itemsWithRealQuantity,
+          supplier: selectedSupplier,
+        });
 
         console.log('Purchase receipt created:', response.data);
         setPurchaseItems([]);
@@ -228,9 +252,31 @@ const CreatePurchaseReceiptPage = () => {
                         InputProps={{ inputProps: { style: { textAlign: 'center' } } }}
                       />
                     </TableCell>
-                  </TableCell>{' '}
-                  <TableCell>{item.realquantity}</TableCell>
-                  <TableCell>{item.unitPrice}</TableCell>
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      type="number"
+                      value={item.realquantity}
+                      onChange={(e) =>
+                        handleRealQuantityChange(index, parseInt(e.target.value, 10))
+                      }
+                      fullWidth
+                      label="ปริมาณ"
+                      InputProps={{ inputProps: { style: { textAlign: 'center' } } }}
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <TextField
+                      type="number"
+                      value={item.unitPrice}
+                      onChange={(e) => handleUnitPriceChange(index, parseFloat(e.target.value))}
+                      fullWidth
+                      label="ราคาต่อหน่วย"
+                      InputProps={{ inputProps: { style: { textAlign: 'center' } } }}
+                    />
+                  </TableCell>
+
                   <TableCell>{item.total}</TableCell>
                   <TableCell>
                     <Button

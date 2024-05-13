@@ -136,8 +136,8 @@ const MyComponent = () => {
   const handleSearch = (date) => {
     setSelectedDate(date);
     if (date) {
-      const selectedMonth = dayjs(date).month(); // Get the zero-indexed month
-      const selectedYear = dayjs(date).year(); // Get the year
+      const selectedMonth = dayjs(date).month();
+      const selectedYear = dayjs(date).year();
       const filteredData = calculateProfit().filter(
         (row) =>
           dayjs(row.date).month() === selectedMonth && dayjs(row.date).year() === selectedYear
