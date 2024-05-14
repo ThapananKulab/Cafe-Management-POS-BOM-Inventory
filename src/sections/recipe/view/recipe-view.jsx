@@ -129,7 +129,7 @@ function RecipeTable() {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/inventoryitems/all');
+        const response = await axios.get('https://test-api-01.azurewebsites.net/api/inventoryitems/all');
         setInventoryItems(response.data);
       } catch (error) {
         console.error('Failed to fetch inventory items:', error);
