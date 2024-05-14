@@ -546,14 +546,22 @@ function MenuTable() {
                   margin="normal"
                 />
                 <TextField
-                  label="ต้นทุน"
+                  label="ต้นทุนล่าสุด"
                   value={recipes.find((recipe) => recipe._id === updateData.recipe)?.cost || ''}
+                  onChange={(e) => setUpdateData({ ...updateData, cost: e.target.value })}
                   disabled
                   fullWidth
                   margin="normal"
                   type="number"
                 />
-
+                <TextField
+                  label="ต้นทุน"
+                  value={updateData.cost}
+                  onChange={(e) => setUpdateData({ ...updateData, cost: e.target.value })}
+                  fullWidth
+                  margin="normal"
+                  type="number"
+                />
                 <TextField
                   label="Price"
                   type="number"
