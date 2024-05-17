@@ -161,7 +161,7 @@ const CreatePurchaseReceiptPage = () => {
   const getTotalPrice = () => purchaseItems.reduce((total, item) => total + item.total, 0);
 
   return (
-    <Container maxWidth="sm">
+    <Container>
       <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h4" gutterBottom>
