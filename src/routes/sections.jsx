@@ -292,6 +292,7 @@ export default function Router() {
       path: '/test',
       element: <Test />,
     },
+    { path: '/order-page', element: <OrderPage /> },
   ]);
 
   return routes;
