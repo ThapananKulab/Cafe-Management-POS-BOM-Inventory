@@ -122,7 +122,7 @@ function MenuTable() {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       const { data } = await axios.get(
-        'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
       );
       setInventoryItems(data);
     };
@@ -148,7 +148,9 @@ function MenuTable() {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get('https://test-api-01.azurewebsites.net/api/menus/allMenus');
+      const response = await axios.get(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/allMenus'
+      );
       setMenus(response.data);
     } catch (error) {
       console.error('Could not fetch menus:', error);
@@ -235,14 +237,16 @@ function MenuTable() {
         try {
           await Promise.all(
             selected.map((id) =>
-              axios.delete(`https://test-api-01.azurewebsites.net/api/menus/${id}`)
+              axios.delete(
+                `https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/${id}`
+              )
             )
           );
           // toast.success(`${selected.length} item(s)ลบสำเร็จ`);
           toast.success(`ลบสำเร็จ`);
           setSelected([]);
           const response = await axios.get(
-            'https://test-api-01.azurewebsites.net/api/menus/allMenus'
+            'https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/allMenus'
           );
           setMenus(response.data);
         } catch (error) {
@@ -256,7 +260,7 @@ function MenuTable() {
   const fetchMenuItemDetails = async (menuItemId) => {
     try {
       const response = await axios.get(
-        `https://test-api-01.azurewebsites.net/api/menus/menu/${menuItemId}`
+        `https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/menu/${menuItemId}`
       );
       const menuItemDetails = response.data;
 
@@ -283,7 +287,7 @@ function MenuTable() {
 
     try {
       await axios.put(
-        `https://test-api-01.azurewebsites.net/api/menus/${updateData._id}`,
+        `https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/${updateData._id}`,
         formData,
         {
           headers: {
