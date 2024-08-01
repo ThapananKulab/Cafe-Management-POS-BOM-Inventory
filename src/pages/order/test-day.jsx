@@ -135,13 +135,16 @@ function RealTimeOrderPage() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -178,7 +181,7 @@ function RealTimeOrderPage() {
 
       if (result.isConfirmed) {
         const response = await fetch(
-          `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/accept`,
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/${orderId}/accept`,
           {
             method: 'POST',
             headers: {
@@ -203,7 +206,7 @@ function RealTimeOrderPage() {
   const deductStock = async (orderId) => {
     try {
       const response = await fetch(
-        `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/deductStock`,
+        `https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/${orderId}/deductStock`,
         {
           method: 'POST',
           headers: {
@@ -236,7 +239,7 @@ function RealTimeOrderPage() {
 
       if (result.isConfirmed) {
         const response = await fetch(
-          `https://test-api-01.azurewebsites.net/api/saleorder/${orderId}/cancel`,
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/${orderId}/cancel`,
           {
             method: 'POST',
             headers: {
@@ -260,7 +263,9 @@ function RealTimeOrderPage() {
 
   const checkSaleRoundStatus = async () => {
     try {
-      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/status');
+      const response = await fetch(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/status'
+      );
       if (response.ok) {
         const data = await response.json();
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
@@ -276,7 +281,7 @@ function RealTimeOrderPage() {
   const fetchOrders = async () => {
     try {
       const response = await fetch(
-        'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/saleOrders'
       );
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
@@ -294,7 +299,7 @@ function RealTimeOrderPage() {
 
   // const handleOpenSaleRound = async () => {
   //   try {
-  //     const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
+  //     const response = await fetch('https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/open', {
   //       method: 'POST',
   //     });
   //     if (response.ok) {
@@ -322,7 +327,7 @@ function RealTimeOrderPage() {
   //     });
 
   //     if (result.isConfirmed) {
-  //       const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
+  //       const response = await fetch('https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/close', {
   //         method: 'POST',
   //       });
   //       if (response.ok) {
