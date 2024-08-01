@@ -20,7 +20,7 @@ const ProductForm = () => {
     if (productId) {
       console.log('Fetching product data for ID:', productId);
       axios
-        .get(`https://cafe-project-server11.onrender.com/api/products/${productId}`)
+        .get(`https://cafe-management-pos-bom-inventory-api.vercel.app/api/products/${productId}`)
         .then((response) => {
           console.log('Product data:', response.data);
           setProductname(response.data.productname);
@@ -59,7 +59,7 @@ const ProductForm = () => {
     }
 
     try {
-      const API_URL = `https://cafe-project-server11.onrender.com/api/products/updateProduct/${productId}`;
+      const API_URL = `https://cafe-management-pos-bom-inventory-api.vercel.app/api/products/updateProduct/${productId}`;
       await axios.post(`${API_URL}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

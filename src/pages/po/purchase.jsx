@@ -38,7 +38,7 @@ const CreatePurchaseReceiptPage = () => {
     const fetchSuppliers = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/supplier/suppliers'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/supplier/suppliers'
         );
         setSuppliers(response.data);
       } catch (error) {
@@ -52,7 +52,7 @@ const CreatePurchaseReceiptPage = () => {
     const fetchInventoryItems = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
         );
         setInventoryItems(response.data);
       } catch (error) {

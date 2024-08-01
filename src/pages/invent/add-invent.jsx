@@ -56,7 +56,7 @@ function InventoryManager() {
   const fetchInventoryItems = async () => {
     try {
       const response = await axios.get(
-        'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
       );
       setInventoryItems(response.data);
     } catch (error) {
@@ -123,7 +123,10 @@ function InventoryManager() {
     };
 
     try {
-      await axios.post('http://localhost:3333/api/inventoryitems/add', itemToAdd);
+      await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/add',
+        itemToAdd
+      );
       toast.success(`เพิ่ม "${newItem.name}" สำเร็จ`);
       fetchInventoryItems();
       setNewItem({

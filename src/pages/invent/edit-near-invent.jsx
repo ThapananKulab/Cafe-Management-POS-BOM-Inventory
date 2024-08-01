@@ -35,7 +35,7 @@ const InventoryList = () => {
   const fetchItems = async () => {
     try {
       const response = await axios.get(
-        'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
       );
       setItems(response.data);
       setIsLowerMap(

@@ -31,7 +31,7 @@ function PaymentMethodReport() {
     async function fetchReport() {
       try {
         const response = await fetch(
-          'https://test-api-01.azurewebsites.net/api/saleorder/report/payment-methods'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/report/payment-methods'
         );
         if (!response.ok) {
           throw new Error('Failed to fetch payment method report');

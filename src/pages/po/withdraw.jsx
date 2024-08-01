@@ -30,13 +30,16 @@ const PendingReceipts = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -63,7 +66,7 @@ const PendingReceipts = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/purchaseitem/pending'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/purchaseitem/pending'
         );
         setPendingReceipts(response.data);
       } catch (error) {

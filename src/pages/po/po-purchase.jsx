@@ -37,7 +37,7 @@ const PurchaseReceiptPage = () => {
     const fetchSuppliers = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/supplier/suppliers'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/supplier/suppliers'
         );
         setSuppliers(response.data);
       } catch (error) {
@@ -51,7 +51,7 @@ const PurchaseReceiptPage = () => {
     const fetchPurchaseReceipts = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/purchaseitem/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/purchaseitem/all'
         );
         // เรียงลำดับข้อมูลจากเวลาล่าสุด
         const sortedReceipts = response.data.sort(

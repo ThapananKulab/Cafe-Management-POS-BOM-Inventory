@@ -51,7 +51,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]); // Log the first product to check its structure
         setProducts(response.data);

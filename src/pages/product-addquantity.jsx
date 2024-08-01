@@ -37,7 +37,7 @@ function CreateProductForm() {
 
     try {
       const response = await axios.post(
-        'https://test-api-01.azurewebsites.net/api/test/createProduct',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/test/createProduct',
         formData,
         {
           headers: {

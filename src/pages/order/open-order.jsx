@@ -33,7 +33,7 @@ const SaleRoundsTable = () => {
     const fetchDailySales = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/salerounds/statuses'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/statuses'
         );
         if (response.data && response.data.saleRounds) {
           const sortedSaleRounds = response.data.saleRounds.sort(

@@ -60,13 +60,16 @@ function MenuTable() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -96,7 +99,9 @@ function MenuTable() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('https://test-api-01.azurewebsites.net/api/recipes/all');
+        const response = await axios.get(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/all'
+        );
         setRecipes(response.data);
       } catch (error) {
         console.error('Failed to fetch recipes', error);

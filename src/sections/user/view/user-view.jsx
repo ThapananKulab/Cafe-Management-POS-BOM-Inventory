@@ -40,7 +40,9 @@ export default function UserPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://test-api-01.azurewebsites.net/api/users');
+        const response = await axios.get(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/users'
+        );
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -73,7 +75,9 @@ export default function UserPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`https://test-api-01.azurewebsites.net/api/users/${userId}`);
+          await axios.delete(
+            `https://cafe-management-pos-bom-inventory-api.vercel.app/api/users/${userId}`
+          );
           Swal.fire('ลบสำเร็จ!', 'ผู้ใช้ถูกลบเรียบร้อยแล้ว.', 'success');
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         } catch (error) {

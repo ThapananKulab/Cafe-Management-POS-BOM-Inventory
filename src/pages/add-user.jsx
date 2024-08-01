@@ -48,7 +48,7 @@ const UserForm = () => {
 
     try {
       const response = await axios.post(
-        'https://cafe-project-server11.onrender.com/api/employees/add-user',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/employees/add-user',
         userFormData,
         {
           headers: {

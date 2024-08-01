@@ -17,13 +17,16 @@ function ChatPage() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -51,7 +54,7 @@ function ChatPage() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `https://test-api-01.azurewebsites.net/api/chatmessage/get-messages/${userId}`,
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/chatmessage/get-messages/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -73,7 +76,7 @@ function ChatPage() {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'https://test-api-01.azurewebsites.net/api/chatmessage/send-message',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/chatmessage/send-message',
         { senderId: user?.id, receiverId: '6573c88a1871d28dee176da0', message },
         {
           headers: {

@@ -20,7 +20,7 @@ const SalesByTimeChart = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          `https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByTime?date=${selectedDateTime.toISOString()}`
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/salesByTime?date=${selectedDateTime.toISOString()}`
         );
         setSalesData(response.data);
       } catch (error) {

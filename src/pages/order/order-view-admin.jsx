@@ -92,7 +92,9 @@ function RealTimeOrderPage() {
 
   const checkSaleRoundStatus = async () => {
     try {
-      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/status');
+      const response = await fetch(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/status'
+      );
       if (response.ok) {
         const data = await response.json();
         const isSaleRoundOpenLocalStorage = localStorage.getItem('isSaleRoundOpen');
@@ -114,7 +116,7 @@ function RealTimeOrderPage() {
   const fetchOrders = async () => {
     try {
       const response = await fetch(
-        'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders/currentdate'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/saleOrders/currentdate'
       );
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
@@ -134,9 +136,12 @@ function RealTimeOrderPage() {
 
   const handleOpenSaleRound = async () => {
     try {
-      const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/open', {
-        method: 'POST',
-      });
+      const response = await fetch(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/open',
+        {
+          method: 'POST',
+        }
+      );
       if (response.ok) {
         setIsSaleRound(true);
         setIsSaleRoundOpen(true); // เปลี่ยนค่าเมื่อเปิดร้าน
@@ -162,9 +167,12 @@ function RealTimeOrderPage() {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/salerounds/close', {
-          method: 'POST',
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/salerounds/close',
+          {
+            method: 'POST',
+          }
+        );
         if (response.ok) {
           setIsSaleRound(false);
           setIsSaleRoundOpen(false); // เปลี่ยนค่าเมื่อปิดร้าน

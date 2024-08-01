@@ -130,7 +130,7 @@ function RecipeTable() {
     const fetchInventoryItems = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
         );
         setInventoryItems(response.data);
       } catch (error) {
@@ -147,7 +147,9 @@ function RecipeTable() {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get('https://test-api-01.azurewebsites.net/api/recipes/all');
+      const response = await axios.get(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/all'
+      );
       setRecipes(response.data);
     } catch (error) {
       console.error('Failed to fetch recipes:', error);
@@ -159,7 +161,7 @@ function RecipeTable() {
       const newTotalCost = calculateTotalCost().toFixed(2);
       const updatedRecipe = { ...editableRecipe, cost: newTotalCost };
       const response = await axios.put(
-        `https://test-api-01.azurewebsites.net/api/recipes/update/${editableRecipe._id}`,
+        `https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/update/${editableRecipe._id}`,
         updatedRecipe
       );
       console.log('Recipe updated:', response.data);
@@ -204,7 +206,7 @@ function RecipeTable() {
 
       if (willDelete.isConfirmed) {
         const response = await axios.delete(
-          `https://test-api-01.azurewebsites.net/api/recipes/delete/${recipeId}`
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/delete/${recipeId}`
         );
         console.log('Recipe deleted:', response.data);
         fetchRecipes();

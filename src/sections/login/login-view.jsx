@@ -48,13 +48,16 @@ export default function LoginView() {
 
     try {
       // const response = await fetch('http://localhost:3333/api/login', {
-      const response = await fetch('https://test-api-01.azurewebsites.net/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         const errorResponse = await response.json();

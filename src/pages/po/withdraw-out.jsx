@@ -48,7 +48,7 @@ const PendingReceipts = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/purchaseitem/pending'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/purchaseitem/pending'
         );
         setPendingReceipts(response.data);
       } catch (error) {

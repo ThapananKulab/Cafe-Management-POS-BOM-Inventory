@@ -68,7 +68,9 @@ const CartTemplate = () => {
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       try {
-        const response = await axios.get('https://test-api-01.azurewebsites.net/api/promptpay/all');
+        const response = await axios.get(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/promptpay/all'
+        );
         setPhoneNumber(response.data);
       } catch (error) {
         console.error('Error fetching phone number:', error);
@@ -81,10 +83,13 @@ const CartTemplate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://test-api-01.azurewebsites.net/generateQR', {
-        phoneNumber,
-        amount: totalPrice,
-      });
+      const response = await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/generateQR',
+        {
+          phoneNumber,
+          amount: totalPrice,
+        }
+      );
       if (response.data.RespCode === 200) {
         setQrCode(response.data.Result);
       } else {
@@ -123,7 +128,7 @@ const CartTemplate = () => {
     const fetchInventoryItems = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
         );
         setInventoryItems(response.data); // เซ็ตข้อมูล inventory items ใน state
       } catch (error) {
@@ -148,7 +153,7 @@ const CartTemplate = () => {
     try {
       if (menuId) {
         const response = await axios.get(
-          `https://test-api-01.azurewebsites.net/api/menus/menu/${menuId}`
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/menu/${menuId}`
         );
         setRecipes(response.data.recipe);
       }
@@ -194,13 +199,16 @@ const CartTemplate = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -245,7 +253,7 @@ const CartTemplate = () => {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/menus/allMenus')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/allMenus')
       .then((response) => {
         console.log('Sample product:', response.data[0]);
         setProducts(response.data);
@@ -270,7 +278,7 @@ const CartTemplate = () => {
     const quantityToAdd = existingCartItem ? existingCartItem.quantity + 1 : 1;
 
     axios
-      .post('https://test-api-01.azurewebsites.net/api/menus/checkIngredients', {
+      .post('https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/checkIngredients', {
         id: productToAdd._id,
         quantityToAdd,
       })
@@ -383,7 +391,8 @@ const CartTemplate = () => {
     navigate('/order');
   };
 
-  const endpoint = 'https://test-api-01.azurewebsites.net/api/saleorder/saleOrders';
+  const endpoint =
+    'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/saleOrders';
 
   const handleSubmitOrder = async () => {
     try {

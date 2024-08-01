@@ -54,7 +54,9 @@ const SalesReportPage = () => {
   useEffect(() => {
     const fetchWeeklySales = async () => {
       try {
-        const response = await axios.get('http://localhost:3333/api/saleorder/report/weeklySales');
+        const response = await axios.get(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/report/weeklySales'
+        );
         setWeeklySales(response.data.weeklySales);
         setTotalSales(response.data.totalSales);
       } catch (error) {

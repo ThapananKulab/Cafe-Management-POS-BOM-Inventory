@@ -32,7 +32,9 @@ function ExpenseForm() {
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const response = await axios.get('https://test-api-01.azurewebsites.net/api/expenses/all');
+        const response = await axios.get(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/expenses/all'
+        );
         setExpenses(response.data);
       } catch (error) {
         console.error('Error fetching expenses:', error);
@@ -46,7 +48,10 @@ function ExpenseForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://test-api-01.azurewebsites.net/api/expenses/add', expense);
+      await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/expenses/add',
+        expense
+      );
       alert('Expense added successfully!');
       setExpense({ description: '', amount: '', category: '' });
       setIsOpen(false); // ปิด Modal เมื่อเพิ่มค่าใช้จ่ายเสร็จ

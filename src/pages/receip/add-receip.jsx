@@ -42,7 +42,7 @@ function AddRecipe() {
     const fetchInventoryItems = async () => {
       try {
         const { data } = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
         );
         const updatedIngredients = data.map((item) => ({
           ...item,
@@ -132,7 +132,7 @@ function AddRecipe() {
     }
     try {
       const recipesResponse = await axios.get(
-        'https://test-api-01.azurewebsites.net/api/recipes/all'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/all'
       );
       const recipes = recipesResponse.data;
       const isDuplicate = recipes.some(
@@ -145,14 +145,17 @@ function AddRecipe() {
         });
         return;
       }
-      const response = await axios.post('https://test-api-01.azurewebsites.net/api/recipes/add', {
-        name: recipe.title,
-        ingredients: ingredients.map((ingredient) => ({
-          inventoryItemId: ingredient.inventoryItemId,
-          quantity: ingredient.quantity,
-        })),
-        cost: totalCost,
-      });
+      const response = await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/add',
+        {
+          name: recipe.title,
+          ingredients: ingredients.map((ingredient) => ({
+            inventoryItemId: ingredient.inventoryItemId,
+            quantity: ingredient.quantity,
+          })),
+          cost: totalCost,
+        }
+      );
 
       console.log(response.data);
       toast.success('เพิ่มสำเร็จ', {

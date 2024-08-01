@@ -33,7 +33,7 @@ const App = () => {
   const fetchSuppliers = async () => {
     try {
       const response = await axios.get(
-        'https://test-api-01.azurewebsites.net/api/supplier/suppliers'
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/supplier/suppliers'
       );
       setSuppliers(response.data);
     } catch (error) {
@@ -43,12 +43,15 @@ const App = () => {
 
   const addSupplier = async () => {
     try {
-      await axios.post('https://test-api-01.azurewebsites.net/api/supplier/suppliers', {
-        name,
-        phone,
-        address,
-        email,
-      });
+      await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/supplier/suppliers',
+        {
+          name,
+          phone,
+          address,
+          email,
+        }
+      );
       fetchSuppliers();
       // ปิด Modal เมื่อเพิ่ม Supplier เรียบร้อย
       setOpenModal(false);
@@ -72,7 +75,7 @@ const App = () => {
       if (result.isConfirmed) {
         try {
           await axios.delete(
-            `https://test-api-01.azurewebsites.net/api/supplier/suppliers/${supplierId}`
+            `https://cafe-management-pos-bom-inventory-api.vercel.app/api/supplier/suppliers/${supplierId}`
           );
           fetchSuppliers();
 

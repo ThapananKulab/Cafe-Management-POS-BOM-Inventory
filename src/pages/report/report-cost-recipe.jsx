@@ -32,7 +32,7 @@ function HighestCostRecipeReport() {
     async function fetchHighestCostRecipes() {
       try {
         const response = await fetch(
-          'https://test-api-01.azurewebsites.net/api/recipes/reports/highest-cost-recipes'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/reports/highest-cost-recipes'
         );
         if (!response.ok) {
           throw new Error('Failed to fetch highest cost recipes');

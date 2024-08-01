@@ -45,7 +45,7 @@ export default function AppView() {
     const fetchYearlySales = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByYear'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/salesByYear'
         );
         setYearlySales(response.data);
       } catch (error) {
@@ -60,7 +60,7 @@ export default function AppView() {
     const fetchWeekSales = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByWeek'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/salesByWeek'
         );
         setWeekSales(response.data);
       } catch (error) {
@@ -75,7 +75,7 @@ export default function AppView() {
     const fetchMonthlySales = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesByMonth'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/salesByMonth'
         );
         setMonthlySales(response.data);
       } catch (error) {
@@ -90,7 +90,7 @@ export default function AppView() {
     const fetchTotalProfit = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/total-profit'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/total-profit'
         );
         setTotalProfit(response.data.totalProfit);
       } catch (error) {
@@ -105,7 +105,7 @@ export default function AppView() {
     async function fetchWeeklyTotal() {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/weeklyTotal'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/weeklyTotal'
         );
         setDailySales(response.data.dailySales);
       } catch (error) {
@@ -159,7 +159,7 @@ export default function AppView() {
     async function fetchData() {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/dashboard/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/dashboard/all'
         );
         setItemCount(response.data.itemCount);
       } catch (error) {
@@ -174,7 +174,7 @@ export default function AppView() {
     async function fetchMostPurchasedMenuItems() {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/mostPurchasedMenuItems'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/mostPurchasedMenuItems'
         );
         setMostPurchasedMenuItems(response.data);
       } catch (error) {
@@ -189,7 +189,7 @@ export default function AppView() {
     async function fetchWeeklySales() {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/dailySales'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/dailySales'
         );
         setWeeklySales(response.data.totalSales);
       } catch (error) {
@@ -204,7 +204,7 @@ export default function AppView() {
     async function fetchSaleOrders() {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/dashboard/saleOrders'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/saleOrders'
         );
         setNumberOfOrders(response.data.numberOfOrders);
       } catch (error) {

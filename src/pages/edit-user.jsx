@@ -35,7 +35,7 @@ const UserForm = () => {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`https://cafe-project-server11.onrender.com/api/users/${userId}`)
+        .get(`https://cafe-management-pos-bom-inventory-api.vercel.app/api/users/${userId}`)
         .then((response) => {
           const userData = response.data;
           setUsername(userData.username);
@@ -76,7 +76,7 @@ const UserForm = () => {
 
     try {
       await axios.post(
-        `https://cafe-project-server11.onrender.com/api/users/updateUser/${userId}`,
+        `https://cafe-management-pos-bom-inventory-api.vercel.app/api/users/updateUser/${userId}`,
         formData,
         {
           headers: {

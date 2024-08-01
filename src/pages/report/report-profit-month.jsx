@@ -108,22 +108,22 @@ const MyComponent = () => {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/income/income')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/income/income')
       .then((response) => setIncomeData(response.data))
       .catch((error) => console.error('Error fetching income data:', error));
 
     axios
-      .get('https://test-api-01.azurewebsites.net/api/income/expenses')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/income/expenses')
       .then((response) => setExpensesData(response.data))
       .catch((error) => console.error('Error fetching expenses data:', error));
 
     axios
-      .get('https://test-api-01.azurewebsites.net/api/income/purchase-receipts')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/income/purchase-receipts')
       .then((response) => setPurchaseReceiptData(response.data))
       .catch((error) => console.error('Error fetching purchase receipt data:', error));
 
     axios
-      .get('https://test-api-01.azurewebsites.net/api/income/sale-orders')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/income/sale-orders')
       .then((response) => setSaleOrderData(response.data))
       .catch((error) => console.error('Error fetching sale order data:', error));
   }, []);

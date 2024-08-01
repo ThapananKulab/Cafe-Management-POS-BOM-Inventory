@@ -38,9 +38,12 @@ const AddPhonePage = () => {
       if (!phoneNumber.trim()) {
         throw new Error('Phone number is required');
       }
-      await axios.post('https://test-api-01.azurewebsites.net/api/phonenumber/add', {
-        phoneNumber,
-      });
+      await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/phonenumber/add',
+        {
+          phoneNumber,
+        }
+      );
       setPhoneNumber('');
       setSuccess(true);
       setAddError(null);
@@ -54,7 +57,9 @@ const AddPhonePage = () => {
 
   const fetchPhoneNumbers = async () => {
     try {
-      const response = await axios.get('https://test-api-01.azurewebsites.net/api/phonenumber/all');
+      const response = await axios.get(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/phonenumber/all'
+      );
       setPhoneNumbers(response.data);
     } catch (error) {
       console.error('Error fetching phone numbers:', error);
@@ -64,10 +69,13 @@ const AddPhonePage = () => {
   const handleAddPromptPay = async () => {
     try {
       const selectedPromptPayId = '662bdf1e0fd21950ee6cdefa';
-      await axios.post('https://test-api-01.azurewebsites.net/api/promptpay/addOrUpdate', {
-        id: selectedPromptPayId,
-        phoneNumber: selectedPhoneNumber,
-      });
+      await axios.post(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/promptpay/addOrUpdate',
+        {
+          id: selectedPromptPayId,
+          phoneNumber: selectedPhoneNumber,
+        }
+      );
       setSuccess(true);
       setAddError(null);
       toast.success('เปลี่ยนเบอร์สำเร็จแล้ว');
@@ -79,7 +87,9 @@ const AddPhonePage = () => {
 
   const fetchPromptPayPhoneNumbers = async () => {
     try {
-      const response = await axios.get('https://test-api-01.azurewebsites.net/api/promptpay/all');
+      const response = await axios.get(
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/promptpay/all'
+      );
       setPromptPayNumbers(response.data.split(', ')); // Split the response data into an array
     } catch (error) {
       console.error('Error fetching promptpay phone numbers:', error);
@@ -104,7 +114,9 @@ const AddPhonePage = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`https://test-api-01.azurewebsites.net/api/phonenumber/delete/${id}`);
+        await axios.delete(
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/phonenumber/delete/${id}`
+        );
         fetchPhoneNumbers();
         Swal.fire('ลบแล้ว!', 'หมายเลขโทรศัพท์ถูกลบแล้ว', 'success');
       }

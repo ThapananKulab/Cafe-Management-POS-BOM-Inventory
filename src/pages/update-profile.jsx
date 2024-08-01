@@ -25,13 +25,16 @@ const UpdateUserPage = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -91,7 +94,7 @@ const UpdateUserPage = () => {
       }
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://test-api-01.azurewebsites.net/api/employees/update-profile',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/employees/update-profile',
         formData,
         {
           headers: {

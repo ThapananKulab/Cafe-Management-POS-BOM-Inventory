@@ -58,7 +58,7 @@ const RawForm = () => {
   useEffect(() => {
     if (rawId) {
       axios
-        .get(`https://test-api-01.azurewebsites.net/api/inventoryitems/${rawId}`)
+        .get(`https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/${rawId}`)
         .then((response) => {
           setName(response.data.name);
           setInitialName(response.data.name);
@@ -140,7 +140,7 @@ const RawForm = () => {
     };
 
     await axios.patch(
-      `https://test-api-01.azurewebsites.net/api/inventoryitems/update/${rawId}`,
+      `https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/update/${rawId}`,
       inventoryData,
       {
         headers: { 'Content-Type': 'application/json' },

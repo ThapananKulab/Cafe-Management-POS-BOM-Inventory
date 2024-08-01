@@ -56,7 +56,7 @@ const ProductForm = () => {
 
     try {
       const response = await axios.post(
-        'https://cafe-project-server11.onrender.com/api/raws/insertReact',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/raws/insertReact',
         { rawname, rawquantity, rawunit, rawunitprice },
         {
           headers: {

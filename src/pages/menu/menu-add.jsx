@@ -42,7 +42,9 @@ function AddMenuItem() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('https://test-api-01.azurewebsites.net/api/recipes/all');
+        const response = await axios.get(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/recipes/all'
+        );
         setRecipes(response.data);
       } catch (error) {
         console.error('Error fetching recipes:', error);
@@ -95,7 +97,7 @@ function AddMenuItem() {
 
     try {
       const response = await axios.post(
-        'https://test-api-01.azurewebsites.net/api/menus/addMenu',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/addMenu',
         formData,
         {
           headers: {

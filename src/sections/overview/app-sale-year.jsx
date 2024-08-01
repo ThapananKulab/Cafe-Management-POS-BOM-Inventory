@@ -19,7 +19,7 @@ const SalesChart = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          `https://test-api-01.azurewebsites.net/api/saleorder/dashboard/salesdata?year=${selectedYear}`
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/dashboard/salesdata?year=${selectedYear}`
         );
         setSalesData(response.data);
       } catch (error) {

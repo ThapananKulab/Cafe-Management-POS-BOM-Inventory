@@ -29,7 +29,7 @@ const SalesAnalysisPage = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/saleorder/report/sales-analysis'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/saleorder/report/sales-analysis'
         );
         setSalesData(response.data);
       } catch (error) {

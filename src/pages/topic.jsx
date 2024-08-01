@@ -39,13 +39,16 @@ function App() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://test-api-01.azurewebsites.net/api/authen', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/authen',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -70,7 +73,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get('https://test-api-01.azurewebsites.net/api/post/all')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/post/all')
       .then((res) => setPosts(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -90,7 +93,7 @@ function App() {
         author: `${user?.firstname} ${user?.lastname} (${user?.role})`,
       };
       const res = await axios.post(
-        'https://test-api-01.azurewebsites.net/api/post/add',
+        'https://cafe-management-pos-bom-inventory-api.vercel.app/api/post/add',
         dataToSend
       );
       setPosts([...posts, res.data]);
@@ -117,7 +120,9 @@ function App() {
 
     if (confirmation.isConfirmed) {
       try {
-        await axios.delete(`https://test-api-01.azurewebsites.net/api/post/delete/${postId}`);
+        await axios.delete(
+          `https://cafe-management-pos-bom-inventory-api.vercel.app/api/post/delete/${postId}`
+        );
         setPosts(posts.filter((post) => post._id !== postId));
         Swal.fire({
           icon: 'success',

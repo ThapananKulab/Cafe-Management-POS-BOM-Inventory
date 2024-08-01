@@ -18,7 +18,7 @@ function MenuPage() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3333/api/menus/allMenus')
+      .get('https://cafe-management-pos-bom-inventory-api.vercel.app/api/menus/allMenus')
       .then((response) => setMenuItems(response.data))
       .catch((error) => console.error('There was an error!', error));
   }, []);

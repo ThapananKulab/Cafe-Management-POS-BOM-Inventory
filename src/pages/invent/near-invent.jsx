@@ -34,7 +34,7 @@ export default function InventoryItemsTable() {
     const fetchNearEmptyItems = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/nearEmpty'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/nearEmpty'
         );
         setNearEmptyItems(response.data);
       } catch (error) {

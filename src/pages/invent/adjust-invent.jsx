@@ -41,7 +41,7 @@ function UpdateStock() {
     const fetchInventoryItems = async () => {
       try {
         const response = await axios.get(
-          'https://test-api-01.azurewebsites.net/api/inventoryitems/all'
+          'https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/all'
         );
         setInventoryItems(response.data);
       } catch (error) {
@@ -90,7 +90,7 @@ function UpdateStock() {
         (async () => {
           try {
             const response = await axios.patch(
-              `http://localhost:3333/api/inventoryitems/adjust-stock/${selectedItemId}`,
+              `https://cafe-management-pos-bom-inventory-api.vercel.app/api/inventoryitems/adjust-stock/${selectedItemId}`,
               { adjustment: multipliedResult }
             );
             toast.success(`${response.data.message}`, {
